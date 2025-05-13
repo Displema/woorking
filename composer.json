@@ -1,5 +1,6 @@
 {
   "require": {
-    "doctrine/orm": "*"
+    "doctrine/orm": "*",
+    "moneyphp/money": "^4.4"
   }
 }
