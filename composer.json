@@ -1,6 +1,7 @@
 {
   "require": {
     "doctrine/orm": "*",
-    "moneyphp/money": "^4.4"
+    "moneyphp/money": "^4.4",
+    "ramsey/uuid": "^4.7"
   }
 }
