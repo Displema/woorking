@@ -40,6 +40,10 @@ class EFoto{
         return $this->mimeType;
     }
 
+    public function getSize(): int {
+        return $this->size;
+    }
+
     public function setId(UuidInterface $id): void {
         $this->id = $id;
     }
@@ -52,6 +56,9 @@ class EFoto{
         $this->mimeType = $mimeType;
     }
 
+    public function setSize(int $size): void {
+        $this->size = $size;
+    }
     public function __toString(): string {
         return "EFoto(ID: $this->id, mimeType: $this->mimeType, Size: $this->size)";
     }
