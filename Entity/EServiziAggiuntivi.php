@@ -1,6 +1,12 @@
 <?php
-
+use Doctrine\ORM\Mapping as ORM;    
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
+#[ORM\Entity]
+#[ORM\Table(name: "ServiziAggiuntivi")]
 class EServiziAggiuntivi{
+    #[ORM\Id]
+   
     private $idUfficio;
     private $nomeServizio; //che tipo usiamo?
 

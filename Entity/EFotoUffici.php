@@ -2,10 +2,10 @@
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
-/**
- * @ORM\Entity
- * @ORM\Table(name="FotoUffici")
- */
+
+ #[ORM\Entity]
+ #[ORM\Table(name:"FotoUffici")]
+
 class EFotoUffici{
     
      #[ORM\Id]
