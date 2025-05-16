@@ -7,69 +7,67 @@ use Ramsey\Uuid\Uuid;
 use Enum\StatoUfficio;
 use ELocatore;
 use EIndirizzo;
-/**
- * @ORM\Entity
- * @ORM\Table(name="Ufficio")
- */
+
+ #[ORM\Entity]
+ #[ORM\Table(name: "Ufficio")]
 class EUfficio{
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="guid",unique = true) 
-     */
+    
+     #[ORM\Id]
+     #[ORM\Column(type:"guid",unique:true)] 
+     
     private UuidInterface $id;
-    /**
-     * @ORM\ManyToOne(targetEntity=ELocatore::class)
-     * @ORM\JoinColumn(name="idLocatore", referencedColumnName="id")
-     */
+    
+      #[ORM\ManyToOne(targetEntity:ELocatore::class)]
+      #[ORM\JoinColumn(name:"idLocatore", referencedColumnName:"id")]
+     
     private ELocatore $idLocatore;
-    /**
-     * @ORM\ManyToOne(targetEntity= EIndirizzo::class)
-     * @ORM\JoinColumn(name="IdIndirizzo",referencedColumnName="id") 
-     */
+    
+     #[ORM\ManyToOne(targetEntity:EIndirizzo::class)]
+     #[ORM\JoinColumn(name:"IdIndirizzo",referencedColumnName:"id")]
+     
     private EIndirizzo $idIndirizzo;
-    /**
-     * @ORM\Column(type="string")*/
+    
+      #[ORM\Column(type:"string")]
     private $titolo;
 
-    /**
-     * @ORM\Column(type="integer") */       //NEL COSTRUTTORE ABBIAMO MONEY MA DOCTRINE NON LO GESTISCE E QUI HO MESSO INT
+    
+     #[ORM\Column(type:"integer")]       //NEL COSTRUTTORE ABBIAMO MONEY MA DOCTRINE NON LO GESTISCE E QUI HO MESSO INT
     private $prezzo;
-    /**
-     * @ORM\Column(type="string")*/
+    
+    #[ORM\Column(type:"string")]
     private $descrizione;
-    /**
-     * @ORM\Column(type="integer") */
+    
+     #[ORM\Column(type:"integer")]
     private $numeroPostazioni;
-    /**
-     * @ORM\Column(type="float")
-     */
+    
+      #[ORM\Column(type:"float")]
+     
     private $superficie;
-    /**
-     * @ORM\Column(type="datetime") 
-     */
+    
+    #[ORM\Column(type:"datetime")]
+     
     private $dataCaricamento;
-    /**
-     * @ORM\Column(type="datetime",nullable=true)
-     */
+    
+     #[ORM\Column(type:"datetime",nullable:true)]
+     
     private $dataCancellazione;
-    /**
-     * @ORM\Column(type="string", enumType=Entity\Enum\StatoUfficio::class)
-     */
+    
+     #[ORM\Column(type:"string", enumType:Enum\StatoUfficio::class)]
+     
     private StatoUfficio $stato;  //usare tipo enum per i vari stati
-    /**
-     * @ORM\Column(type="datetime",nullable=true) 
-     */
+    
+     #[ORM\Column(type:"datetime",nullable:true)] 
+     
     private $dataApprovazione;
-    /**
-     * @ORM\Column(type="datetime",nullable=true) */
+    
+     #[ORM\Column(type:"datetime",nullable:true)]
 
     private $dataRifiuto;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
+    
+     #[ORM\Column(type:"string",nullable:true)]
     private $motivoRifiuto;
 
-    public function __construct( ELocatore $idLocatore, EIndirizzo $idIndirizzo,  int $prezzo,) {
+    public function __construct( ELocatore $idLocatore, EIndirizzo $idIndirizzo,  int $prezzo) {
         $this->id = Uuid::uuid4();
         $this->idLocatore = $idLocatore;
         $this->idIndirizzo = $idIndirizzo;

@@ -7,20 +7,19 @@ use Ramsey\Uuid\UuidInterface;
  * @ORM\Table(name="FotoUffici")
  */
 class EFotoUffici{
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="guid")
-     */
+    
+     #[ORM\Id]
+     #[ORM\Column(type:"guid")]
+     
     private UuidInterface $idFoto;
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="guid")
-     */
+    
+     #[ORM\Id]
+     #[ORM\Column(type:"guid")]
     private UuidInterface $idUfficio;
 
     public function __construct() {
         $this->idFoto = Uuid::uuid4();
-        $this->idUfficio = UUId::uuid4();
+        $this->idUfficio = Uuid::uuid4();
     }
 
     public function getIdFoto(): UuidInterface{
