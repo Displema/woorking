@@ -1,7 +1,8 @@
 <?php
 namespace Enum;
- enum FasciaPrenotazione : string{
+ enum FasciaPrenotazione : String{
     case Mattina = "Mattina";
 
-    case Pomeriggio="Pomeriggio";
+    case Pomeriggio = "Pomeriggio";
  }
+?>
