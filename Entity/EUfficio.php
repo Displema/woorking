@@ -1,47 +1,90 @@
 <?php
 use Money\Money;
+use Doctrine\ORM\Mapping as ORM;
+use DateTime;
+use Ramsey\Uuid\UuidInterface;
+use Ramsey\Uuid\Uuid;
+use Enum\StatoUfficio;
+use ELocatore;
+use EIndirizzo;
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="Ufficio")
+ */
 class EUfficio{
-    private $id;
-    private $idLocatore;
-    private $idIndirizzo;
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="guid",unique = true) 
+     */
+    private UuidInterface $id;
+    /**
+     * @ORM\ManyToOne(targetEntity=ELocatore::class)
+     * @ORM\JoinColumn(name="idLocatore", referencedColumnName="id")
+     */
+    private ELocatore $idLocatore;
+    /**
+     * @ORM\ManyToOne(targetEntity= EIndirizzo::class)
+     * @ORM\JoinColumn(name="IdIndirizzo",referencedColumnName="id") 
+     */
+    private EIndirizzo $idIndirizzo;
+    /**
+     * @ORM\Column(type="string")*/
     private $titolo;
+
+    /**
+     * @ORM\Column(type="integer") */       //NEL COSTRUTTORE ABBIAMO MONEY MA DOCTRINE NON LO GESTISCE E QUI HO MESSO INT
     private $prezzo;
+    /**
+     * @ORM\Column(type="string")*/
     private $descrizione;
+    /**
+     * @ORM\Column(type="integer") */
     private $numeroPostazioni;
+    /**
+     * @ORM\Column(type="float")
+     */
     private $superficie;
+    /**
+     * @ORM\Column(type="datetime") 
+     */
     private $dataCaricamento;
+    /**
+     * @ORM\Column(type="datetime",nullable=true)
+     */
     private $dataCancellazione;
-    private $stato;  //usare tipo enum per i vari stati
+    /**
+     * @ORM\Column(type="string", enumType=Entity\Enum\StatoUfficio::class)
+     */
+    private StatoUfficio $stato;  //usare tipo enum per i vari stati
+    /**
+     * @ORM\Column(type="datetime",nullable=true) 
+     */
     private $dataApprovazione;
+    /**
+     * @ORM\Column(type="datetime",nullable=true) */
+
     private $dataRifiuto;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
     private $motivoRifiuto;
 
-    public function __construct(int $id, int $idLocatore, int $idIndirizzo, string $titolo, Money $prezzo, string $descrizione, int $numeroPostazioni, float $superficie, DateTime $dataCaricamento, ?DateTime $dataCancellazione, string $stato, ?DateTime $dataApprovazione, ?DateTime $dataRifiuto, ?string $motivoRifiuto) {
-        $this->id = $id;
+    public function __construct( ELocatore $idLocatore, EIndirizzo $idIndirizzo,  int $prezzo,) {
+        $this->id = Uuid::uuid4();
         $this->idLocatore = $idLocatore;
         $this->idIndirizzo = $idIndirizzo;
-        $this->titolo = $titolo;
         $this->prezzo = $prezzo;
-        $this->descrizione = $descrizione;
-        $this->numeroPostazioni = $numeroPostazioni;
-        $this->superficie = $superficie;
-        $this->dataCaricamento = $dataCaricamento;
-        $this->dataCancellazione = $dataCancellazione;
-        $this->stato = $stato;
-        $this->dataApprovazione = $dataApprovazione;
-        $this->dataRifiuto = $dataRifiuto;
-        $this->motivoRifiuto = $motivoRifiuto;
     }
 
-    public function getId(): int {
+    public function getId(): UuidInterface {
         return $this->id;
     }
 
-    public function getIdLocatore(): int {
+    public function getIdLocatore(): ELocatore {
         return $this->idLocatore;
     }
 
-    public function getIdIndirizzo(): int {
+    public function getIdIndirizzo(): EIndirizzo {
         return $this->idIndirizzo;
     }
 
@@ -49,7 +92,7 @@ class EUfficio{
         return $this->titolo;
     }
 
-    public function getPrezzo(): Money {
+    public function getPrezzo(): int {
         return $this->prezzo;
     }
 
@@ -73,7 +116,7 @@ class EUfficio{
         return $this->dataCancellazione;
     }
 
-    public function getStato(): string {
+    public function getStato(): StatoUfficio {
         return $this->stato;
     }
 
@@ -89,15 +132,15 @@ class EUfficio{
         return $this->motivoRifiuto;
     }
 
-    public function setId(int $id): void {
+    public function setId(UuidInterface $id): void {
         $this->id = $id;
     }
 
-    public function setIdLocatore(int $idLocatore): void {
+    public function setIdLocatore(ELocatore $idLocatore): void {
         $this->idLocatore = $idLocatore;
     }
 
-    public function setIdIndirizzo(int $idIndirizzo): void {
+    public function setIdIndirizzo(EIndirizzo $idIndirizzo): void {
         $this->idIndirizzo = $idIndirizzo;
     }
 
@@ -105,7 +148,7 @@ class EUfficio{
         $this->titolo = $titolo;
     }
 
-    public function setPrezzo(Money $prezzo): void {
+    public function setPrezzo(int $prezzo): void {
         $this->prezzo = $prezzo;
     }
 
@@ -129,7 +172,7 @@ class EUfficio{
         $this->dataCancellazione = $dataCancellazione;
     }
 
-    public function setStato(string $stato): void {
+    public function setStato(StatoUfficio $stato): void {
         $this->stato = $stato;
     }
 
@@ -146,7 +189,7 @@ class EUfficio{
     }
 
     public function __toString(): string {
-        return "EUfficio(ID: $this->id, ID Locatore: $this->idLocatore, ID Indirizzo: $this->idIndirizzo, Titolo: $this->titolo, Prezzo: " . $this->prezzo->getAmount() . ", Descrizione: $this->descrizione, Numero Postazioni: $this->numeroPostazioni, Superficie: $this->superficie, Data Caricamento: " . $this->dataCaricamento->format('Y-m-d H:i:s') . ", Data Cancellazione: " . ($this->dataCancellazione ? $this->dataCancellazione->format('Y-m-d H:i:s') : 'null') . ", Stato: $this->stato, Data Approvazione: " . ($this->dataApprovazione ? $this->dataApprovazione->format('Y-m-d H:i:s') : 'null') . ", Data Rifiuto: " . ($this->dataRifiuto ? $this->dataRifiuto->format('Y-m-d H:i:s') : 'null') . ", Motivo Rifiuto: " . ($this->motivoRifiuto ? $this->motivoRifiuto : 'null)');
+        return "EUfficio(ID:". $this->id->__tostring() .", ID Locatore: $this->idLocatore, ID Indirizzo: $this->idIndirizzo, Titolo: $this->titolo, Prezzo: " . $this->prezzo . ", Descrizione: $this->descrizione, Numero Postazioni: $this->numeroPostazioni, Superficie: $this->superficie, Data Caricamento: " . $this->dataCaricamento->format('Y-m-d H:i:s') . ", Data Cancellazione: " . ($this->dataCancellazione ? $this->dataCancellazione->format('Y-m-d H:i:s') : 'null') . ", Stato:". $this->stato->value." , Data Approvazione: " . ($this->dataApprovazione ? $this->dataApprovazione->format('Y-m-d H:i:s') : 'null') . ", Data Rifiuto: " . ($this->dataRifiuto ? $this->dataRifiuto->format('Y-m-d H:i:s') : 'null') . ", Motivo Rifiuto: " . ($this->motivoRifiuto ? $this->motivoRifiuto : 'null)');
     }
 
 }

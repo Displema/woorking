@@ -1,26 +1,45 @@
 <?php
+use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
+use EPrenotazione;
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="Recensione")
+ */
 
 class ERecensione {
-    private $id;
-    
-    private $idPrenotazione;
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="guid",unique=true)
+     */
+     private $id;
+    /**
+     * @ORM\OneToOne(targetEntity=EPrenotazione::class)
+     * @ORM\JoinColumn(name="idPrenotazione", referencedColumnName="id",nullable=false,unique=true)
+     */
+    private EPrenotazione $idPrenotazione;
+    /**
+     * @ORM\Column(type="integer")
+     */
     private $valutazione;
+    /**
+     * @ORM\Column(type="string")
+
+     */
     private $commento;
 
-    public function __construct(int $id, int $idUtente, int $idPrenotazione, int $valutazione, string $commento) {
-        $this->id = $id;
-        $this->idUtente = $idUtente;
+    public function __construct( EPrenotazione $idPrenotazione) {
+        $this->id = Uuid::uuid4();
         $this->idPrenotazione = $idPrenotazione;
-        $this->valutazione = $valutazione;
-        $this->commento = $commento;
     }
 
-    public function getId(): int {
+    public function getId(): UuidInterface {
         return $this->id;
     }
 
 
-    public function getIdPrenotazione(): int {
+    public function getIdPrenotazione(): EPrenotazione {
         return $this->idPrenotazione;
     }
 
@@ -32,11 +51,11 @@ class ERecensione {
         return $this->commento;
     }
 
-    public function setId(int $id): void {
+    public function setId(UuidInterface $id): void {
         $this->id = $id;
     }
 
-    public function setIdPrenotazione(int $idPrenotazione): void {
+    public function setIdPrenotazione(EPrenotazione $idPrenotazione): void {
         $this->idPrenotazione = $idPrenotazione;
     }
 
@@ -49,6 +68,6 @@ class ERecensione {
     }
 
     public function __toString(): string {
-        return "ERecensione(ID: $this->id, ID Prenotazione: $this->idPrenotazione, Valutazione: $this->valutazione, Commento: $this->commento)";
+        return "ERecensione(ID:". $this->id->__tostring() .", ID Prenotazione:". $this->idPrenotazione->__toString() .", Valutazione: $this->valutazione, Commento: $this->commento)";
     }
 }
