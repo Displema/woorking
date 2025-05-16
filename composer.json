@@ -1,8 +1,9 @@
 {
   "require": {
-    "doctrine/orm": "^3.3",
+    "doctrine/orm": "3.3",
     "moneyphp/money": "^4.4",
     "ramsey/uuid": "^4.7",
-    "doctrine/annotations": "^2.0"
+    "doctrine/annotations": "^2.0",
+    "symfony/cache": "^7.2"
   }
 }
