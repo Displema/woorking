@@ -3,23 +3,27 @@
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
-/**
- * @ORM\Entity
- * @ORM\Table(name="foto")
- */
+use EUfficio;
+
+ #[ORM\Entity]
+ #[ORM\Table(name: "foto")]
 class EFoto{
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="guid", unique=true)
-     */
+    
+     #[ORM\Id]
+     #[ORM\Column(type:"guid", unique:true)]
+     
     private UuidInterface $id;
-    /** @ORM\Column(type="blob") */
+    #[ORM\Column(type:"blob")]
     private $content;
 
-    /** @ORM\Column(type="string") */
+    #[ORM\ManyToOne(targetEntity:EUfficio::class, inversedBy:"foto")]
+    #[ORM\JoinColumn(name:"idUfficio", referencedColumnName:"id", nullable: false)]    
+    private EUfficio $Ufficio;
+
+    #[ORM\Column(type:"string")]
     private $mimeType;
 
-    /** @ORM\Column(type="integer") */
+    #[ORM\Column(type:"integer")]
     private int $size;
 
     public function __construct()
@@ -36,6 +40,9 @@ class EFoto{
         return $this->content;
     }
 
+    public function getUfficio(): EUfficio {
+        return $this->Ufficio;
+    }
     public function getMimeType(): string {
         return $this->mimeType;
     }
@@ -50,6 +57,9 @@ class EFoto{
 
     public function setContent($content): void {
         $this->content = $content;
+    }
+    public function setUfficio(?EUfficio $Ufficio): void {
+        $this->Ufficio = $Ufficio;
     }
 
     public function setMimetype(string $mimeType): void {

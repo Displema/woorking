@@ -1,6 +1,8 @@
 <?php
 use Money\Money;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use DateTime;
 use Ramsey\Uuid\UuidInterface;
 use Ramsey\Uuid\Uuid;
@@ -14,17 +16,18 @@ class EUfficio{
     
      #[ORM\Id]
      #[ORM\Column(type:"guid",unique:true)] 
-     
     private UuidInterface $id;
     
       #[ORM\ManyToOne(targetEntity:ELocatore::class)]
       #[ORM\JoinColumn(name:"idLocatore", referencedColumnName:"id")]
-     
     private ELocatore $idLocatore;
+
+
+    #[ORM\OneToMany(targetEntity:EFoto::class,mappedBy:"Ufficio",cascade:["persist", "remove"])]
+    private Collection $foto;
     
      #[ORM\ManyToOne(targetEntity:EIndirizzo::class)]
      #[ORM\JoinColumn(name:"IdIndirizzo",referencedColumnName:"id")]
-     
     private EIndirizzo $idIndirizzo;
     
       #[ORM\Column(type:"string")]
@@ -41,27 +44,21 @@ class EUfficio{
     private $numeroPostazioni;
     
       #[ORM\Column(type:"float")]
-     
     private $superficie;
     
     #[ORM\Column(type:"datetime")]
-     
     private $dataCaricamento;
     
      #[ORM\Column(type:"datetime",nullable:true)]
-     
     private $dataCancellazione;
     
      #[ORM\Column(type:"string", enumType:Enum\StatoUfficio::class)]
-     
     private StatoUfficio $stato;  //usare tipo enum per i vari stati
     
      #[ORM\Column(type:"datetime",nullable:true)] 
-     
     private $dataApprovazione;
     
      #[ORM\Column(type:"datetime",nullable:true)]
-
     private $dataRifiuto;
     
      #[ORM\Column(type:"string",nullable:true)]
@@ -84,6 +81,9 @@ class EUfficio{
 
     public function getIdIndirizzo(): EIndirizzo {
         return $this->idIndirizzo;
+    }
+    public function getfoto(): Collection{
+        return $this->foto;
     }
 
     public function getTitolo(): string {
@@ -185,6 +185,20 @@ class EUfficio{
     public function setMotivoRifiuto(?string $motivoRifiuto): void {
         $this->motivoRifiuto = $motivoRifiuto;
     }
+    public function addFoto(EFoto $foto) : void {
+        if (!$this->foto->contains($foto)) {
+        $this->foto[] = $foto;
+        $foto->setUfficio($this); 
+    }
+    
+    }
+    public function removeFoto(EFoto $foto) : void {
+         if ($this->foto->removeElement($foto)) {
+        if ($foto->getUfficio() === $this) {
+            $foto->setUfficio(null);
+        }
+    }
+}
 
     public function __toString(): string {
         return "EUfficio(ID:". $this->id->__tostring() .", ID Locatore: $this->idLocatore, ID Indirizzo: $this->idIndirizzo, Titolo: $this->titolo, Prezzo: " . $this->prezzo . ", Descrizione: $this->descrizione, Numero Postazioni: $this->numeroPostazioni, Superficie: $this->superficie, Data Caricamento: " . $this->dataCaricamento->format('Y-m-d H:i:s') . ", Data Cancellazione: " . ($this->dataCancellazione ? $this->dataCancellazione->format('Y-m-d H:i:s') : 'null') . ", Stato:". $this->stato->value." , Data Approvazione: " . ($this->dataApprovazione ? $this->dataApprovazione->format('Y-m-d H:i:s') : 'null') . ", Data Rifiuto: " . ($this->dataRifiuto ? $this->dataRifiuto->format('Y-m-d H:i:s') : 'null') . ", Motivo Rifiuto: " . ($this->motivoRifiuto ? $this->motivoRifiuto : 'null)');
