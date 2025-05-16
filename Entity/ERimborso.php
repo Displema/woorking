@@ -1,44 +1,62 @@
 <?php
 use Money\Money;
 
+use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
+
+#[ORM\Entity]
+#[ORM\Table(name: "Rimborsi")]
 class ERimborso{
-    private $id;
-    private $idSegnalazione;
-    private $valore;
 
-    public function __construct(int $id, int $idSegnalazione,  Money $valore) {
-        $this->id = $id;
+    #[ORM\Id]
+    #[ORM\Column(type: "guid", unique: true)]
+    private UuidInterface $id;
+
+    #[ORM\OneToOne(targetEntity: ESegnalazione::class)]
+    #[ORM\JoinColumn(name: "idSegnalazione", referencedColumnName: "id")]
+    private ESegnalazione $Segnalazione;
+
+    #[ORM\Column(type:"integer")]
+    private $importo;
+
+    #[ORM\Column(type:"string")]
+    private $valuta;
+
+    public function __construct(ESegnalazione $idSegnalazione,  Money $importo) {
+        $this->id = Uuid::uuid4();
         $this->idSegnalazione = $idSegnalazione;
-        $this->valore = $valore;
+        $this->setImporto($importo);
     }
 
-    public function getId(): int{
+    public function getId(): UuidInterface{
         return $this->id;
     }
 
-    public function getIdSegnalazione(): int{
-        return $this->idSegnalazione;
+    public function getSegnalazione(): ESegnalazione{
+        return $this->Segnalazione;
     }
 
-    public function getValore(): Money{
-        return $this->valore;
+    public function getImporto(): Money{
+         return new Money($this->importo, new \Money\Currency($this->valuta));
     }
 
-    public function setId(int $id): void{
+    public function setId(UuidInterface $id): void{
         $this->id = $id;
     }
 
-    public function setIdSegnalazione(int $idSegnalazione): void{
-        $this->idSegnalazione = $idSegnalazione;
+    public function setIdSegnalazione(ESegnalazione $Segnalazione): void{
+        $this->idSegnalazione = $Segnalazione;
     }
 
-    public function setValore(Money $valore): void{
-        $this->valore = $valore;
+    public function setImporto(Money $importo): void{
+        $this->importo =(int) $importo->getAmount();
+        $this->valuta = $importo->getCurrency()->getCode();
     }
 
     public function __toString(): string{
-        return "Rimborso(ID: $this->id, ID Segnalazione: $this->idSegnalazione, Valore: " . $this->valore->getAmount() . ")";
+        return "Rimborso(ID: $this->id, ID Segnalazione: $this->Segnalazione, Valore: " . $this->importo . $this->valuta . ")";
     }
 
 }

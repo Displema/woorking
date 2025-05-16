@@ -13,6 +13,7 @@ class EFoto{
      * @ORM\Column(type="guid", unique=true)
      */
     private UuidInterface $id;
+    
     /** @ORM\Column(type="blob") */
     private $content;
 

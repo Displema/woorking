@@ -1,18 +1,31 @@
 <?php
 
+
+use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
+use EUfficio;
+use DateTime;
+
+#[ORM\Entity]
+#[ORM\Table(name: "Intervallo_disponibilita")]
 class EIntervalliDisponibilita{
-    private $idUfficio;
+
+    
+    private EUfficio $Ufficio;
     private $dataInizio;
+
+    #[ORM\Column(type: "datetime")]
     private $dataFine;
 
-    public function __construct(int $idUfficio, DateTime $dataInizio, DateTime $dataFine) {
-        $this->idUfficio = $idUfficio;
+    public function __construct(EUfficio $Ufficio, DateTime $dataInizio, DateTime $dataFine) {
+        $this->idUfficio = $Ufficio;
         $this->dataInizio = $dataInizio;
         $this->dataFine = $dataFine;
     }
 
-    public function getIdUfficio(): int {
-        return $this->idUfficio;
+    public function getUfficio(): EUfficio {
+        return $this->Ufficio;
     }
 
     public function getDataInizio(): DateTime {
@@ -36,6 +49,6 @@ class EIntervalliDisponibilita{
     }
 
     public function __toString(): string {
-        return "Intervallo Disponibilità (ID Ufficio: $this->idUfficio, Data Inizio: " . $this->dataInizio->format('Y-m-d H:i:s') . ", Data Fine: " . $this->dataFine->format('Y-m-d H:i:s') . ")";
+        return "Intervallo Disponibilità (ID Ufficio: $this->Ufficio, Data Inizio: " . $this->dataInizio->format('Y-m-d H:i:s') . ", Data Fine: " . $this->dataFine->format('Y-m-d H:i:s') . ")";
     }
 }
