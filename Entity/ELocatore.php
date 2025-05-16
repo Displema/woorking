@@ -1,12 +1,17 @@
 <?php
+use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 require_once 'EUtente.php';
 
+#[ORM\Entity]
 class ELocatore extends EUtente{
-    private $partitaIva;
 
-    public function __construct($id,$nome, $cognome, $email, $telefono, $dataNascita, $password, $isAdmin, $partitaIva) {
-        parent::__construct($id, $nome, $cognome, $email, $telefono, $dataNascita, $password, $isAdmin);
-        $this->partitaIva = $partitaIva;
+    #[ORM\Column(type: "string", length: 20, nullable: false)]
+    private string $partitaIva;
+
+    public function __construct(UuidInterface $id) {
+        parent::__construct($id);
     }
 
     public function getPartitaIva(): string {
