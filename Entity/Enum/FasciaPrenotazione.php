@@ -5,6 +5,3 @@ namespace Enum;
 
     case Pomeriggio="Pomeriggio";
  }
-
-
-?>

@@ -5,9 +5,6 @@ enum StatoUfficio : String {
 
     case Approvato = 'Approvato';
 
-    case Rifiutat0 = 'Rifiutato';
+    case Rifiutato = 'Rifiutato';
 
 }
-
-
-?>
