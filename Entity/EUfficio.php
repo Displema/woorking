@@ -64,11 +64,17 @@ class EUfficio{
      #[ORM\Column(type:"string",nullable:true)]
     private $motivoRifiuto;
 
+    #[ORM\OneToMany(targetEntity:EServiziAggiuntivi::class,mappedBy:"Ufficio",cascade:["persist", "remove"])]
+    private Collection $serviziAggiuntivi;
+
     public function __construct( ELocatore $idLocatore, EIndirizzo $idIndirizzo,  int $prezzo) {
         $this->id = Uuid::uuid4();
         $this->idLocatore = $idLocatore;
         $this->idIndirizzo = $idIndirizzo;
         $this->prezzo = $prezzo;
+
+        $this->foto = new ArrayCollection();
+        $this->serviziAggiuntivi = new ArrayCollection();
     }
 
     public function getId(): UuidInterface {
@@ -128,6 +134,10 @@ class EUfficio{
 
     public function getMotivoRifiuto(): ?string {
         return $this->motivoRifiuto;
+    }
+
+    public function getServiziAggiuntivi(): Collection {
+        return $this->serviziAggiuntivi;
     }
 
     public function setId(UuidInterface $id): void {
@@ -196,6 +206,22 @@ class EUfficio{
          if ($this->foto->removeElement($foto)) {
         if ($foto->getUfficio() === $this) {
             $foto->setUfficio(null);
+        }
+    }
+}
+
+
+public function addServizioAggiuntivo(EServiziAggiuntivi $servizio): void {
+    if (!$this->serviziAggiuntivi->contains($servizio)) {
+        $this->serviziAggiuntivi->add($servizio);
+        $servizio->setUfficio($this);
+    }
+}
+
+public function removeServizioAggiuntivo(EServiziAggiuntivi $servizio): void {
+    if ($this->serviziAggiuntivi->removeElement($servizio)) {
+        if ($servizio->getUfficio() === $this) {
+            $servizio->setUfficio(null);
         }
     }
 }

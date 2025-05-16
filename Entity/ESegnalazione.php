@@ -18,6 +18,9 @@ class ESegnalazione{
     #[ORM\Column(type:"string", nullable: false)]
     private $commento;
 
+    #[ORM\OneToOne(targetEntity:ERimborso::class, mappedBy: "Segnalazione", cascade: ["persist", "remove"])]
+    private ?ERimborso $rimborso = null;
+
     public function __construct(EPrenotazione $Prenotazione, string $commento) {
         $this->id = Uuid::uuid4();
         $this->Prenotazione = $Prenotazione;
@@ -36,6 +39,10 @@ class ESegnalazione{
         return $this->commento;
     }
 
+    public function getRimborso(): ?ERimborso{
+        return $this->rimborso;
+    }
+
     public function setId(UuidInterface $id): void{
         $this->id = $id;
     }
@@ -46,6 +53,10 @@ class ESegnalazione{
 
     public function setCommento(string $commento): void{
         $this->commento = $commento;
+    }
+
+    public function setRimborso(?ERimborso $rimborso): void{
+        $this->rimborso = $rimborso;
     }
 
     public function __toString(): string{

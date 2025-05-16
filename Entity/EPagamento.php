@@ -14,9 +14,9 @@ class EPagamento{
     #[ORM\Column(type: "guid", unique: true)]
     private  UuidInterface $id;
 
-    #[ORM\OneToOne(targetEntity: EPrenotazione::class)]
+    #[ORM\OneToOne(targetEntity: EPrenotazione::class, inversedBy: "pagamento")]
     #[ORM\JoinColumn(name: "idPrenotazione", referencedColumnName: "id")]
-    private EPrenotazione $Prenotazione;
+    private EPrenotazione $prenotazione;
 
     #[ORM\Column(type:"integer")]
     private $importo;
@@ -24,17 +24,18 @@ class EPagamento{
     #[ORM\Column(type:"string")]
     private $valuta;
 
-    public function __construct(EPrenotazione $Prenotazione, Money $importo) {
+    public function __construct(EPrenotazione $prenotazione, Money $importo) {
         $this->id = Uuid::uuid4();
-        $this->Prenotazione = $Prenotazione;
+        $this->prenotazione = $prenotazione;
         $this->setImporto($importo);
+        $this->prenotazione->setPagamento($this);  //relazione bidirezionale
     }
     public function getId(): UuidInterface{
         return $this->id;
     }
 
     public function getPrenotazione(): EPrenotazione{
-        return $this->Prenotazione;
+        return $this->prenotazione;
     }
 
     public function getImporto(): Money{
@@ -45,8 +46,8 @@ class EPagamento{
         $this->id = $id;
     }
 
-    public function setPrenotazione(EPrenotazione $Prenotazione): void{
-        $this->Prenotazione = $Prenotazione;
+    public function setPrenotazione(EPrenotazione $prenotazione): void{
+        $this->prenotazione = $prenotazione;
     }
 
     public function setImporto(Money $importo): void{
@@ -55,7 +56,7 @@ class EPagamento{
     }
 
     public function __toString(): string{
-        return "EPagamento(ID: $this->id, ID Prenotazione: $this->Prenotazione, Importo: " . $this->importo . $this->valuta . ")";
+        return "EPagamento(ID: $this->id, ID Prenotazione: $this->prenotazione, Importo: " . $this->importo . $this->valuta . ")";
     }
 
 

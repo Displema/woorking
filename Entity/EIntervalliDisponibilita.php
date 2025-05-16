@@ -2,8 +2,6 @@
 
 
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
 use EUfficio;
 use DateTime;
 
@@ -11,15 +9,20 @@ use DateTime;
 #[ORM\Table(name: "Intervallo_disponibilita")]
 class EIntervalliDisponibilita{
 
-    
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: EUfficio::class)]
+    #[ORM\JoinColumn(name: "idUfficio", referencedColumnName: "id")]
     private EUfficio $Ufficio;
-    private $dataInizio;
+
+    #[ORM\Id]
+    #[ORM\Column(type: "datetime")]
+    private DateTime $dataInizio;
 
     #[ORM\Column(type: "datetime")]
-    private $dataFine;
+    private DateTime $dataFine;
 
     public function __construct(EUfficio $Ufficio, DateTime $dataInizio, DateTime $dataFine) {
-        $this->idUfficio = $Ufficio;
+        $this->Ufficio = $Ufficio;
         $this->dataInizio = $dataInizio;
         $this->dataFine = $dataFine;
     }
@@ -36,8 +39,8 @@ class EIntervalliDisponibilita{
         return $this->dataFine;
     }
 
-    public function setIdUfficio(int $idUfficio): void {
-        $this->idUfficio = $idUfficio;
+    public function setUfficio(EUfficio $Ufficio): void {
+        $this->idUfficio = $Ufficio;
     }
 
     public function setDataInizio(DateTime $dataInizio): void {

@@ -1,6 +1,5 @@
 <?php
 use Money\Money;
-
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -14,7 +13,7 @@ class ERimborso{
     #[ORM\Column(type: "guid", unique: true)]
     private UuidInterface $id;
 
-    #[ORM\OneToOne(targetEntity: ESegnalazione::class)]
+    #[ORM\OneToOne(targetEntity: ESegnalazione::class, inversedBy: "rimborso")]
     #[ORM\JoinColumn(name: "idSegnalazione", referencedColumnName: "id")]
     private ESegnalazione $Segnalazione;
 
@@ -24,9 +23,9 @@ class ERimborso{
     #[ORM\Column(type:"string")]
     private $valuta;
 
-    public function __construct(ESegnalazione $idSegnalazione,  Money $importo) {
+    public function __construct(ESegnalazione $Segnalazione,  Money $importo) {
         $this->id = Uuid::uuid4();
-        $this->idSegnalazione = $idSegnalazione;
+        $this->Segnalazione = $Segnalazione;
         $this->setImporto($importo);
     }
 
@@ -46,8 +45,8 @@ class ERimborso{
         $this->id = $id;
     }
 
-    public function setIdSegnalazione(ESegnalazione $Segnalazione): void{
-        $this->idSegnalazione = $Segnalazione;
+    public function setSegnalazione(ESegnalazione $Segnalazione): void{
+        $this->Segnalazione = $Segnalazione;
     }
 
     public function setImporto(Money $importo): void{

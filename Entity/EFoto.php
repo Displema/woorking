@@ -14,7 +14,7 @@ class EFoto{
      
     private UuidInterface $id;
     
-    /** @ORM\Column(type="blob") */
+    
     #[ORM\Column(type:"blob")]
     private $content;
 

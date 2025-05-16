@@ -35,6 +35,9 @@ class EPrenotazione{
     
     private $data;
 
+    #[ORM\OneToOne(targetEntity:EPagamento::class, mappedBy: "prenotazione", cascade: ["persist", "remove"])]
+    private ?EPagamento $pagamento = null;
+
     public function __construct(EUfficio $idUfficio, EUtente $idUtente) {
         $this->id = Uuid::uuid4();
         $this->idUfficio = $idUfficio;
@@ -62,6 +65,12 @@ class EPrenotazione{
         return $this->data;
     }
 
+    public function getPagamento(): ?EPagamento {
+    return $this->pagamento;
+    }
+
+
+
     public function setId(UuidInterface $id): void{
         $this->id = $id;
     }
@@ -80,6 +89,10 @@ class EPrenotazione{
 
     public function setData(DateTime $data): void{
         $this->data = $data;
+    }
+
+    public function setPagamento(?EPagamento $pagamento): void {
+    $this->pagamento = $pagamento;
     }
 
     public function __toString(): string{
