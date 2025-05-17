@@ -3,30 +3,26 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use EPrenotazione;
-/**
- * @ORM\Entity
- * @ORM\Table(name="Recensione")
- */
+ #[ORM\Entity]
+ #[ORM\Table(name: "Recensione")]
 
 class ERecensione {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="guid",unique=true)
-     */
+    
+     #[ORM\Id]
+     #[ORM\Column(type:"guid",unique:true)]
      private $id;
-    /**
-     * @ORM\OneToOne(targetEntity=EPrenotazione::class)
-     * @ORM\JoinColumn(name="idPrenotazione", referencedColumnName="id",nullable=false,unique=true)
-     */
+    
+     #[ORM\OneToOne(targetEntity:EPrenotazione::class)]
+     #[ORM\JoinColumn(name:"idPrenotazione", referencedColumnName:"id",nullable:false,unique:true)]
+     
     private EPrenotazione $idPrenotazione;
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $valutazione;
-    /**
-     * @ORM\Column(type="string")
 
-     */
+     #[ORM\Column(type:"integer")] 
+     
+    private $valutazione;
+    
+     #[ORM\Column(type:"string")]
+
     private $commento;
 
     public function __construct( EPrenotazione $idPrenotazione) {

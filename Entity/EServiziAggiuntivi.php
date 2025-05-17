@@ -1,24 +1,37 @@
 <?php
 
-class EServiziAggiuntivi{
-    private $idUfficio;
-    private $nomeServizio; //che tipo usiamo?
+use Doctrine\ORM\Mapping as ORM;    
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
-    public function __construct(int $idUfficio, string $nomeServizio){ 
-        $this->idUfficio = $idUfficio;
+
+#[ORM\Entity]
+#[ORM\Table(name: "ServiziAggiuntivi")]
+class EServiziAggiuntivi{
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: EUfficio::class, inversedBy: "serviziAggiuntivi")]
+    #[ORM\JoinColumn(name: "idUfficio", referencedColumnName: "id")]
+    private EUfficio $Ufficio;
+
+    #[ORM\Id]
+    #[ORM\Column(type: "string")]
+    private $nomeServizio; 
+
+    public function __construct(EUfficio $Ufficio, string $nomeServizio){ 
+        $this->Ufficio = $Ufficio;
         $this->nomeServizio = $nomeServizio;
     }
 
-   public function getIdUfficio(): int{
-    return $this->idUfficio;
+   public function getUfficio(): EUfficio{
+    return $this->Ufficio;
    }
 
    public function getNomeServizio(): string{
     return $this->nomeServizio;
    }
    
-   public function setIdUfficio(int $idUfficio):void{
-    $this->idUfficio = $idUfficio;
+   public function setUfficio(?EUfficio $Ufficio):void{
+    $this->Ufficio = $Ufficio;
    }
 
    public function setNomeServizio(string $nomeServizio):void{
@@ -26,6 +39,6 @@ class EServiziAggiuntivi{
    }
 
    public function __tostring() :string{
-    return "EServiziAggiuntivi(ID: $this->idUfficio, Nome Servizio: $this->nomeServizio)";
+    return "EServiziAggiuntivi(ID: $this->Ufficio, Nome Servizio: $this->nomeServizio)";
    }
 }

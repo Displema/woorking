@@ -1,43 +1,62 @@
 <?php
 use Money\Money;
 
+use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
+
+
+#[ORM\Entity]
+#[ORM\Table(name: "Pagamenti")]
 class EPagamento{
-    private $id;
-    private $idPrenotazione;
+
+    #[ORM\Id]
+    #[ORM\Column(type: "guid", unique: true)]
+    private  UuidInterface $id;
+
+    #[ORM\OneToOne(targetEntity: EPrenotazione::class, inversedBy: "pagamento")]
+    #[ORM\JoinColumn(name: "idPrenotazione", referencedColumnName: "id")]
+    private EPrenotazione $prenotazione;
+
+    #[ORM\Column(type:"integer")]
     private $importo;
 
-    public function __construct(int $id, int $idPrenotazione, Money $importo) {
-        $this->id = $id;
-        $this->idPrenotazione = $idPrenotazione;
-        $this->importo = $importo;
-    }
+    #[ORM\Column(type:"string")]
+    private $valuta;
 
-    public function getId(): int{
+    public function __construct(EPrenotazione $prenotazione, Money $importo) {
+        $this->id = Uuid::uuid4();
+        $this->prenotazione = $prenotazione;
+        $this->setImporto($importo);
+        $this->prenotazione->setPagamento($this);  //relazione bidirezionale
+    }
+    public function getId(): UuidInterface{
         return $this->id;
     }
 
-    public function getIdPrenotazione(): int{
-        return $this->idPrenotazione;
+    public function getPrenotazione(): EPrenotazione{
+        return $this->prenotazione;
     }
 
     public function getImporto(): Money{
-        return $this->importo;
+        return new Money($this->importo, new \Money\Currency($this->valuta));
     }
 
-    public function setId(int $id): void{
+    public function setId(UuidInterface $id): void{
         $this->id = $id;
     }
 
-    public function setIdPrenotazione(int $idPrenotazione): void{
-        $this->idPrenotazione = $idPrenotazione;
+    public function setPrenotazione(EPrenotazione $prenotazione): void{
+        $this->prenotazione = $prenotazione;
     }
 
     public function setImporto(Money $importo): void{
-        $this->importo = $importo;
+        $this->importo =(int) $importo->getAmount();
+        $this->valuta = $importo->getCurrency()->getCode();
     }
 
     public function __toString(): string{
-        return "EPagamento(ID: $this->id, ID Prenotazione: $this->idPrenotazione, Importo: " . $this->importo->getAmount() .")";
+        return "EPagamento(ID: $this->id, ID Prenotazione: $this->prenotazione, Importo: " . $this->importo . $this->valuta . ")";
     }
 
 

@@ -1,22 +1,40 @@
 <?php
+
+
+
+use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
+
+#[ORM\Entity]
+#[ORM\Table(name: "indirizzo")]
 class EIndirizzo {
-    private $id;
+
+    #[ORM\Id]
+    #[ORM\Column(type: "guid", unique: true)]
+    private UuidInterface $id;
+
+    #[ORM\Column(type: "string")]
     private $via;
+
+    #[ORM\Column(type:"string")]
     private $numeroCivico;
+
+    #[ORM\Column(type:"string")]
     private $citta;
+
+    #[ORM\Column(type:"string")]
     private $provincia;
+
+    #[ORM\Column(type:"string")]
     private $cap;
 
-    public function __construct(int $id, string $via, string $numeroCivico, string $citta, string $provincia, string $cap) {
-        $this->id = $id;
-        $this->via = $via;
-        $this->numeroCivico = $numeroCivico;
-        $this->citta = $citta;
-        $this->provincia = $provincia;
-        $this->cap = $cap;
+    public function __construct() {
+        $this->id = Uuid::uuid4();  // Genera un UUID (versione 4)
+        
     }
 
-    public function getId(): int {
+    public function getId(): UuidInterface {
         return $this->id;
     }
 
@@ -40,7 +58,7 @@ class EIndirizzo {
         return $this->cap;
     }
 
-    public function setId(int $id): void {
+    public function setId(UuidInterface $id): void {
         $this->id = $id;
   }
 

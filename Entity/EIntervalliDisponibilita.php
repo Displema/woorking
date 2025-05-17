@@ -1,18 +1,34 @@
 <?php
 
-class EIntervalliDisponibilita{
-    private $idUfficio;
-    private $dataInizio;
-    private $dataFine;
 
-    public function __construct(int $idUfficio, DateTime $dataInizio, DateTime $dataFine) {
-        $this->idUfficio = $idUfficio;
+use Doctrine\ORM\Mapping as ORM;
+use EUfficio;
+use DateTime;
+
+#[ORM\Entity]
+#[ORM\Table(name: "Intervallo_disponibilita")]
+class EIntervalliDisponibilita{
+
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: EUfficio::class)]
+    #[ORM\JoinColumn(name: "idUfficio", referencedColumnName: "id")]
+    private EUfficio $Ufficio;
+
+    #[ORM\Id]
+    #[ORM\Column(type: "datetime")]
+    private DateTime $dataInizio;
+
+    #[ORM\Column(type: "datetime")]
+    private DateTime $dataFine;
+
+    public function __construct(EUfficio $Ufficio, DateTime $dataInizio, DateTime $dataFine) {
+        $this->Ufficio = $Ufficio;
         $this->dataInizio = $dataInizio;
         $this->dataFine = $dataFine;
     }
 
-    public function getIdUfficio(): int {
-        return $this->idUfficio;
+    public function getUfficio(): EUfficio {
+        return $this->Ufficio;
     }
 
     public function getDataInizio(): DateTime {
@@ -23,8 +39,8 @@ class EIntervalliDisponibilita{
         return $this->dataFine;
     }
 
-    public function setIdUfficio(int $idUfficio): void {
-        $this->idUfficio = $idUfficio;
+    public function setUfficio(EUfficio $Ufficio): void {
+        $this->idUfficio = $Ufficio;
     }
 
     public function setDataInizio(DateTime $dataInizio): void {
@@ -36,6 +52,6 @@ class EIntervalliDisponibilita{
     }
 
     public function __toString(): string {
-        return "Intervallo Disponibilità (ID Ufficio: $this->idUfficio, Data Inizio: " . $this->dataInizio->format('Y-m-d H:i:s') . ", Data Fine: " . $this->dataFine->format('Y-m-d H:i:s') . ")";
+        return "Intervallo Disponibilità (ID Ufficio: $this->Ufficio, Data Inizio: " . $this->dataInizio->format('Y-m-d H:i:s') . ", Data Fine: " . $this->dataFine->format('Y-m-d H:i:s') . ")";
     }
 }

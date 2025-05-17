@@ -1,79 +1,80 @@
 <?php
 use Money\Money;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use DateTime;
 use Ramsey\Uuid\UuidInterface;
 use Ramsey\Uuid\Uuid;
 use Enum\StatoUfficio;
 use ELocatore;
 use EIndirizzo;
-/**
- * @ORM\Entity
- * @ORM\Table(name="Ufficio")
- */
+
+ #[ORM\Entity]
+ #[ORM\Table(name: "Ufficio")]
 class EUfficio{
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="guid",unique = true) 
-     */
+    
+     #[ORM\Id]
+     #[ORM\Column(type:"guid",unique:true)] 
     private UuidInterface $id;
-    /**
-     * @ORM\ManyToOne(targetEntity=ELocatore::class)
-     * @ORM\JoinColumn(name="idLocatore", referencedColumnName="id")
-     */
+    
+      #[ORM\ManyToOne(targetEntity:ELocatore::class)]
+      #[ORM\JoinColumn(name:"idLocatore", referencedColumnName:"id")]
     private ELocatore $idLocatore;
-    /**
-     * @ORM\ManyToOne(targetEntity= EIndirizzo::class)
-     * @ORM\JoinColumn(name="IdIndirizzo",referencedColumnName="id") 
-     */
+
+
+    #[ORM\OneToMany(targetEntity:EFoto::class,mappedBy:"Ufficio",cascade:["persist", "remove"])]
+    private Collection $foto;
+    
+     #[ORM\ManyToOne(targetEntity:EIndirizzo::class)]
+     #[ORM\JoinColumn(name:"IdIndirizzo",referencedColumnName:"id")]
     private EIndirizzo $idIndirizzo;
-    /**
-     * @ORM\Column(type="string")*/
+    
+      #[ORM\Column(type:"string")]
     private $titolo;
 
-    /**
-     * @ORM\Column(type="integer") */       //NEL COSTRUTTORE ABBIAMO MONEY MA DOCTRINE NON LO GESTISCE E QUI HO MESSO INT
+    
+     #[ORM\Column(type:"integer")]       //NEL COSTRUTTORE ABBIAMO MONEY MA DOCTRINE NON LO GESTISCE E QUI HO MESSO INT
     private $prezzo;
-    /**
-     * @ORM\Column(type="string")*/
+    
+    #[ORM\Column(type:"string")]
     private $descrizione;
-    /**
-     * @ORM\Column(type="integer") */
+    
+     #[ORM\Column(type:"integer")]
     private $numeroPostazioni;
-    /**
-     * @ORM\Column(type="float")
-     */
+    
+      #[ORM\Column(type:"float")]
     private $superficie;
-    /**
-     * @ORM\Column(type="datetime") 
-     */
+    
+    #[ORM\Column(type:"datetime")]
     private $dataCaricamento;
-    /**
-     * @ORM\Column(type="datetime",nullable=true)
-     */
+    
+     #[ORM\Column(type:"datetime",nullable:true)]
     private $dataCancellazione;
-    /**
-     * @ORM\Column(type="string", enumType=Entity\Enum\StatoUfficio::class)
-     */
+    
+     #[ORM\Column(type:"string", enumType:Enum\StatoUfficio::class)]
     private StatoUfficio $stato;  //usare tipo enum per i vari stati
-    /**
-     * @ORM\Column(type="datetime",nullable=true) 
-     */
+    
+     #[ORM\Column(type:"datetime",nullable:true)] 
     private $dataApprovazione;
-    /**
-     * @ORM\Column(type="datetime",nullable=true) */
-
+    
+     #[ORM\Column(type:"datetime",nullable:true)]
     private $dataRifiuto;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
+    
+     #[ORM\Column(type:"string",nullable:true)]
     private $motivoRifiuto;
 
-    public function __construct( ELocatore $idLocatore, EIndirizzo $idIndirizzo,  int $prezzo,) {
+    #[ORM\OneToMany(targetEntity:EServiziAggiuntivi::class,mappedBy:"Ufficio",cascade:["persist", "remove"])]
+    private Collection $serviziAggiuntivi;
+
+    public function __construct( ELocatore $idLocatore, EIndirizzo $idIndirizzo,  int $prezzo) {
         $this->id = Uuid::uuid4();
         $this->idLocatore = $idLocatore;
         $this->idIndirizzo = $idIndirizzo;
         $this->prezzo = $prezzo;
+
+        $this->foto = new ArrayCollection();
+        $this->serviziAggiuntivi = new ArrayCollection();
     }
 
     public function getId(): UuidInterface {
@@ -86,6 +87,9 @@ class EUfficio{
 
     public function getIdIndirizzo(): EIndirizzo {
         return $this->idIndirizzo;
+    }
+    public function getfoto(): Collection{
+        return $this->foto;
     }
 
     public function getTitolo(): string {
@@ -130,6 +134,10 @@ class EUfficio{
 
     public function getMotivoRifiuto(): ?string {
         return $this->motivoRifiuto;
+    }
+
+    public function getServiziAggiuntivi(): Collection {
+        return $this->serviziAggiuntivi;
     }
 
     public function setId(UuidInterface $id): void {
@@ -187,6 +195,36 @@ class EUfficio{
     public function setMotivoRifiuto(?string $motivoRifiuto): void {
         $this->motivoRifiuto = $motivoRifiuto;
     }
+    public function addFoto(EFoto $foto) : void {
+        if (!$this->foto->contains($foto)) {
+        $this->foto[] = $foto;
+        $foto->setUfficio($this); 
+    }
+    
+    }
+    public function removeFoto(EFoto $foto) : void {
+         if ($this->foto->removeElement($foto)) {
+        if ($foto->getUfficio() === $this) {
+            $foto->setUfficio(null);
+        }
+    }
+}
+
+
+public function addServizioAggiuntivo(EServiziAggiuntivi $servizio): void {
+    if (!$this->serviziAggiuntivi->contains($servizio)) {
+        $this->serviziAggiuntivi->add($servizio);
+        $servizio->setUfficio($this);
+    }
+}
+
+public function removeServizioAggiuntivo(EServiziAggiuntivi $servizio): void {
+    if ($this->serviziAggiuntivi->removeElement($servizio)) {
+        if ($servizio->getUfficio() === $this) {
+            $servizio->setUfficio(null);
+        }
+    }
+}
 
     public function __toString(): string {
         return "EUfficio(ID:". $this->id->__tostring() .", ID Locatore: $this->idLocatore, ID Indirizzo: $this->idIndirizzo, Titolo: $this->titolo, Prezzo: " . $this->prezzo . ", Descrizione: $this->descrizione, Numero Postazioni: $this->numeroPostazioni, Superficie: $this->superficie, Data Caricamento: " . $this->dataCaricamento->format('Y-m-d H:i:s') . ", Data Cancellazione: " . ($this->dataCancellazione ? $this->dataCancellazione->format('Y-m-d H:i:s') : 'null') . ", Stato:". $this->stato->value." , Data Approvazione: " . ($this->dataApprovazione ? $this->dataApprovazione->format('Y-m-d H:i:s') : 'null') . ", Data Rifiuto: " . ($this->dataRifiuto ? $this->dataRifiuto->format('Y-m-d H:i:s') : 'null') . ", Motivo Rifiuto: " . ($this->motivoRifiuto ? $this->motivoRifiuto : 'null)');

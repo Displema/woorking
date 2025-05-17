@@ -6,34 +6,37 @@ use EUfficio;
 use Eutente;
 use Enum\FasciaPrenotazione;
 use DateTime;
-/**
- * @ORM\Entity
- * @ORM\Table(name="Prenotazione")
- */
+
+ #[ORM\Entity]
+ #[ORM\Table(name: "Prenotazione")]
+ 
 class EPrenotazione{
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="guid",unique=true)
-     */
+    
+      #[ORM\Id]
+      #[ORM\Column(type:"guid",unique:true)]
+     
      private UuidInterface $id;
-    /**
-     * @ORM\ManyToOne(targetEntity=EUfficio::class)
-     * @ORM\JoinColumn(name="idUfficio",referencedColumnName="id")
-     */
+    
+     #[ORM\ManyToOne(targetEntity:EUfficio::class)]
+     #[ORM\JoinColumn(name:"idUfficio",referencedColumnName:"id")]
+     
     private EUfficio $idUfficio;
-    /**
-     * @ORM\ManyToOne(targetEntity=EUtente::class)
-     * @ORM\JoinColumn(name="idUtente",referencedColumnName="id")
-     */
+    
+     #[ORM\ManyToOne(targetEntity:EUtente::class)]
+     #[ORM\JoinColumn(name:"idUtente",referencedColumnName:"id")]
+     
     private EUtente $idUtente;
-    /**
-     * @ORM\Column(type="string",enumType=Enum\FasciaPrenotazione::class)
-     */
+    
+     #[ORM\Column(type:"string",enumType:Enum\FasciaPrenotazione::class)]
+     
     private FasciaPrenotazione $fascia;
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    
+     #[ORM\Column(type:"datetime")]
+    
     private $data;
+
+    #[ORM\OneToOne(targetEntity:EPagamento::class, mappedBy: "prenotazione", cascade: ["persist", "remove"])]
+    private ?EPagamento $pagamento = null;
 
     public function __construct(EUfficio $idUfficio, EUtente $idUtente) {
         $this->id = Uuid::uuid4();
@@ -62,6 +65,12 @@ class EPrenotazione{
         return $this->data;
     }
 
+    public function getPagamento(): ?EPagamento {
+    return $this->pagamento;
+    }
+
+
+
     public function setId(UuidInterface $id): void{
         $this->id = $id;
     }
@@ -80,6 +89,10 @@ class EPrenotazione{
 
     public function setData(DateTime $data): void{
         $this->data = $data;
+    }
+
+    public function setPagamento(?EPagamento $pagamento): void {
+    $this->pagamento = $pagamento;
     }
 
     public function __toString(): string{
