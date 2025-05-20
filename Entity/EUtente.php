@@ -2,9 +2,10 @@
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
-
- #[ORM\Entity]
- #[ORM\Table(name: "utenti")]
+#[ORM\Entity]
+#[ORM\InheritanceType("JOINED")]
+#[ORM\DiscriminatorColumn(name: "tipo", type: "string")]
+#[ORM\DiscriminatorMap(["utente" =>EUtente::class, "Locatore" => ELocatore::class])]
 class EUtente{
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]

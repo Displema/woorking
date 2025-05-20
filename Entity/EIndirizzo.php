@@ -12,7 +12,7 @@ class EIndirizzo {
 
     #[ORM\Id]
     #[ORM\Column(type: "guid", unique: true)]
-    private UuidInterface $id;
+    private string $id;
 
     #[ORM\Column(type: "string")]
     private $via;
@@ -34,7 +34,7 @@ class EIndirizzo {
         
     }
 
-    public function getId(): UuidInterface {
+    public function getId(): string {
         return $this->id;
     }
 

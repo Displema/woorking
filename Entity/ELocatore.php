@@ -1,23 +1,28 @@
 <?php
-require_once 'EUtente.php';
+use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Rfc4122\UuidInterface;
+require_once __DIR__ . "/EUtente.php";
 
-class ELocatore extends EUtente{
-    private $partitaIva;
+#[ORM\Entity]
+class ELocatore extends EUtente
 
-    public function __construct($id,$nome, $cognome, $email, $telefono, $dataNascita, $password, $isAdmin, $partitaIva) {
+{
+    #[ORM\Column(type: "string", length: 20)]
+    private string $partitaIva;
+
+    public function __construct(UuidInterface $id){
         parent::__construct($id);
-        $this->partitaIva = $partitaIva;
+       
     }
 
-    public function getPartitaIva(): string {
+    public function getPartitaIva(): string
+    {
         return $this->partitaIva;
     }
 
-    public function setPartitaIva(string $partitaIva): void {
+    public function setPartitaIva(string $partitaIva): self
+    {
         $this->partitaIva = $partitaIva;
-    }
-
-    public function __toString(): string {
-        return parent::__toString() . ", Partita IVA: $this->partitaIva";
+        return $this;
     }
 }
