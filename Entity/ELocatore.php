@@ -5,7 +5,7 @@ class ELocatore extends EUtente{
     private $partitaIva;
 
     public function __construct($id,$nome, $cognome, $email, $telefono, $dataNascita, $password, $isAdmin, $partitaIva) {
-        parent::__construct($id, $nome, $cognome, $email, $telefono, $dataNascita, $password, $isAdmin);
+        parent::__construct($id);
         $this->partitaIva = $partitaIva;
     }
 

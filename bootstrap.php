@@ -17,7 +17,7 @@ function getEntityManager(): EntityManager
         'dbname' => 'Uffici1',
         'user' => 'root',
         'password' => '',
-        'port' => '3036',
+        'port' => '3306',
         'host' => '127.0.0.1',
         'driver' => 'pdo_mysql',
     ];

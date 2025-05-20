@@ -2,6 +2,9 @@
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+
+ #[ORM\Entity]
+ #[ORM\Table(name: "utenti")]
 class EUtente{
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]
