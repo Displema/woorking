@@ -14,10 +14,10 @@ function getEntityManager(): EntityManager
     $config = ORMSetup::createAttributeMetadataConfiguration($paths, $isDevMode);
 
     $connectionParams = [
-        'dbname' => 'Uffici1',
+        'dbname' => 'uffici2',
         'user' => 'root',
         'password' => '',
-        'port' => '3036',
+        'port' => '3306',
         'host' => '127.0.0.1',
         'driver' => 'pdo_mysql',
     ];
