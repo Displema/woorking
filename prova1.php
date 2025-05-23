@@ -20,8 +20,8 @@ if (empty($uffici)) {
 } else {
     echo "Uffici trovati:\n";
     foreach ($uffici as $ufficio) {
-        // Presumo che EUfficio abbia un metodo __toString o almeno getId/getNome
+       
         echo  $ufficio->getTitolo() . "\n";
-        // oppure echo $ufficio; se hai __toString
+       
     }
 }

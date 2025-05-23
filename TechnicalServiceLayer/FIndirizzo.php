@@ -5,7 +5,7 @@ class FIndirizzo
 {
     public static function getAllIndirizzi()
     {
-        $entity = 'EIndirizzo'; // Nome completo della tua entità (Namespace + Nome Classe)
+        $entity = 'EIndirizzo'; 
         return FEntityManager::selectobj($entity);
     }
 }
