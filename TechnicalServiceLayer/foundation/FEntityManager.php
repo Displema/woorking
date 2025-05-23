@@ -27,7 +27,7 @@ class FEntityManager {
 
 
     //questa funzione permette di trovare un entity usando la sua chiave primaria
-    public static function RetriveObj($class, $id){
+    public static function retriveObj($class, $id){
         try{
             $obj = self::$EntityManager->find($class,$id);
             return $obj;
@@ -39,7 +39,7 @@ class FEntityManager {
 
 
      //Recupera un oggetto usando un campo qualsiasi , se ce ne sono tanti prende il primo che trova
-    public static function RetriveObjNotOnId($class,$field, $id){
+    public static function retriveObjNotOnId($class,$field, $id){
         try{
             $obj = self::$EntityManager->getRepository($class)->findOneBy([$field => $id]); 
             return $obj;
@@ -55,11 +55,11 @@ class FEntityManager {
 
 
     //Ritorna una lista di oggetti che hanno un determinato valore in un determinato campo
-    public static function ListOfObj($entity,$field,$id){
+    public static function listOfObj($entity,$field,$id){
         try{
             $query="SELECT e FROM " . $entity ." e WHERE e.". $field . "= :creatorId"; //abbiamo usato creatorId perchè è un parametro che evuta l'SQL injection , poi lo settiamo con un vero parametro
             $createquery = self::$EntityManager->createQuery($query); //creazione query
-            $createquery-> setParameter("creatorID", $id); //cambiamo il parametro
+            $createquery-> setParameter("creatorId", $id); //cambiamo il parametro
             $result =$createquery->getResult(); //ritorniamo il risultato
             return($result);
     } catch (Exception $e){
@@ -87,12 +87,15 @@ public static function objListWithNull($entity,$field){
 
         }
         
+    } catch (Exception $e){
+        echo "Error : ". $e->getMessage();
+        return null;
     }
 }
 
 
-//ritorna oggetti che in tre determinati campi hanno tre determinati valori
-public static function ListOfObjWithTwoAtt($entity,$field1,$id1,$field2,$id2,){
+//ritorna oggetti che in due determinati campi hanno due determinati valori
+public static function listOfObjWithTwoAtt($entity,$field1,$id1,$field2,$id2){
         try{
             $query="SELECT e FROM " . $entity ." e WHERE e.". $field1 . "= :Id1 AND e." . $field2 . "= :Id2 "; //abbiamo usato creatorId perchè è un parametro che evuta l'SQL injection , poi lo settiamo con un vero parametro
             $createquery = self::$EntityManager->createQuery($query); //creazione query
@@ -106,8 +109,8 @@ public static function ListOfObjWithTwoAtt($entity,$field1,$id1,$field2,$id2,){
     }
 }
 
-//ritorna una lista di oggetti che in due determinati campi hanno due determinati valori
-public static function ListOfObjWithThreeAtt($entity,$field1,$id1,$field2,$id2,$field3,$id3){
+//ritorna una lista di oggetti che in tre determinati campi hanno tre determinati valori
+public static function listOfObjWithThreeAtt($entity,$field1,$id1,$field2,$id2,$field3,$id3){
         try{
             $query="SELECT e FROM " . $entity ." e WHERE e.". $field1 . "= :Id1 AND e." . $field2 . "= :Id2 AND e." . $field3 . "= :Id3"; //abbiamo usato creatorId perchè è un parametro che evuta l'SQL injection , poi lo settiamo con un vero parametro
             $createquery = self::$EntityManager->createQuery($query); //creazione query
@@ -124,7 +127,7 @@ public static function ListOfObjWithThreeAtt($entity,$field1,$id1,$field2,$id2,$
 
 
 // controlla se dato un determinato campo e un determinato valore per quel campo esiste almeno un oggetto che rispecchia questa caratteristica
-public static function exsistAttribute($fieldid,$entity,$field,$id){
+public static function existAttribute($fieldid,$entity,$field,$id){
     try{
     $query = "SELECT u.". $fieldid ." FROM ". $entity ." u WHERE u.". $field . "= :id1";
     $createquery = self::$EntityManager->createQuery($query);
@@ -154,7 +157,7 @@ public static function saveObj($obj){
         return true;
 
 } catch (Exception $e){ 
-    self::$EntityManager->getConnection();
+    self::$EntityManager->getConnection()->rollBack();
     echo "Error : ". $e->getMessage();
     return false;
 }
@@ -171,7 +174,7 @@ public static function deleteObj($obj){
         return true;
 
 } catch (Exception $e){ 
-    self::$EntityManager->getConnection();
+    self::$EntityManager->getConnection()->rollBack(); // in caso di errore annulla tutto quello che si stava facendo in precedenza
     echo "Error : ". $e->getMessage();
     return false;
 }
