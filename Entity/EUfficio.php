@@ -4,6 +4,7 @@ require_once __DIR__ ."/ELocatore.php";
 require_once __DIR__ ."/EFoto.php";
 require_once __DIR__ ."/EIntervalliDisponibilita.php";
 require_once __DIR__ ."/EServiziAggiuntivi.php";
+require_once __DIR__ ."/EIndirizzo.php";
 use Money\Money;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;

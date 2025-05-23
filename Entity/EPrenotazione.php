@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ ."/EUfficio.php";
+require_once __DIR__ ."/EPagamento.php";
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -15,7 +17,7 @@ class EPrenotazione{
       #[ORM\Id]
       #[ORM\Column(type:"guid",unique:true)]
      
-     private UuidInterface $id;
+     private string $id;
     
      #[ORM\ManyToOne(targetEntity:EUfficio::class)]
      #[ORM\JoinColumn(name:"idUfficio",referencedColumnName:"id")]
@@ -45,7 +47,7 @@ class EPrenotazione{
 
     }
 
-    public function getId(): UuidInterface{
+    public function getId(): string{
         return $this->id;
     }
 

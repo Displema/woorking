@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ ."/EPrenotazione.php";
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
