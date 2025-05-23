@@ -25,4 +25,19 @@ class FPersistentManager{
             $result=FEntityManager::getInstance()->saveObj($obj);
             return $result;
          }
+
+         public static function deleteObj($obj){
+            $result=FEntityManager::getInstance()->deleteObj($obj);
+            return $result;
+        }
+
+        public static function searchoffice($indirizzo,$date,$fascia){
+            $result=FUfficio::findbyIndirizzoDataFascia($indirizzo,$date,$fascia);
+            return $result;
+        }
+
+        public static function getRecensione($idufficio){
+            $result=FRecensione::getRecensioneByUfficio($idufficio);    
+            return $result;
+        }
 }
