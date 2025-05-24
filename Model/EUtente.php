@@ -10,7 +10,8 @@ use Ramsey\Uuid\UuidInterface;
 #[ORM\InheritanceType("SINGLE_TABLE")]
 #[ORM\DiscriminatorColumn(name: "tipo", type: "string")]
 #[ORM\DiscriminatorMap(["utente" => EUtente::class, "locatore" => ELocatore::class])]
-class EUtente{
+class EUtente
+{
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]
     private String $id;
@@ -29,7 +30,8 @@ class EUtente{
     #[ORM\Column(type: "boolean")]
     private bool $isAdmin;
 
-    public function __construct(UuidInterface $id) {
+    public function __construct(UuidInterface $id)
+    {
         $this->id = Uuid::uuid4();
     }
     public function getId(): string
@@ -37,67 +39,83 @@ class EUtente{
         return $this->id;
     }
 
-    public function getNome(): string {
+    public function getNome(): string
+    {
         return $this->nome;
     }
 
-    public function getCognome(): string {
+    public function getCognome(): string
+    {
         return $this->cognome;
     }
 
-    public function getEmail(): string {
+    public function getEmail(): string
+    {
         return $this->email;
     }
 
-    public function getTelefono(): string {
+    public function getTelefono(): string
+    {
         return $this->telefono;
     }
 
-    public function getDataNascita(): DateTime {
+    public function getDataNascita(): DateTime
+    {
         return $this->dataNascita;
     }
 
-    public function getPassword(): string {
+    public function getPassword(): string
+    {
         return $this->password;
     }
 
-    public function getisAdmin(): bool {
+    public function getisAdmin(): bool
+    {
         return $this->isAdmin;
     }
 
-    public function setId(UuidInterface $id): void {
+    public function setId(UuidInterface $id): void
+    {
         $this->id = $id;
     }
 
-    public function setNome(string $nome): void {
+    public function setNome(string $nome): void
+    {
         $this->nome = $nome;
     }
 
-    public function setCognome(string $cognome): void {
+    public function setCognome(string $cognome): void
+    {
         $this->cognome = $cognome;
     }
 
-    public function setEmail(string $email): void {
+    public function setEmail(string $email): void
+    {
         $this->email = $email;
     }
 
-    public function setTelefono(string $telefono): void {
+    public function setTelefono(string $telefono): void
+    {
         $this->telefono = $telefono;
     }
 
-    public function setDataNascita(DateTime $dataNascita): void {
+    public function setDataNascita(DateTime $dataNascita): void
+    {
         $this->dataNascita = $dataNascita;
     }
 
-    public function setPassword(string $password): void {
+    public function setPassword(string $password): void
+    {
         $this->password = $password;
     }
 
-    public function setIsAdmin(bool $isAdmin): void {
+    public function setIsAdmin(bool $isAdmin): void
+    {
         $this->isAdmin = $isAdmin;
     }
 
-    public function __toString(): string {
+    public function __toString(): string
+    {
         return "EUtente(ID: $this->id, Nome: $this->nome, Cognome: $this->cognome, Email: $this->email, Telefono: $this->telefono, Data di Nascita: " . $this->dataNascita->format('Y-m-d') . ", Admin: " . ($this->isAdmin ? 'Sì' : 'No'.")");
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Woorking\Core;
+namespace Core;
 
 use JsonException;
 
@@ -59,5 +59,6 @@ class Router
         // If no route matches
         http_response_code(404);
         echo "404 Not Found";
+        return null;
     }
 }

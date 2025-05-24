@@ -44,7 +44,7 @@ class EServiziAggiuntivi
         $this->nomeServizio = $nomeServizio;
     }
 
-    public function __tostring() :string
+    public function __toString() :string
     {
         return "EServiziAggiuntivi(ID: $this->Ufficio, Nome Servizio: $this->nomeServizio)";
     }

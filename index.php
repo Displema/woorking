@@ -1,12 +1,24 @@
 <?php
 
-use Woorking\Core\Router;
+use Model\EIndirizzo;
+use Core\Router;
 
-require_once __DIR__ . '/src/vendor/autoload.php';
-require_once __DIR__ . '/bootstrap.php';
-require_once __DIR__ . '/src/Model/EIndirizzo.php';
+require __DIR__ . '/src/vendor/autoload.php';
+require __DIR__ . '/bootstrap.php';
 
-require './src/Core/Router.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+$dotenv->required('DB_NAME')->notEmpty();
+$dotenv->required('DB_USER')->notEmpty();
+$dotenv->required('DB_PASSWORD');
+$dotenv->required('DB_HOST')->notEmpty();
+$dotenv->required('DB_PORT')->notEmpty();
+$dotenv->required('DB_DRIVER')->allowedValues(['pdo_mysql']);
+
+
+
 
 $entityManager = getEntityManager();
  $products = $entityManager->getRepository(EIndirizzo::class)->find("8de01155-3571-11f0-b19d-b48c9d833b56");
@@ -33,4 +45,8 @@ $router->get('/product/(\d+)', function ($id) {
 });
 
 // Dispatch the current request
-$router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
+try {
+    $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
+} catch (JsonException $e) {
+    die("An error occurred: " . $e->getMessage());
+}

@@ -7,8 +7,6 @@ class FRecensione
 
 {
 
-    
-
     public static function getRecensioneByUfficio($idufficio)
     {
         FEntityManager::getInstance();

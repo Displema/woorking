@@ -1,7 +1,7 @@
 <?php
 namespace TechnicalServiceLayer;
 
-use Woorking\TechnicalServiceLayer\Foundation\FEntityManager;
+use TechnicalServiceLayer\Foundation\FEntityManager;
 
 class FIndirizzo
 {
