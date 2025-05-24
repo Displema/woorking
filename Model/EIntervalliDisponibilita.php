@@ -6,7 +6,7 @@ use DateTime;
 use Model\Enum\FasciaPrenotazione;
 
 #[ORM\Entity]
-#[ORM\Table(name: "Intervallo_disponibilita")]
+#[ORM\Table(name: "Intervalli_disponibilita")]
 class EIntervalliDisponibilita
 {
 

@@ -5,12 +5,14 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Exception;
 
+use TechnicalServiceLayer\Foundation\FPersistentManager;
+
 class FEntityManager
 {
-    private static FEntityManager $instance;
+    private static ?FEntityManager $instance = null;
 
-    //crei la variabile dove verrà assegnato l' Model manager
-    private static EntityManager $EntityManager;
+    //crei la variabile dove verrà assegnato l'entity manager
+    private static ?EntityManager $EntityManager = null;
 
 
 
@@ -19,7 +21,7 @@ class FEntityManager
         self::$EntityManager = getEntityManager(); //richiami l'Model manager
     }
 
-    public static function getInstance()
+    public static function getInstance(): FEntityManager
     {
         if (self::$instance === null) {
             self::$instance = new self();

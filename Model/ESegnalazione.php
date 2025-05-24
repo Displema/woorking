@@ -7,7 +7,7 @@ use Ramsey\Uuid\UuidInterface;
 use Model\EPrenotazione;
 
 #[ORM\Entity]
-#[ORM\Table(name:"Segnalazione")]
+#[ORM\Table(name:"Segnalazioni")]
 class ESegnalazione{
     #[ORM\Id]
     #[ORM\Column(type:"guid",unique: true)]

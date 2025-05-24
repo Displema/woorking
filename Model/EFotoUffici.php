@@ -6,7 +6,7 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
  #[ORM\Entity]
- #[ORM\Table(name:"FotoUffici")]
+ #[ORM\Table(name:"Foto_Uffici")]
 
 class EFotoUffici
 {

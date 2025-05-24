@@ -6,7 +6,7 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 #[ORM\Entity]
-#[ORM\Table(name: "ServiziAggiuntivi")]
+#[ORM\Table(name: "Servizi_Aggiuntivi")]
 class EServiziAggiuntivi
 {
     #[ORM\Id]

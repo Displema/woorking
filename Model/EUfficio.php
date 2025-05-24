@@ -10,7 +10,7 @@ use Ramsey\Uuid\UuidInterface;
 use Ramsey\Uuid\Uuid;
 
  #[ORM\Entity]
- #[ORM\Table(name: "Ufficio")]
+ #[ORM\Table(name: "Uffici")]
 class EUfficio
 {
     

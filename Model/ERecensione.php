@@ -7,8 +7,7 @@ use Ramsey\Uuid\UuidInterface;
 use Model\EPrenotazione;
 
  #[ORM\Entity]
- #[ORM\Table(name: "Recensione")]
-
+ #[ORM\Table(name: "Recensioni")]
 class ERecensione
 {
     

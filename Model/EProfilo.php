@@ -7,10 +7,11 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 #[ORM\Entity]
-#[ORM\InheritanceType("SINGLE_TABLE")]
+#[ORM\InheritanceType("JOINED")]
 #[ORM\DiscriminatorColumn(name: "tipo", type: "string")]
-#[ORM\DiscriminatorMap(["utente" => EUtente::class, "locatore" => ELocatore::class])]
-class EUtente
+#[ORM\DiscriminatorMap(["utente" => EProfilo::class, "locatore" => ELocatore::class])]
+#[ORM\Table(name: "Profili")]
+class EProfilo
 {
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]
@@ -116,6 +117,6 @@ class EUtente
 
     public function __toString(): string
     {
-        return "EUtente(ID: $this->id, Nome: $this->nome, Cognome: $this->cognome, Email: $this->email, Telefono: $this->telefono, Data di Nascita: " . $this->dataNascita->format('Y-m-d') . ", Admin: " . ($this->isAdmin ? 'Sì' : 'No'.")");
+        return "EProfilo(ID: $this->id, Nome: $this->nome, Cognome: $this->cognome, Email: $this->email, Telefono: $this->telefono, Data di Nascita: " . $this->dataNascita->format('Y-m-d') . ", Admin: " . ($this->isAdmin ? 'Sì' : 'No'.")");
     }
 }

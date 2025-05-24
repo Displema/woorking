@@ -5,7 +5,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\UuidInterface;
 
 #[ORM\Entity]
-class ELocatore extends EUtente
+#[ORM\Table(name: "Profili_Locatori")]
+class ELocatore extends EProfilo
 {
 
     #[ORM\Column(type: "string", length: 20, nullable: false)]

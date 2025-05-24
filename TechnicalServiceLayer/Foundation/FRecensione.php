@@ -1,10 +1,10 @@
 <?php
-namespace TechnicalServiceLayer;
+namespace TechnicalServiceLayer\Foundation;
 
 use Exception;
-use Woorking\TechnicalServiceLayer\Foundation\FEntityManager;
-class FRecensione
+use TechnicalServiceLayer\Foundation\FEntityManager;
 
+class FRecensione
 {
 
     public static function getRecensioneByUfficio($idufficio)

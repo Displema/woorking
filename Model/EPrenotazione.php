@@ -9,8 +9,7 @@ use Ramsey\Uuid\UuidInterface;
 use DateTime;
 
  #[ORM\Entity]
- #[ORM\Table(name: "Prenotazione")]
- 
+ #[ORM\Table(name: "Prenotazioni")]
 class EPrenotazione
 {
     
@@ -24,10 +23,10 @@ class EPrenotazione
      
     private EUfficio $idUfficio;
     
-     #[ORM\ManyToOne(targetEntity:EUtente::class)]
+     #[ORM\ManyToOne(targetEntity:EProfilo::class)]
      #[ORM\JoinColumn(name:"idUtente", referencedColumnName:"id")]
      
-    private EUtente $idUtente;
+    private EProfilo $idUtente;
     
      #[ORM\Column(type:"string", enumType:Enum\FasciaPrenotazione::class)]
      
@@ -40,7 +39,7 @@ class EPrenotazione
     #[ORM\OneToOne(targetEntity:EPagamento::class, mappedBy: "prenotazione", cascade: ["persist", "remove"])]
     private ?EPagamento $pagamento = null;
 
-    public function __construct(EUfficio $idUfficio, EUtente $idUtente)
+    public function __construct(EUfficio $idUfficio, EProfilo $idUtente)
     {
         $this->id = Uuid::uuid4();
         $this->idUfficio = $idUfficio;
@@ -57,7 +56,7 @@ class EPrenotazione
         return $this->idUfficio;
     }
 
-    public function getIdUtente(): EUtente
+    public function getIdUtente(): EProfilo
     {
         return $this->idUtente;
     }
@@ -89,7 +88,7 @@ class EPrenotazione
         $this->idUfficio = $idUfficio;
     }
 
-    public function setIdUtente(EUtente $idUtente): void
+    public function setIdUtente(EProfilo $idUtente): void
     {
         $this->idUtente = $idUtente;
     }
