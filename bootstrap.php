@@ -12,12 +12,12 @@ function getEntityManager(): EntityManager
     $config = ORMSetup::createAttributeMetadataConfiguration($paths, $isDevMode);
 
     $connectionParams = [
-        'dbname' => 'dev_woorking',
-        'user' => 'root',
-        'password' => '',
-        'port' => '3306',
-        'host' => '127.0.0.1',
-        'driver' => 'pdo_mysql',
+        'dbname' => $_ENV['DB_NAME'],
+        'user' => $_ENV['DB_USER'],
+        'password' => $_ENV['DB_PASSWORD'],
+        'port' => $_ENV['DB_PORT'],
+        'host' => $_ENV['DB_HOST'],
+        'driver' => $_ENV['DB_DRIVER'],
     ];
 
     // Crea la connessione DBAL
