@@ -474,3 +474,6 @@ composer.lock
 
 ##### Environment
 .env
+
+
+/phpcs.xml
