@@ -4,7 +4,6 @@ use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\DriverManager;
 
-
 function getEntityManager(): EntityManager
 {
     $isDevMode = true;

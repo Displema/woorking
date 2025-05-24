@@ -1,12 +1,12 @@
 <?php
 
-use Woorking\Core\Router;
+use Model\EIndirizzo;
+use Core\Router;
 
 require_once __DIR__ . '/src/vendor/autoload.php';
 require_once __DIR__ . '/bootstrap.php';
 require_once __DIR__ . '/src/Model/EIndirizzo.php';
 
-require './src/Core/Router.php';
 
 $entityManager = getEntityManager();
  $products = $entityManager->getRepository(EIndirizzo::class)->find("8de01155-3571-11f0-b19d-b48c9d833b56");

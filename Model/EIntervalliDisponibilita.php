@@ -3,6 +3,7 @@ namespace Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use DateTime;
+use Model\Enum\FasciaPrenotazione;
 
 #[ORM\Entity]
 #[ORM\Table(name: "Intervallo_disponibilita")]

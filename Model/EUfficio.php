@@ -5,11 +5,10 @@ use Money\Money;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use \DateTime;
-use Enum\StatoUfficio;
+use DateTime;
+use Model\Enum\StatoUfficio;
 use Ramsey\Uuid\UuidInterface;
 use Ramsey\Uuid\Uuid;
-
 
  #[ORM\Entity]
  #[ORM\Table(name: "Ufficio")]
@@ -24,7 +23,6 @@ class EUfficio
       #[ORM\JoinColumn(name:"idLocatore", referencedColumnName:"id")]
     private ELocatore $idLocatore;
 
-
     #[ORM\OneToMany(targetEntity:EFoto::class, mappedBy:"Ufficio", cascade:["persist", "remove"])]
     private Collection $foto;
     
@@ -33,13 +31,11 @@ class EUfficio
     private EIndirizzo $idIndirizzo;
     
       #[ORM\Column(type:"string")]
-    private $titolo;
-
+    private string $titolo;
 
     #[ORM\OneToMany(targetEntity:EIntervalliDisponibilita::class, mappedBy:"Ufficio", cascade:["persist", "remove"])]
     private Collection $intervalliDisponibilita;
 
-    
      #[ORM\Column(type:"integer")]       //NEL COSTRUTTORE ABBIAMO MONEY MA DOCTRINE NON LO GESTISCE E QUI HO MESSO INT
     private $prezzo;
     
@@ -79,7 +75,7 @@ class EUfficio
         $this->idLocatore = $idLocatore;
         $this->idIndirizzo = $idIndirizzo;
         $this->prezzo = $prezzo;
-        $this->intervalliDisponibilità = new ArrayCollection();
+        $this->intervalliDisponibilita = new ArrayCollection();
         $this->foto = new ArrayCollection();
         $this->serviziAggiuntivi = new ArrayCollection();
     }

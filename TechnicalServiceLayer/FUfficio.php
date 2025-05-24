@@ -1,6 +1,9 @@
 <?php
 namespace TechnicalServiceLayer;
 
+use Exception;
+use TechnicalServiceLayer\Foundation\FEntityManager;
+
 class FUfficio
 {
 

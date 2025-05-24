@@ -1,6 +1,8 @@
 <?php
-namespace Woorking\TechnicalServiceLayer\Foundation;
+namespace TechnicalServiceLayer\Foundation;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\ORMException;
 use Exception;
 
 class FEntityManager
@@ -8,7 +10,7 @@ class FEntityManager
     private static FEntityManager $instance;
 
     //crei la variabile dove verrà assegnato l' Model manager
-    private static \Doctrine\ORM\EntityManager $EntityManager;
+    private static EntityManager $EntityManager;
 
 
 
@@ -69,7 +71,7 @@ class FEntityManager
                 ->setParameter('value', $id);
 
             return $qb->getQuery()->getResult();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             echo "Error: " . $e->getMessage();
             return []; // ritorna array vuoto per controllo con empty()
         }
@@ -90,7 +92,7 @@ class FEntityManager
             $result = $qb->getQuery()->getResult();
 
             return $result ?? [];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             echo "Error: " . $e->getMessage();
             return [];
         }
@@ -112,7 +114,7 @@ class FEntityManager
             }
 
             return $qb->getQuery()->getResult();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             echo "Error: " . $e->getMessage();
             return [];
         }
@@ -134,7 +136,7 @@ class FEntityManager
             $result = $qb->getQuery()->getOneOrNullResult();
 
             return $result !== null;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             echo "Error: " . $e->getMessage();
             return false;
         }
@@ -171,7 +173,7 @@ class FEntityManager
             self::$EntityManager->getConnection()->rollBack();
             echo "Error : ". $e->getMessage();
             return false;
-        } catch (\Doctrine\ORM\Exception\ORMException $e) {
+        } catch (ORMException $e) {
             self::$EntityManager->getConnection()->rollBack();
             echo "Error : ". $e->getMessage();
             return false;
@@ -190,7 +192,7 @@ class FEntityManager
                 ->from($entity, 'e');
 
             return $qb->getQuery()->getResult();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             echo "Error: " . $e->getMessage();
             return [];
         }

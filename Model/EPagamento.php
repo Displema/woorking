@@ -1,6 +1,7 @@
 <?php
 namespace Model;
 
+use Money\Currency;
 use Money\Money;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -45,7 +46,7 @@ class EPagamento
 
     public function getImporto(): Money
     {
-        return new Money($this->importo, new \Money\Currency($this->valuta));
+        return new Money($this->importo, new Currency($this->valuta));
     }
 
     public function setId(UuidInterface $id): void

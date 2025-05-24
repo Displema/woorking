@@ -2,6 +2,7 @@
 namespace Model;
 
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\UuidInterface;
 
 #[ORM\Entity]
 class ELocatore extends EUtente
@@ -9,11 +10,6 @@ class ELocatore extends EUtente
 
     #[ORM\Column(type: "string", length: 20, nullable: false)]
     private string $partitaIva;
-
-    public function __construct(UuidInterface $id)
-    {
-        parent::__construct($id);
-    }
 
     public function getPartitaIva(): string
     {

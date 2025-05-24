@@ -1,10 +1,10 @@
 <?php
 namespace TechnicalServiceLayer;
 
+use TechnicalServiceLayer\Foundation\FEntityManager;
+
 class FRecensione
 {
-
-    
 
     public static function getRecensioneByUfficio($idufficio)
     {
