@@ -33,4 +33,8 @@ $router->get('/product/(\d+)', function ($id) {
 });
 
 // Dispatch the current request
-$router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
+try {
+    $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
+} catch (JsonException $e) {
+    die("An error occurred: " . $e->getMessage());
+}

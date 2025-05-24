@@ -1,6 +1,8 @@
 <?php
 namespace TechnicalServiceLayer;
 
+use TechnicalServiceLayer\Foundation\FEntityManager;
+
 class FPersistentManager
 {
     // E' una classe singleton ovvero in tutto il progrmma esiste una sola istanza di questa classe alla quale si può accedere in maniera globale
@@ -30,19 +32,16 @@ class FPersistentManager
 
     public static function deleteObj($obj)
     {
-        $result=FEntityManager::getInstance()->deleteObj($obj);
-        return $result;
+        return FEntityManager::getInstance()->deleteObj($obj);
     }
 
     public static function searchoffice($indirizzo, $date, $fascia)
     {
-        $result=FUfficio::findbyIndirizzoDataFascia($indirizzo, $date, $fascia);
-        return $result;
+        return FUfficio::findbyIndirizzoDataFascia($indirizzo, $date, $fascia);
     }
 
     public static function getRecensione($idufficio)
     {
-        $result=FRecensione::getRecensioneByUfficio($idufficio);
-        return $result;
+        return FRecensione::getRecensioneByUfficio($idufficio);
     }
 }

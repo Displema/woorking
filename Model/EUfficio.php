@@ -1,7 +1,6 @@
 <?php
 namespace Model;
 
-use Money\Money;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -36,8 +35,8 @@ class EUfficio
     #[ORM\OneToMany(targetEntity:EIntervalliDisponibilita::class, mappedBy:"Ufficio", cascade:["persist", "remove"])]
     private Collection $intervalliDisponibilita;
 
-     #[ORM\Column(type:"integer")]       //NEL COSTRUTTORE ABBIAMO MONEY MA DOCTRINE NON LO GESTISCE E QUI HO MESSO INT
-    private $prezzo;
+     #[ORM\Column(type:"integer")]
+    private int $prezzo;
     
     #[ORM\Column(type:"string")]
     private $descrizione;
@@ -55,16 +54,16 @@ class EUfficio
     private $dataCancellazione;
     
      #[ORM\Column(type:"string", enumType:Enum\StatoUfficio::class)]
-    private StatoUfficio $stato;  //usare tipo enum per i vari stati
+    private StatoUfficio $stato;
     
      #[ORM\Column(type:"datetime", nullable:true)]
-    private $dataApprovazione;
+    private ?DateTime $dataApprovazione;
     
      #[ORM\Column(type:"datetime", nullable:true)]
-    private $dataRifiuto;
+    private ?DateTime $dataRifiuto;
     
      #[ORM\Column(type:"string", nullable:true)]
-    private $motivoRifiuto;
+    private ?string $motivoRifiuto;
 
     #[ORM\OneToMany(targetEntity:EServiziAggiuntivi::class, mappedBy:"Ufficio", cascade:["persist", "remove"])]
     private Collection $serviziAggiuntivi;
@@ -94,7 +93,7 @@ class EUfficio
     {
         return $this->idIndirizzo;
     }
-    public function getfoto(): Collection
+    public function getFoto(): Collection
     {
         return $this->foto;
     }
