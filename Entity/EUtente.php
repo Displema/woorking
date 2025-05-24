@@ -10,7 +10,7 @@ use Ramsey\Uuid\UuidInterface;
 class EUtente{
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]
-    private UuidInterface $id;
+    private String $id;
     #[ORM\Column(type: 'string', length: 40, unique: true)]
     private string $nome;
     #[ORM\Column(type: 'string', length: 40, unique: true)]
@@ -29,7 +29,7 @@ class EUtente{
     public function __construct(UuidInterface $id) {
         $this->id = Uuid::uuid4();
     }
-    public function getId(): UuidInterface
+    public function getId(): string
     {
         return $this->id;
     }

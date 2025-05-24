@@ -1,14 +1,22 @@
 <?php
+require_once __DIR__ ."/Enum/StatoUfficio.php";
+require_once __DIR__ ."/ELocatore.php";
+require_once __DIR__ ."/EFoto.php";
+require_once __DIR__ ."/EIntervalliDisponibilita.php";
+require_once __DIR__ ."/EServiziAggiuntivi.php";
+require_once __DIR__ ."/EIndirizzo.php";
 use Money\Money;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use DateTime;
+use \DateTime;
+use Enum\StatoUfficio;
 use Ramsey\Uuid\UuidInterface;
 use Ramsey\Uuid\Uuid;
-use Enum\StatoUfficio;
+
 use ELocatore;
 use EIndirizzo;
+
 
  #[ORM\Entity]
  #[ORM\Table(name: "Ufficio")]
@@ -16,7 +24,7 @@ class EUfficio{
     
      #[ORM\Id]
      #[ORM\Column(type:"guid",unique:true)] 
-    private UuidInterface $id;
+    private string $id;
     
       #[ORM\ManyToOne(targetEntity:ELocatore::class)]
       #[ORM\JoinColumn(name:"idLocatore", referencedColumnName:"id")]
@@ -32,6 +40,10 @@ class EUfficio{
     
       #[ORM\Column(type:"string")]
     private $titolo;
+
+
+    #[ORM\OneToMany(targetEntity:EIntervalliDisponibilita::class,mappedBy:"Ufficio",cascade:["persist", "remove"])]
+    private Collection $intervalliDisponibilita;
 
     
      #[ORM\Column(type:"integer")]       //NEL COSTRUTTORE ABBIAMO MONEY MA DOCTRINE NON LO GESTISCE E QUI HO MESSO INT
@@ -72,12 +84,12 @@ class EUfficio{
         $this->idLocatore = $idLocatore;
         $this->idIndirizzo = $idIndirizzo;
         $this->prezzo = $prezzo;
-
+        $this->intervalliDisponibilità = new ArrayCollection();
         $this->foto = new ArrayCollection();
         $this->serviziAggiuntivi = new ArrayCollection();
     }
 
-    public function getId(): UuidInterface {
+    public function getId(): string {
         return $this->id;
     }
 
@@ -227,7 +239,7 @@ public function removeServizioAggiuntivo(EServiziAggiuntivi $servizio): void {
 }
 
     public function __toString(): string {
-        return "EUfficio(ID:". $this->id->__tostring() .", ID Locatore: $this->idLocatore, ID Indirizzo: $this->idIndirizzo, Titolo: $this->titolo, Prezzo: " . $this->prezzo . ", Descrizione: $this->descrizione, Numero Postazioni: $this->numeroPostazioni, Superficie: $this->superficie, Data Caricamento: " . $this->dataCaricamento->format('Y-m-d H:i:s') . ", Data Cancellazione: " . ($this->dataCancellazione ? $this->dataCancellazione->format('Y-m-d H:i:s') : 'null') . ", Stato:". $this->stato->value." , Data Approvazione: " . ($this->dataApprovazione ? $this->dataApprovazione->format('Y-m-d H:i:s') : 'null') . ", Data Rifiuto: " . ($this->dataRifiuto ? $this->dataRifiuto->format('Y-m-d H:i:s') : 'null') . ", Motivo Rifiuto: " . ($this->motivoRifiuto ? $this->motivoRifiuto : 'null)');
+        return "EUfficio(ID:". $this->id.", ID Locatore: $this->idLocatore, ID Indirizzo: $this->idIndirizzo, Titolo: $this->titolo, Prezzo: " . $this->prezzo . ", Descrizione: $this->descrizione, Numero Postazioni: $this->numeroPostazioni, Superficie: $this->superficie, Data Caricamento: " . $this->dataCaricamento->format('Y-m-d H:i:s') . ", Data Cancellazione: " . ($this->dataCancellazione ? $this->dataCancellazione->format('Y-m-d H:i:s') : 'null') . ", Stato:". $this->stato->value." , Data Approvazione: " . ($this->dataApprovazione ? $this->dataApprovazione->format('Y-m-d H:i:s') : 'null') . ", Data Rifiuto: " . ($this->dataRifiuto ? $this->dataRifiuto->format('Y-m-d H:i:s') : 'null') . ", Motivo Rifiuto: " . ($this->motivoRifiuto ? $this->motivoRifiuto : 'null)');
     }
 
 }

@@ -1,7 +1,8 @@
 <?php
-
+require_once __DIR__ ."/Enum/FasciaPrenotazione.php";
 
 use Doctrine\ORM\Mapping as ORM;
+use Enum\FasciaPrenotazione;
 use EUfficio;
 use DateTime;
 
@@ -18,13 +19,17 @@ class EIntervalliDisponibilita{
     #[ORM\Column(type: "datetime")]
     private DateTime $dataInizio;
 
+    #[ORM\Column(type:"string", enumType:Enum\FasciaPrenotazione::class)]
+    private FasciaPrenotazione $fascia;
+
     #[ORM\Column(type: "datetime")]
     private DateTime $dataFine;
 
-    public function __construct(EUfficio $Ufficio, DateTime $dataInizio, DateTime $dataFine) {
+    public function __construct(EUfficio $Ufficio, DateTime $dataInizio, DateTime $dataFine,FasciaPrenotazione $fascia) {
         $this->Ufficio = $Ufficio;
         $this->dataInizio = $dataInizio;
         $this->dataFine = $dataFine;
+        $this->fascia = $fascia;
     }
 
     public function getUfficio(): EUfficio {
@@ -38,9 +43,13 @@ class EIntervalliDisponibilita{
     public function getDataFine(): DateTime {
         return $this->dataFine;
     }
+    
+    public function getFascia(): FasciaPrenotazione {
+            return $this->fascia;
+    }
 
     public function setUfficio(EUfficio $Ufficio): void {
-        $this->idUfficio = $Ufficio;
+        $this->Ufficio = $Ufficio;
     }
 
     public function setDataInizio(DateTime $dataInizio): void {
@@ -49,6 +58,10 @@ class EIntervalliDisponibilita{
 
     public function setDataFine(DateTime $dataFine): void {
         $this->dataFine = $dataFine;
+    }
+
+    public function setfascia(FasciaPrenotazione $fascia):void {
+        $this->fascia = $fascia;
     }
 
     public function __toString(): string {
