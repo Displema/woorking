@@ -6,23 +6,20 @@ class FPersistentManager{
     private static $instance;
 
     private function __construct(){
-        
-
-
     }
 
     public static function getInstance(){
-        if(!self::$instance){
+        if (!self::$instance) {
             self::$instance = new self();
         }
-        return self::$instance;}
+        return self::$instance;
+    }
 
-        public static function retriveobj($Eclass,$id){
-            $result=FEntityManager::getInstance()->retriveobj($Eclass,$id);
-            return $result; 
+        public static function retriveobj($Eclass, $id){
+            return FEntityManager::getInstance()->retriveobj($Eclass, $id);
         }
-         public static function uploadObj($obj){
-            $result=FEntityManager::getInstance()->saveObj($obj);
-            return $result;
+         public static function uploadObj($obj): bool
+         {
+            return FEntityManager::getInstance()->saveObj($obj);
          }
 }
