@@ -181,15 +181,18 @@ class FEntityManager
 
 
 // Recupera tutti gli oggetti di una determinata entità
-    public static function selectobj($entity)
+    public static function selectObj(string $entity): array
     {
         try {
-            $query = "SELECT e FROM " . $entity ." e";
-            $createquery = self::$EntityManager->createQuery($query);
-            $result = $createquery->getResult();
-            return $result;
-        } catch (Exception $e) {
-            echo "Error : ". $e->getMessage();
+            $qb = self::$EntityManager->createQueryBuilder();
+
+            $qb->select('e')
+                ->from($entity, 'e');
+
+            return $qb->getQuery()->getResult();
+
+        } catch (\Exception $e) {
+            echo "Error: " . $e->getMessage();
             return [];
         }
     }
