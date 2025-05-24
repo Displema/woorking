@@ -20,6 +20,12 @@ $router->get('/user/(\d+)', function ($id) {
     //$controller->show($id);
 });
 
+$router->post('/submit/(\d+)', function ($id, $query, $body) {
+    echo "ID: $id<br>";
+    echo "Query: " . json_encode($query, JSON_THROW_ON_ERROR) . "<br>";
+    echo "Body: " . json_encode($body, JSON_THROW_ON_ERROR);
+});
+
 $router->get('/product/(\d+)', function ($id) {
     //$controller = new ProductController();
     //$controller->show($id);
