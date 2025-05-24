@@ -1,35 +1,35 @@
 <?php
-require_once __DIR__ ."/EUfficio.php";
-require_once __DIR__ ."/EPagamento.php";
+namespace Model;
+
 use Doctrine\ORM\Mapping as ORM;
+use Model\Enum\FasciaPrenotazione;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
-use EUfficio;
-use Eutente;
-use Enum\FasciaPrenotazione;
+
 use DateTime;
 
  #[ORM\Entity]
  #[ORM\Table(name: "Prenotazione")]
  
-class EPrenotazione{
+class EPrenotazione
+{
     
       #[ORM\Id]
-      #[ORM\Column(type:"guid",unique:true)]
+      #[ORM\Column(type:"guid", unique:true)]
      
-     private string $id;
+    private string $id;
     
      #[ORM\ManyToOne(targetEntity:EUfficio::class)]
-     #[ORM\JoinColumn(name:"idUfficio",referencedColumnName:"id")]
+     #[ORM\JoinColumn(name:"idUfficio", referencedColumnName:"id")]
      
     private EUfficio $idUfficio;
     
      #[ORM\ManyToOne(targetEntity:EUtente::class)]
-     #[ORM\JoinColumn(name:"idUtente",referencedColumnName:"id")]
+     #[ORM\JoinColumn(name:"idUtente", referencedColumnName:"id")]
      
     private EUtente $idUtente;
     
-     #[ORM\Column(type:"string",enumType:Enum\FasciaPrenotazione::class)]
+     #[ORM\Column(type:"string", enumType:Enum\FasciaPrenotazione::class)]
      
     private FasciaPrenotazione $fascia;
     
@@ -40,64 +40,77 @@ class EPrenotazione{
     #[ORM\OneToOne(targetEntity:EPagamento::class, mappedBy: "prenotazione", cascade: ["persist", "remove"])]
     private ?EPagamento $pagamento = null;
 
-    public function __construct(EUfficio $idUfficio, EUtente $idUtente) {
+    public function __construct(EUfficio $idUfficio, EUtente $idUtente)
+    {
         $this->id = Uuid::uuid4();
         $this->idUfficio = $idUfficio;
         $this->idUtente = $idUtente;
-
     }
 
-    public function getId(): string{
+    public function getId(): string
+    {
         return $this->id;
     }
 
-    public function getIdUfficio(): EUfficio{
+    public function getIdUfficio(): EUfficio
+    {
         return $this->idUfficio;
     }
 
-    public function getIdUtente(): EUtente{
+    public function getIdUtente(): EUtente
+    {
         return $this->idUtente;
     }
 
-    public function getFascia(): FasciaPrenotazione {
+    public function getFascia(): FasciaPrenotazione
+    {
         return $this->fascia;
     }
 
-    public function getData(): DateTime{
+    public function getData(): DateTime
+    {
         return $this->data;
     }
 
-    public function getPagamento(): ?EPagamento {
-    return $this->pagamento;
+    public function getPagamento(): ?EPagamento
+    {
+        return $this->pagamento;
     }
 
 
 
-    public function setId(UuidInterface $id): void{
+    public function setId(UuidInterface $id): void
+    {
         $this->id = $id;
     }
 
-    public function setIdUfficio(EUfficio $idUfficio): void{
+    public function setIdUfficio(EUfficio $idUfficio): void
+    {
         $this->idUfficio = $idUfficio;
     }
 
-    public function setIdUtente(EUtente $idUtente): void{
+    public function setIdUtente(EUtente $idUtente): void
+    {
         $this->idUtente = $idUtente;
     }
 
-    public function setFascia(FasciaPrenotazione $fascia): void{
+    public function setFascia(FasciaPrenotazione $fascia): void
+    {
         $this->fascia = $fascia;
     }
 
-    public function setData(DateTime $data): void{
+    public function setData(DateTime $data): void
+    {
         $this->data = $data;
     }
 
-    public function setPagamento(?EPagamento $pagamento): void {
-    $this->pagamento = $pagamento;
+    public function setPagamento(?EPagamento $pagamento): void
+    {
+        $this->pagamento = $pagamento;
     }
 
-    public function __toString(): string{
+    public function __toString(): string
+    {
         return "EPrenotazione(ID:". $this->id->__toString() .", ID Ufficio:" .$this->idUfficio->__toString()  . ", ID Utente:". $this->idUtente->__toString().", Fascia:". $this->fascia->value .", Data: " . $this->data->format('Y-m-d H:i:s').")";
     }
 }

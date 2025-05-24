@@ -4,17 +4,16 @@ use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\DriverManager;
 
-require_once __DIR__ . '/vendor/autoload.php';
 
 function getEntityManager(): EntityManager
 {
     $isDevMode = true;
-    $paths = [__DIR__ . '/Entity'];
+    $paths = [__DIR__ . '/Model'];
 
     $config = ORMSetup::createAttributeMetadataConfiguration($paths, $isDevMode);
 
     $connectionParams = [
-        'dbname' => 'uffici2',
+        'dbname' => 'dev_woorking',
         'user' => 'root',
         'password' => '',
         'port' => '3306',

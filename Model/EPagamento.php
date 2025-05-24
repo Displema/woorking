@@ -1,18 +1,20 @@
 <?php
+namespace Model;
+
 use Money\Money;
 
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
-
 #[ORM\Entity]
 #[ORM\Table(name: "Pagamenti")]
-class EPagamento{
+class EPagamento
+{
 
     #[ORM\Id]
     #[ORM\Column(type: "guid", unique: true)]
-    private  UuidInterface $id;
+    private UuidInterface $id;
 
     #[ORM\OneToOne(targetEntity: EPrenotazione::class, inversedBy: "pagamento")]
     #[ORM\JoinColumn(name: "idPrenotazione", referencedColumnName: "id")]
@@ -24,40 +26,46 @@ class EPagamento{
     #[ORM\Column(type:"string")]
     private $valuta;
 
-    public function __construct(EPrenotazione $prenotazione, Money $importo) {
+    public function __construct(EPrenotazione $prenotazione, Money $importo)
+    {
         $this->id = Uuid::uuid4();
         $this->prenotazione = $prenotazione;
         $this->setImporto($importo);
         $this->prenotazione->setPagamento($this);  //relazione bidirezionale
     }
-    public function getId(): UuidInterface{
+    public function getId(): UuidInterface
+    {
         return $this->id;
     }
 
-    public function getPrenotazione(): EPrenotazione{
+    public function getPrenotazione(): EPrenotazione
+    {
         return $this->prenotazione;
     }
 
-    public function getImporto(): Money{
+    public function getImporto(): Money
+    {
         return new Money($this->importo, new \Money\Currency($this->valuta));
     }
 
-    public function setId(UuidInterface $id): void{
+    public function setId(UuidInterface $id): void
+    {
         $this->id = $id;
     }
 
-    public function setPrenotazione(EPrenotazione $prenotazione): void{
+    public function setPrenotazione(EPrenotazione $prenotazione): void
+    {
         $this->prenotazione = $prenotazione;
     }
 
-    public function setImporto(Money $importo): void{
+    public function setImporto(Money $importo): void
+    {
         $this->importo =(int) $importo->getAmount();
         $this->valuta = $importo->getCurrency()->getCode();
     }
 
-    public function __toString(): string{
+    public function __toString(): string
+    {
         return "EPagamento(ID: $this->id, ID Prenotazione: $this->prenotazione, Importo: " . $this->importo . $this->valuta . ")";
     }
-
-
 }

@@ -1,5 +1,7 @@
 <?php
+namespace TechnicalServiceLayer;
 
-class FPrenotazione{
+class FPrenotazione
+{
     
 }

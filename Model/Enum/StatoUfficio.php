@@ -1,11 +1,11 @@
 <?php
-namespace Enum;
+namespace Model\Enum;
 
-enum StatoUfficio : string {
+enum StatoUfficio : string
+{
     case InAttesa = " In attesa";
 
     case Approvato = "Approvato";
 
     case NonApprovato = "Non Approvato";
 }
-?>

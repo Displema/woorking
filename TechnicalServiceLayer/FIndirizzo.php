@@ -1,11 +1,11 @@
 <?php
-require_once 'C:/Users/39327/Desktop/UFFICI/TechnicalServiceLayer/foundation/FEntityManager.php';
-require_once 'C:/Users/39327/Desktop/UFFICI/Entity/EIndirizzo.php';
+namespace TechnicalServiceLayer;
+
 class FIndirizzo
 {
     public static function getAllIndirizzi()
     {
-        $entity = 'EIndirizzo'; 
+        $entity = 'EIndirizzo';
         return FEntityManager::selectobj($entity);
     }
 }

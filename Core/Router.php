@@ -1,4 +1,9 @@
 <?php
+
+namespace Woorking\Core;
+
+use JsonException;
+
 class Router
 {
     private $routes = [];
@@ -49,7 +54,6 @@ class Router
                 return call_user_func_array($route['callback'], $matches);
             }
         }
-
 
 
         // If no route matches

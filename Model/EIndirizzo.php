@@ -1,6 +1,5 @@
 <?php
-
-
+namespace Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
@@ -8,7 +7,8 @@ use Ramsey\Uuid\UuidInterface;
 
 #[ORM\Entity]
 #[ORM\Table(name: "indirizzo")]
-class EIndirizzo {
+class EIndirizzo
+{
 
     #[ORM\Id]
     #[ORM\Column(type: "guid", unique: true)]
@@ -29,61 +29,73 @@ class EIndirizzo {
     #[ORM\Column(type:"string")]
     private $cap;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->id = Uuid::uuid4();  // Genera un UUID (versione 4)
-        
     }
 
-    public function getId(): string {
+    public function getId(): string
+    {
         return $this->id;
     }
 
-    public function getVia(): string {
+    public function getVia(): string
+    {
         return $this->via;
     }
 
-    public function getNumeroCivico(): string {
+    public function getNumeroCivico(): string
+    {
         return $this->numeroCivico;
     }
 
-    public function getCitta(): string {
+    public function getCitta(): string
+    {
         return $this->citta;
     }
 
-    public function getProvincia(): string {
+    public function getProvincia(): string
+    {
         return $this->provincia;
     }
 
-    public function getCap(): string {
+    public function getCap(): string
+    {
         return $this->cap;
     }
 
-    public function setId(UuidInterface $id): void {
+    public function setId(UuidInterface $id): void
+    {
         $this->id = $id;
-  }
+    }
 
-    public function setVia(string $via): void {
+    public function setVia(string $via): void
+    {
         $this->via = $via;
     }
 
-    public function setNumeroCivico(string $numeroCivico): void {
+    public function setNumeroCivico(string $numeroCivico): void
+    {
         $this->numeroCivico = $numeroCivico;
     }
 
-    public function setCitta(string $citta): void {
+    public function setCitta(string $citta): void
+    {
         $this->citta = $citta;
     }
 
-    public function setProvincia(string $provincia): void {
+    public function setProvincia(string $provincia): void
+    {
         $this->provincia = $provincia;
     }
 
-    public function setCap(string $cap): void {
+    public function setCap(string $cap): void
+    {
         $this->cap = $cap;
     }
 
-    public function __toString(): string {
+    public function __toString(): string
+    {
         return "Indirizzo: {$this->via} {$this->numeroCivico}, {$this->citta}, {$this->provincia}, {$this->cap}";
     }
 }
-

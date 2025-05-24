@@ -1,13 +1,14 @@
 <?php
+namespace Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
-use EUfficio;
 
  #[ORM\Entity]
  #[ORM\Table(name: "foto")]
-class EFoto{
+class EFoto
+{
     
      #[ORM\Id]
      #[ORM\Column(type:"guid", unique:true)]
@@ -19,7 +20,7 @@ class EFoto{
     private $content;
 
     #[ORM\ManyToOne(targetEntity:EUfficio::class, inversedBy:"foto")]
-    #[ORM\JoinColumn(name:"idUfficio", referencedColumnName:"id", nullable: false)]    
+    #[ORM\JoinColumn(name:"idUfficio", referencedColumnName:"id", nullable: false)]
     private EUfficio $Ufficio;
 
     #[ORM\Column(type:"string")]
@@ -34,44 +35,55 @@ class EFoto{
         $this->id = Uuid::uuid4();  // La libreria Ramsey\Uuid crea un UUID v4
     }
 
-    public function getId(): UuidInterface {
+    public function getId(): UuidInterface
+    {
         return $this->id;
     }
 
-    public function getContent(): string {
+    public function getContent(): string
+    {
         return $this->content;
     }
 
-    public function getUfficio(): EUfficio {
+    public function getUfficio(): EUfficio
+    {
         return $this->Ufficio;
     }
-    public function getMimeType(): string {
+    public function getMimeType(): string
+    {
         return $this->mimeType;
     }
 
-    public function getSize(): int {
+    public function getSize(): int
+    {
         return $this->size;
     }
 
-    public function setId(UuidInterface $id): void {
+    public function setId(UuidInterface $id): void
+    {
         $this->id = $id;
     }
 
-    public function setContent($content): void {
+    public function setContent($content): void
+    {
         $this->content = $content;
     }
-    public function setUfficio(?EUfficio $Ufficio): void {
+    public function setUfficio(?EUfficio $Ufficio): void
+    {
         $this->Ufficio = $Ufficio;
     }
 
-    public function setMimetype(string $mimeType): void {
+    public function setMimetype(string $mimeType): void
+    {
         $this->mimeType = $mimeType;
     }
 
-    public function setSize(int $size): void {
+    public function setSize(int $size): void
+    {
         $this->size = $size;
     }
-    public function __toString(): string {
+    public function __toString(): string
+    {
         return "EFoto(ID: $this->id, mimeType: $this->mimeType, Size: $this->size)";
     }
 }

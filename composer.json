@@ -4,10 +4,18 @@
     "moneyphp/money": "^4.4",
     "ramsey/uuid": "^4.7",
     "doctrine/annotations": "^2.0",
-    "symfony/cache": "^7.2",
-    "": ""
+    "symfony/cache": "^7.2"
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "@stable"
+  },
+  "autoload": {
+    "psr-4": {
+      "Model\\": "./Model",
+      "TechnicalServiceLayer\\": "./TechnicalServiceLayer",
+      "TechnicalServiceLayer\\Foundation\\": "./TechnicalServiceLayer/Foundation",
+      "Core\\": "./Core",
+      "Model\\Enum\\": "./Model/Enum"
+    }
   }
 }

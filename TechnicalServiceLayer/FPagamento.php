@@ -1,5 +1,7 @@
 <?php
+namespace TechnicalServiceLayer;
 
-class FPagamento{
+class FPagamento
+{
     
 }

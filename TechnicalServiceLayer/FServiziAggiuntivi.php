@@ -1,4 +1,7 @@
-<?php 
-class FServiziAggiuntivi{
+<?php
+namespace TechnicalServiceLayer;
+
+class FServiziAggiuntivi
+{
     
 }

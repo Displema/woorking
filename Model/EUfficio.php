@@ -1,10 +1,6 @@
 <?php
-require_once __DIR__ ."/Enum/StatoUfficio.php";
-require_once __DIR__ ."/ELocatore.php";
-require_once __DIR__ ."/EFoto.php";
-require_once __DIR__ ."/EIntervalliDisponibilita.php";
-require_once __DIR__ ."/EServiziAggiuntivi.php";
-require_once __DIR__ ."/EIndirizzo.php";
+namespace Model;
+
 use Money\Money;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -14,16 +10,14 @@ use Enum\StatoUfficio;
 use Ramsey\Uuid\UuidInterface;
 use Ramsey\Uuid\Uuid;
 
-use ELocatore;
-use EIndirizzo;
-
 
  #[ORM\Entity]
  #[ORM\Table(name: "Ufficio")]
-class EUfficio{
+class EUfficio
+{
     
      #[ORM\Id]
-     #[ORM\Column(type:"guid",unique:true)] 
+     #[ORM\Column(type:"guid", unique:true)]
     private string $id;
     
       #[ORM\ManyToOne(targetEntity:ELocatore::class)]
@@ -31,18 +25,18 @@ class EUfficio{
     private ELocatore $idLocatore;
 
 
-    #[ORM\OneToMany(targetEntity:EFoto::class,mappedBy:"Ufficio",cascade:["persist", "remove"])]
+    #[ORM\OneToMany(targetEntity:EFoto::class, mappedBy:"Ufficio", cascade:["persist", "remove"])]
     private Collection $foto;
     
      #[ORM\ManyToOne(targetEntity:EIndirizzo::class)]
-     #[ORM\JoinColumn(name:"IdIndirizzo",referencedColumnName:"id")]
+     #[ORM\JoinColumn(name:"IdIndirizzo", referencedColumnName:"id")]
     private EIndirizzo $idIndirizzo;
     
       #[ORM\Column(type:"string")]
     private $titolo;
 
 
-    #[ORM\OneToMany(targetEntity:EIntervalliDisponibilita::class,mappedBy:"Ufficio",cascade:["persist", "remove"])]
+    #[ORM\OneToMany(targetEntity:EIntervalliDisponibilita::class, mappedBy:"Ufficio", cascade:["persist", "remove"])]
     private Collection $intervalliDisponibilita;
 
     
@@ -61,25 +55,26 @@ class EUfficio{
     #[ORM\Column(type:"datetime")]
     private $dataCaricamento;
     
-     #[ORM\Column(type:"datetime",nullable:true)]
+     #[ORM\Column(type:"datetime", nullable:true)]
     private $dataCancellazione;
     
      #[ORM\Column(type:"string", enumType:Enum\StatoUfficio::class)]
     private StatoUfficio $stato;  //usare tipo enum per i vari stati
     
-     #[ORM\Column(type:"datetime",nullable:true)] 
+     #[ORM\Column(type:"datetime", nullable:true)]
     private $dataApprovazione;
     
-     #[ORM\Column(type:"datetime",nullable:true)]
+     #[ORM\Column(type:"datetime", nullable:true)]
     private $dataRifiuto;
     
-     #[ORM\Column(type:"string",nullable:true)]
+     #[ORM\Column(type:"string", nullable:true)]
     private $motivoRifiuto;
 
-    #[ORM\OneToMany(targetEntity:EServiziAggiuntivi::class,mappedBy:"Ufficio",cascade:["persist", "remove"])]
+    #[ORM\OneToMany(targetEntity:EServiziAggiuntivi::class, mappedBy:"Ufficio", cascade:["persist", "remove"])]
     private Collection $serviziAggiuntivi;
 
-    public function __construct( ELocatore $idLocatore, EIndirizzo $idIndirizzo,  int $prezzo) {
+    public function __construct(ELocatore $idLocatore, EIndirizzo $idIndirizzo, int $prezzo)
+    {
         $this->id = Uuid::uuid4();
         $this->idLocatore = $idLocatore;
         $this->idIndirizzo = $idIndirizzo;
@@ -89,157 +84,190 @@ class EUfficio{
         $this->serviziAggiuntivi = new ArrayCollection();
     }
 
-    public function getId(): string {
+    public function getId(): string
+    {
         return $this->id;
     }
 
-    public function getIdLocatore(): ELocatore {
+    public function getIdLocatore(): ELocatore
+    {
         return $this->idLocatore;
     }
 
-    public function getIdIndirizzo(): EIndirizzo {
+    public function getIdIndirizzo(): EIndirizzo
+    {
         return $this->idIndirizzo;
     }
-    public function getfoto(): Collection{
+    public function getfoto(): Collection
+    {
         return $this->foto;
     }
 
-    public function getTitolo(): string {
+    public function getTitolo(): string
+    {
         return $this->titolo;
     }
 
-    public function getPrezzo(): int {
+    public function getPrezzo(): int
+    {
         return $this->prezzo;
     }
 
-    public function getDescrizione(): string {
+    public function getDescrizione(): string
+    {
         return $this->descrizione;
     }
 
-    public function getNumeroPostazioni(): int {
+    public function getNumeroPostazioni(): int
+    {
         return $this->numeroPostazioni;
     }
 
-    public function getSuperficie(): float {
+    public function getSuperficie(): float
+    {
         return $this->superficie;
     }
 
-    public function getDataCaricamento(): DateTime {
+    public function getDataCaricamento(): DateTime
+    {
         return $this->dataCaricamento;
     }
 
-    public function getDataCancellazione(): ?DateTime {
+    public function getDataCancellazione(): ?DateTime
+    {
         return $this->dataCancellazione;
     }
 
-    public function getStato(): StatoUfficio {
+    public function getStato(): StatoUfficio
+    {
         return $this->stato;
     }
 
-    public function getDataApprovazione(): ?DateTime {
+    public function getDataApprovazione(): ?DateTime
+    {
         return $this->dataApprovazione;
     }
 
-    public function getDataRifiuto(): ?DateTime {
+    public function getDataRifiuto(): ?DateTime
+    {
         return $this->dataRifiuto;
     }
 
-    public function getMotivoRifiuto(): ?string {
+    public function getMotivoRifiuto(): ?string
+    {
         return $this->motivoRifiuto;
     }
 
-    public function getServiziAggiuntivi(): Collection {
+    public function getServiziAggiuntivi(): Collection
+    {
         return $this->serviziAggiuntivi;
     }
 
-    public function setId(UuidInterface $id): void {
+    public function setId(UuidInterface $id): void
+    {
         $this->id = $id;
     }
 
-    public function setIdLocatore(ELocatore $idLocatore): void {
+    public function setIdLocatore(ELocatore $idLocatore): void
+    {
         $this->idLocatore = $idLocatore;
     }
 
-    public function setIdIndirizzo(EIndirizzo $idIndirizzo): void {
+    public function setIdIndirizzo(EIndirizzo $idIndirizzo): void
+    {
         $this->idIndirizzo = $idIndirizzo;
     }
 
-    public function setTitolo(string $titolo): void {
+    public function setTitolo(string $titolo): void
+    {
         $this->titolo = $titolo;
     }
 
-    public function setPrezzo(int $prezzo): void {
+    public function setPrezzo(int $prezzo): void
+    {
         $this->prezzo = $prezzo;
     }
 
-    public function setDescrizione(string $descrizione): void {
+    public function setDescrizione(string $descrizione): void
+    {
         $this->descrizione = $descrizione;
     }
 
-    public function setNumeroPostazioni(int $numeroPostazioni): void {
+    public function setNumeroPostazioni(int $numeroPostazioni): void
+    {
         $this->numeroPostazioni = $numeroPostazioni;
     }
 
-    public function setSuperficie(float $superficie): void {
+    public function setSuperficie(float $superficie): void
+    {
         $this->superficie = $superficie;
     }
 
-    public function setDataCaricamento(DateTime $dataCaricamento): void {
+    public function setDataCaricamento(DateTime $dataCaricamento): void
+    {
         $this->dataCaricamento = $dataCaricamento;
     }
 
-    public function setDataCancellazione(?DateTime $dataCancellazione): void {
+    public function setDataCancellazione(?DateTime $dataCancellazione): void
+    {
         $this->dataCancellazione = $dataCancellazione;
     }
 
-    public function setStato(StatoUfficio $stato): void {
+    public function setStato(StatoUfficio $stato): void
+    {
         $this->stato = $stato;
     }
 
-    public function setDataApprovazione(?DateTime $dataApprovazione): void {
+    public function setDataApprovazione(?DateTime $dataApprovazione): void
+    {
         $this->dataApprovazione = $dataApprovazione;
     }
 
-    public function setDataRifiuto(?DateTime $dataRifiuto): void {
+    public function setDataRifiuto(?DateTime $dataRifiuto): void
+    {
         $this->dataRifiuto = $dataRifiuto;
     }
 
-    public function setMotivoRifiuto(?string $motivoRifiuto): void {
+    public function setMotivoRifiuto(?string $motivoRifiuto): void
+    {
         $this->motivoRifiuto = $motivoRifiuto;
     }
-    public function addFoto(EFoto $foto) : void {
+    public function addFoto(EFoto $foto) : void
+    {
         if (!$this->foto->contains($foto)) {
-        $this->foto[] = $foto;
-        $foto->setUfficio($this); 
-    }
-    
-    }
-    public function removeFoto(EFoto $foto) : void {
-         if ($this->foto->removeElement($foto)) {
-        if ($foto->getUfficio() === $this) {
-            $foto->setUfficio(null);
+            $this->foto[] = $foto;
+            $foto->setUfficio($this);
         }
     }
-}
-
-
-public function addServizioAggiuntivo(EServiziAggiuntivi $servizio): void {
-    if (!$this->serviziAggiuntivi->contains($servizio)) {
-        $this->serviziAggiuntivi->add($servizio);
-        $servizio->setUfficio($this);
-    }
-}
-
-public function removeServizioAggiuntivo(EServiziAggiuntivi $servizio): void {
-    if ($this->serviziAggiuntivi->removeElement($servizio)) {
-        if ($servizio->getUfficio() === $this) {
-            $servizio->setUfficio(null);
+    public function removeFoto(EFoto $foto) : void
+    {
+        if ($this->foto->removeElement($foto)) {
+            if ($foto->getUfficio() === $this) {
+                $foto->setUfficio(null);
+            }
         }
     }
-}
 
-    public function __toString(): string {
+
+    public function addServizioAggiuntivo(EServiziAggiuntivi $servizio): void
+    {
+        if (!$this->serviziAggiuntivi->contains($servizio)) {
+            $this->serviziAggiuntivi->add($servizio);
+            $servizio->setUfficio($this);
+        }
+    }
+
+    public function removeServizioAggiuntivo(EServiziAggiuntivi $servizio): void
+    {
+        if ($this->serviziAggiuntivi->removeElement($servizio)) {
+            if ($servizio->getUfficio() === $this) {
+                $servizio->setUfficio(null);
+            }
+        }
+    }
+
+    public function __toString(): string
+    {
         return "EUfficio(ID:". $this->id.", ID Locatore: $this->idLocatore, ID Indirizzo: $this->idIndirizzo, Titolo: $this->titolo, Prezzo: " . $this->prezzo . ", Descrizione: $this->descrizione, Numero Postazioni: $this->numeroPostazioni, Superficie: $this->superficie, Data Caricamento: " . $this->dataCaricamento->format('Y-m-d H:i:s') . ", Data Cancellazione: " . ($this->dataCancellazione ? $this->dataCancellazione->format('Y-m-d H:i:s') : 'null') . ", Stato:". $this->stato->value." , Data Approvazione: " . ($this->dataApprovazione ? $this->dataApprovazione->format('Y-m-d H:i:s') : 'null') . ", Data Rifiuto: " . ($this->dataRifiuto ? $this->dataRifiuto->format('Y-m-d H:i:s') : 'null') . ", Motivo Rifiuto: " . ($this->motivoRifiuto ? $this->motivoRifiuto : 'null)');
     }
-
 }

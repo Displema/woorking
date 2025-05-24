@@ -1,5 +1,7 @@
 <?php
+namespace TechnicalServiceLayer;
 
-class FFoto{
+class FFoto
+{
     
 }

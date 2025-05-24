@@ -1,14 +1,13 @@
 <?php
-require_once __DIR__ ."/Enum/FasciaPrenotazione.php";
+namespace Model;
 
 use Doctrine\ORM\Mapping as ORM;
-use Enum\FasciaPrenotazione;
-use EUfficio;
 use DateTime;
 
 #[ORM\Entity]
 #[ORM\Table(name: "Intervallo_disponibilita")]
-class EIntervalliDisponibilita{
+class EIntervalliDisponibilita
+{
 
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: EUfficio::class)]
@@ -25,46 +24,56 @@ class EIntervalliDisponibilita{
     #[ORM\Column(type: "datetime")]
     private DateTime $dataFine;
 
-    public function __construct(EUfficio $Ufficio, DateTime $dataInizio, DateTime $dataFine,FasciaPrenotazione $fascia) {
+    public function __construct(EUfficio $Ufficio, DateTime $dataInizio, DateTime $dataFine, FasciaPrenotazione $fascia)
+    {
         $this->Ufficio = $Ufficio;
         $this->dataInizio = $dataInizio;
         $this->dataFine = $dataFine;
         $this->fascia = $fascia;
     }
 
-    public function getUfficio(): EUfficio {
+    public function getUfficio(): EUfficio
+    {
         return $this->Ufficio;
     }
 
-    public function getDataInizio(): DateTime {
+    public function getDataInizio(): DateTime
+    {
         return $this->dataInizio;
     }
 
-    public function getDataFine(): DateTime {
+    public function getDataFine(): DateTime
+    {
         return $this->dataFine;
     }
     
-    public function getFascia(): FasciaPrenotazione {
+    public function getFascia(): FasciaPrenotazione
+    {
             return $this->fascia;
     }
 
-    public function setUfficio(EUfficio $Ufficio): void {
+    public function setUfficio(EUfficio $Ufficio): void
+    {
         $this->Ufficio = $Ufficio;
     }
 
-    public function setDataInizio(DateTime $dataInizio): void {
+    public function setDataInizio(DateTime $dataInizio): void
+    {
         $this->dataInizio = $dataInizio;
     }
 
-    public function setDataFine(DateTime $dataFine): void {
+    public function setDataFine(DateTime $dataFine): void
+    {
         $this->dataFine = $dataFine;
     }
 
-    public function setfascia(FasciaPrenotazione $fascia):void {
+    public function setfascia(FasciaPrenotazione $fascia):void
+    {
         $this->fascia = $fascia;
     }
 
-    public function __toString(): string {
+    public function __toString(): string
+    {
         return "Intervallo Disponibilità (ID Ufficio: $this->Ufficio, Data Inizio: " . $this->dataInizio->format('Y-m-d H:i:s') . ", Data Fine: " . $this->dataFine->format('Y-m-d H:i:s') . ")";
     }
 }

@@ -1,15 +1,20 @@
 <?php
+namespace Woorking\TechnicalServiceLayer\Foundation;
+
+use Exception;
+
 class FEntityManager
 {
-    private static $instance;
+    private static FEntityManager $instance;
 
-    private static $EntityManager; //crei la variabile dove verrà assegnato l' entity manager
+    //crei la variabile dove verrà assegnato l' Model manager
+    private static \Doctrine\ORM\EntityManager $EntityManager;
 
 
 
     private function __construct()
     {
-        self::$EntityManager = getEntityManager(); //richiami l'entity manager
+        self::$EntityManager = getEntityManager(); //richiami l'Model manager
     }
 
     public static function getInstance()
@@ -27,7 +32,7 @@ class FEntityManager
 
 
 
-    //questa funzione permette di trovare un entity usando la sua chiave primaria
+    //questa funzione permette di trovare un Model usando la sua chiave primaria
     public static function retriveObj($class, $id)
     {
         try {
@@ -85,7 +90,6 @@ class FEntityManager
             $result = $qb->getQuery()->getResult();
 
             return $result ?? [];
-
         } catch (\Exception $e) {
             echo "Error: " . $e->getMessage();
             return [];
@@ -108,7 +112,6 @@ class FEntityManager
             }
 
             return $qb->getQuery()->getResult();
-
         } catch (\Exception $e) {
             echo "Error: " . $e->getMessage();
             return [];
@@ -131,7 +134,6 @@ class FEntityManager
             $result = $qb->getQuery()->getOneOrNullResult();
 
             return $result !== null;
-
         } catch (\Exception $e) {
             echo "Error: " . $e->getMessage();
             return false;
@@ -188,7 +190,6 @@ class FEntityManager
                 ->from($entity, 'e');
 
             return $qb->getQuery()->getResult();
-
         } catch (\Exception $e) {
             echo "Error: " . $e->getMessage();
             return [];

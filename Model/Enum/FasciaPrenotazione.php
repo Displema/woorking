@@ -1,8 +1,9 @@
 <?php
-namespace Enum;
- enum FasciaPrenotazione : String{
+namespace Model\Enum;
+
+enum FasciaPrenotazione : String
+{
     case Mattina = "Mattina";
 
     case Pomeriggio = "Pomeriggio";
- }
-?>
+}

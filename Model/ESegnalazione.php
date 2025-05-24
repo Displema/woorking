@@ -1,4 +1,6 @@
 <?php
+namespace Model;
+
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;

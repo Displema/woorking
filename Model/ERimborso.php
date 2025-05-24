@@ -1,13 +1,15 @@
 <?php
+namespace Model;
+
 use Money\Money;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
-
 #[ORM\Entity]
 #[ORM\Table(name: "Rimborsi")]
-class ERimborso{
+class ERimborso
+{
 
     #[ORM\Id]
     #[ORM\Column(type: "guid", unique: true)]
@@ -23,39 +25,46 @@ class ERimborso{
     #[ORM\Column(type:"string")]
     private $valuta;
 
-    public function __construct(ESegnalazione $Segnalazione,  Money $importo) {
+    public function __construct(ESegnalazione $Segnalazione, Money $importo)
+    {
         $this->id = Uuid::uuid4();
         $this->Segnalazione = $Segnalazione;
         $this->setImporto($importo);
     }
 
-    public function getId(): UuidInterface{
+    public function getId(): UuidInterface
+    {
         return $this->id;
     }
 
-    public function getSegnalazione(): ESegnalazione{
+    public function getSegnalazione(): ESegnalazione
+    {
         return $this->Segnalazione;
     }
 
-    public function getImporto(): Money{
+    public function getImporto(): Money
+    {
          return new Money($this->importo, new \Money\Currency($this->valuta));
     }
 
-    public function setId(UuidInterface $id): void{
+    public function setId(UuidInterface $id): void
+    {
         $this->id = $id;
     }
 
-    public function setSegnalazione(ESegnalazione $Segnalazione): void{
+    public function setSegnalazione(ESegnalazione $Segnalazione): void
+    {
         $this->Segnalazione = $Segnalazione;
     }
 
-    public function setImporto(Money $importo): void{
+    public function setImporto(Money $importo): void
+    {
         $this->importo =(int) $importo->getAmount();
         $this->valuta = $importo->getCurrency()->getCode();
     }
 
-    public function __toString(): string{
+    public function __toString(): string
+    {
         return "Rimborso(ID: $this->id, ID Segnalazione: $this->Segnalazione, Valore: " . $this->importo . $this->valuta . ")";
     }
-
 }
