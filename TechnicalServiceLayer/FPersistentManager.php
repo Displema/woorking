@@ -1,7 +1,7 @@
 <?php
 namespace TechnicalServiceLayer;
 
-
+use Woorking\TechnicalServiceLayer\Foundation\FEntityManager;
 class FPersistentManager{
     // E' una classe singleton ovvero in tutto il progrmma esiste una sola istanza di questa classe alla quale si può accedere in maniera globale
 

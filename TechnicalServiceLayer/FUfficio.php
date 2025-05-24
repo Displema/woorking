@@ -1,6 +1,7 @@
 <?php
 namespace TechnicalServiceLayer;
-
+use Exception;
+use Woorking\TechnicalServiceLayer\Foundation\FEntityManager;
 class FUfficio
 {
 

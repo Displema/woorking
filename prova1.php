@@ -1,9 +1,9 @@
-
-
 <?php
 require_once __DIR__ .'/TechnicalServiceLayer/FIndirizzo.php';
 require_once __DIR__ . '/TechnicalServiceLayer/FUfficio.php';
 require_once __DIR__ . '/TechnicalServiceLayer/Foundation/FEntityManager.php';
+use Woorking\TechnicalServiceLayer\Foundation\FEntityManager;
+use TechnicalServiceLayer\FUfficio;
 $indirizzo = "Via le dita dal naso";
 $fascia = "MATTINA";
 
