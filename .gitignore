@@ -165,7 +165,6 @@ Sessionx.vim
 
 # Temporary
 .netrwhist
-*~
 # Auto-generated tag files
 tags
 # Persistent undo
@@ -256,7 +255,6 @@ GitHub.sublime-settings
 
 ##### Notepad++
 # Notepad++ backups #
-*.bak
 
 ##### TextMate
 *.tmproj
@@ -280,7 +278,6 @@ tmtags
 **/nbproject/Package-*.bash
 build/
 nbbuild/
-dist/
 nbdist/
 .nb-gradle/
 
@@ -360,8 +357,6 @@ fabric.properties
 ##### Eclipse
 .metadata
 tmp/
-*.tmp
-*.bak
 *.swp
 *~.nib
 local.properties
@@ -474,6 +469,5 @@ composer.lock
 
 ##### Environment
 .env
-
-
 /phpcs.xml
+.vscode/launch.json
