@@ -1,6 +1,4 @@
 <?php
-require_once  'C:/Users/39327/Desktop/UFFICI/bootstrap.php';
-
 class FEntityManager
 {
     private static $instance;
