@@ -4,6 +4,16 @@ use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\DriverManager;
 
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+$dotenv->required('DB_NAME')->notEmpty();
+$dotenv->required('DB_USER')->notEmpty();
+$dotenv->required('DB_PASSWORD');
+$dotenv->required('DB_HOST')->notEmpty();
+$dotenv->required('DB_PORT')->notEmpty();
+$dotenv->required('DB_DRIVER')->allowedValues(['pdo_mysql']);
 function getEntityManager(): EntityManager
 {
     $isDevMode = true;
