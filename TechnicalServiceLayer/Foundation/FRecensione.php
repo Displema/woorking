@@ -1,7 +1,7 @@
 <?php
-namespace TechnicalServiceLayer;
+namespace TechnicalServiceLayer\Foundation;
 
-use TechnicalServiceLayer\Foundation\FEntityManager;
+use Exception;
 
 class FRecensione
 {

@@ -1,5 +1,5 @@
 <?php
-namespace TechnicalServiceLayer;
+namespace TechnicalServiceLayer\Foundation;
 
 class FIntervalliDisponibilita
 {

@@ -1,7 +1,5 @@
 <?php
-namespace TechnicalServiceLayer;
-
-use TechnicalServiceLayer\Foundation\FEntityManager;
+namespace TechnicalServiceLayer\Foundation;
 
 class FPersistentManager
 {

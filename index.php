@@ -22,7 +22,7 @@ $dotenv->required('DB_DRIVER')->allowedValues(['pdo_mysql']);
 
 $entityManager = getEntityManager();
  $products = $entityManager->getRepository(EIndirizzo::class)->find("8de01155-3571-11f0-b19d-b48c9d833b56");
- echo"". $products->getId() ."";
+ echo "". $products->getId();
 
 
 $router = new Router();
