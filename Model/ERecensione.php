@@ -13,20 +13,18 @@ class ERecensione
     
      #[ORM\Id]
      #[ORM\Column(type:"guid", unique:true)]
-     private $id;
+     private string $id;
     
      #[ORM\OneToOne(targetEntity:EPrenotazione::class)]
-     #[ORM\JoinColumn(name:"idPrenotazione", referencedColumnName:"id", nullable:false, unique:true)]
-     
+     #[ORM\JoinColumn(name: "idPrenotazione", referencedColumnName: "id", unique: true, nullable: false)]
     private EPrenotazione $idPrenotazione;
 
-     #[ORM\Column(type:"integer")]
-     
-    private $valutazione;
+     #[ORM\Column]
+    private int $valutazione;
     
-     #[ORM\Column(type:"string")]
+     #[ORM\Column]
 
-    private $commento;
+    private string $commento;
 
     public function __construct(EPrenotazione $idPrenotazione)
     {
@@ -55,24 +53,28 @@ class ERecensione
         return $this->commento;
     }
 
-    public function setId(UuidInterface $id): void
+    public function setId(UuidInterface $id): ERecensione
     {
         $this->id = $id;
+        return $this;
     }
 
-    public function setIdPrenotazione(EPrenotazione $idPrenotazione): void
+    public function setIdPrenotazione(EPrenotazione $idPrenotazione): ERecensione
     {
         $this->idPrenotazione = $idPrenotazione;
+        return $this;
     }
 
-    public function setValutazione(int $valutazione): void
+    public function setValutazione(int $valutazione): ERecensione
     {
         $this->valutazione = $valutazione;
+        return $this;
     }
 
-    public function setCommento(string $commento): void
+    public function setCommento(string $commento): ERecensione
     {
         $this->commento = $commento;
+        return $this;
     }
 
     public function __toString(): string

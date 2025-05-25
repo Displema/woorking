@@ -1,7 +1,7 @@
 <?php
 namespace Model\Enum;
 
-enum StatoUfficio : string
+enum StatoUfficioEnum : string
 {
     case InAttesa = " In attesa";
 

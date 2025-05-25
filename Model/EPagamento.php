@@ -12,22 +12,17 @@ use Ramsey\Uuid\UuidInterface;
 #[ORM\Table(name: "Pagamenti")]
 class EPagamento
 {
-
     #[ORM\Id]
     #[ORM\Column(type: "guid", unique: true)]
     private UuidInterface $id;
 
     #[ORM\OneToOne(targetEntity: EPrenotazione::class, inversedBy: "pagamento")]
-    #[ORM\JoinColumn(name: "idPrenotazione", referencedColumnName: "id")]
     private EPrenotazione $prenotazione;
 
     #[ORM\Column(type:"integer")]
-    private $importo;
+    private int $importo;
 
-    #[ORM\Column(type:"string")]
-    private $valuta;
-
-    public function __construct(EPrenotazione $prenotazione, Money $importo)
+    public function __construct(EPrenotazione $prenotazione, int $importo)
     {
         $this->id = Uuid::uuid4();
         $this->prenotazione = $prenotazione;
@@ -44,29 +39,31 @@ class EPagamento
         return $this->prenotazione;
     }
 
-    public function getImporto(): Money
+    public function getImporto(): int
     {
-        return new Money($this->importo, new Currency($this->valuta));
+        return $this->importo;
     }
 
-    public function setId(UuidInterface $id): void
+    public function setId(UuidInterface $id): EPagamento
     {
         $this->id = $id;
+        return $this;
     }
 
-    public function setPrenotazione(EPrenotazione $prenotazione): void
+    public function setPrenotazione(EPrenotazione $prenotazione): EPagamento
     {
         $this->prenotazione = $prenotazione;
+        return $this;
     }
 
-    public function setImporto(Money $importo): void
+    public function setImporto(int $importo): EPagamento
     {
-        $this->importo =(int) $importo->getAmount();
-        $this->valuta = $importo->getCurrency()->getCode();
+        $this->importo = $importo;
+        return $this;
     }
 
     public function __toString(): string
     {
-        return "EPagamento(ID: $this->id, ID Prenotazione: $this->prenotazione, Importo: " . $this->importo . $this->valuta . ")";
+        return "EPagamento(ID: $this->id, ID Prenotazione: $this->prenotazione, Importo: " . $this->importo . ")";
     }
 }

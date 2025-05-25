@@ -1,7 +1,7 @@
 <?php
 namespace Model\Enum;
 
-enum FasciaPrenotazione : String
+enum FasciaOrariaEnum : String
 {
     case Mattina = "Mattina";
 

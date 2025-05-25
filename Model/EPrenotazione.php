@@ -2,7 +2,7 @@
 namespace Model;
 
 use Doctrine\ORM\Mapping as ORM;
-use Model\Enum\FasciaPrenotazione;
+use Model\Enum\FasciaOrariaEnum;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
@@ -12,10 +12,8 @@ use DateTime;
  #[ORM\Table(name: "Prenotazioni")]
 class EPrenotazione
 {
-    
       #[ORM\Id]
       #[ORM\Column(type:"guid", unique:true)]
-     
     private string $id;
     
      #[ORM\ManyToOne(targetEntity:EUfficio::class)]
@@ -28,9 +26,9 @@ class EPrenotazione
      
     private EProfilo $idUtente;
     
-     #[ORM\Column(type:"string", enumType:Enum\FasciaPrenotazione::class)]
+     #[ORM\Column(type:"string", enumType:Enum\FasciaOrariaEnum::class)]
      
-    private FasciaPrenotazione $fascia;
+    private FasciaOrariaEnum $fascia;
     
      #[ORM\Column(type:"datetime")]
     
@@ -61,7 +59,7 @@ class EPrenotazione
         return $this->idUtente;
     }
 
-    public function getFascia(): FasciaPrenotazione
+    public function getFascia(): FasciaOrariaEnum
     {
         return $this->fascia;
     }
@@ -93,7 +91,7 @@ class EPrenotazione
         $this->idUtente = $idUtente;
     }
 
-    public function setFascia(FasciaPrenotazione $fascia): void
+    public function setFascia(FasciaOrariaEnum $fascia): void
     {
         $this->fascia = $fascia;
     }

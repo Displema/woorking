@@ -3,31 +3,32 @@ namespace Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use DateTime;
-use Model\Enum\FasciaPrenotazione;
+use Model\Enum\FasciaOrariaEnum;
 
 #[ORM\Entity]
 #[ORM\Table(name: "Intervalli_disponibilita")]
 class EIntervalliDisponibilita
 {
 
-    #[ORM\Id]
-    #[ORM\ManyToOne(targetEntity: EUfficio::class)]
-    #[ORM\JoinColumn(name: "idUfficio", referencedColumnName: "id")]
-    private EUfficio $Ufficio;
+    #[Orm\Id]
+    #[ORM\GeneratedValue(strategy: "AUTO")]
+    private int $id;
 
-    #[ORM\Id]
+    #[ORM\ManyToOne(cascade: ["persist", "remove"], inversedBy: "intervalliDisponibilita")]
+    private EUfficio $ufficio;
+
     #[ORM\Column(type: "datetime")]
     private DateTime $dataInizio;
 
-    #[ORM\Column(type:"string", enumType:Enum\FasciaPrenotazione::class)]
-    private FasciaPrenotazione $fascia;
+    #[ORM\Column(type:"string", enumType:Enum\FasciaOrariaEnum::class)]
+    private FasciaOrariaEnum $fascia;
 
     #[ORM\Column(type: "datetime")]
     private DateTime $dataFine;
 
-    public function __construct(EUfficio $Ufficio, DateTime $dataInizio, DateTime $dataFine, FasciaPrenotazione $fascia)
+    public function __construct(EUfficio $Ufficio, DateTime $dataInizio, DateTime $dataFine, FasciaOrariaEnum $fascia)
     {
-        $this->Ufficio = $Ufficio;
+        $this->ufficio = $Ufficio;
         $this->dataInizio = $dataInizio;
         $this->dataFine = $dataFine;
         $this->fascia = $fascia;
@@ -48,29 +49,33 @@ class EIntervalliDisponibilita
         return $this->dataFine;
     }
     
-    public function getFascia(): FasciaPrenotazione
+    public function getFascia(): FasciaOrariaEnum
     {
             return $this->fascia;
     }
 
-    public function setUfficio(EUfficio $Ufficio): void
+    public function setUfficio(EUfficio $ufficio): EintervalliDisponibilita
     {
-        $this->Ufficio = $Ufficio;
+        $this->ufficio = $ufficio;
+        return $this;
     }
 
-    public function setDataInizio(DateTime $dataInizio): void
+    public function setDataInizio(DateTime $dataInizio): EintervalliDisponibilita
     {
         $this->dataInizio = $dataInizio;
+        return $this;
     }
 
-    public function setDataFine(DateTime $dataFine): void
+    public function setDataFine(DateTime $dataFine): EintervalliDisponibilita
     {
         $this->dataFine = $dataFine;
+        return $this;
     }
 
-    public function setfascia(FasciaPrenotazione $fascia):void
+    public function setFascia(FasciaOrariaEnum $fascia): EIntervalliDisponibilita
     {
         $this->fascia = $fascia;
+        return $this;
     }
 
     public function __toString(): string

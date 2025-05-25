@@ -16,15 +16,15 @@ class EProfilo
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]
     private String $id;
-    #[ORM\Column(type: 'string', length: 40, unique: true)]
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private string $idUtente;
+
+    #[ORM\Column(type: 'string', length: 40)]
     private string $nome;
-    #[ORM\Column(type: 'string', length: 40, unique: true)]
+    #[ORM\Column(type: 'string', length: 40)]
     private string $cognome;
-    #[ORM\Column(type: 'string', length: 180, unique: true)]
-    private $email;
-    #[ORM\Column(type: 'string', length: 255, unique: true)]
-    private string $password;
-    #[ORM\Column(type: 'string', length: 20, unique: true)]
+    #[ORM\Column(type: 'string', length: 20)]
     private string $telefono;
     #[ORM\Column(type: "date", nullable: false)]
     private DateTime $dataNascita;
@@ -50,11 +50,6 @@ class EProfilo
         return $this->cognome;
     }
 
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
     public function getTelefono(): string
     {
         return $this->telefono;
@@ -65,58 +60,50 @@ class EProfilo
         return $this->dataNascita;
     }
 
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
-
-    public function getisAdmin(): bool
+    public function isAdmin(): bool
     {
         return $this->isAdmin;
     }
 
-    public function setId(UuidInterface $id): void
+    public function setId(UuidInterface $id): EProfilo
     {
         $this->id = $id;
+        return $this;
     }
 
-    public function setNome(string $nome): void
+    public function setNome(string $nome): EProfilo
     {
         $this->nome = $nome;
+        return $this;
     }
 
-    public function setCognome(string $cognome): void
+    public function setCognome(string $cognome): EProfilo
     {
         $this->cognome = $cognome;
+        return $this;
     }
 
-    public function setEmail(string $email): void
-    {
-        $this->email = $email;
-    }
-
-    public function setTelefono(string $telefono): void
+    public function setTelefono(string $telefono): EProfilo
     {
         $this->telefono = $telefono;
+        return $this;
     }
 
-    public function setDataNascita(DateTime $dataNascita): void
+    public function setDataNascita(DateTime $dataNascita): EProfilo
     {
         $this->dataNascita = $dataNascita;
+        return $this;
     }
 
-    public function setPassword(string $password): void
-    {
-        $this->password = $password;
-    }
 
-    public function setIsAdmin(bool $isAdmin): void
+    public function setIsAdmin(bool $isAdmin): EProfilo
     {
         $this->isAdmin = $isAdmin;
+        return $this;
     }
 
     public function __toString(): string
     {
-        return "EProfilo(ID: $this->id, Nome: $this->nome, Cognome: $this->cognome, Email: $this->email, Telefono: $this->telefono, Data di Nascita: " . $this->dataNascita->format('Y-m-d') . ", Admin: " . ($this->isAdmin ? 'Sì' : 'No'.")");
+        return "EProfilo(ID: $this->id, Nome: $this->nome, Cognome: $this->cognome, Telefono: $this->telefono, Data di Nascita: " . $this->dataNascita->format('Y-m-d') . ", Admin: " . ($this->isAdmin ? 'Sì' : 'No'.")");
     }
 }

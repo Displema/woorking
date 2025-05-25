@@ -1,8 +1,6 @@
 <?php
 namespace Model;
 
-use Money\Currency;
-use Money\Money;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -11,7 +9,6 @@ use Ramsey\Uuid\UuidInterface;
 #[ORM\Table(name: "Rimborsi")]
 class ERimborso
 {
-
     #[ORM\Id]
     #[ORM\Column(type: "guid", unique: true)]
     private UuidInterface $id;
@@ -20,17 +17,15 @@ class ERimborso
     #[ORM\JoinColumn(name: "idSegnalazione", referencedColumnName: "id")]
     private ESegnalazione $Segnalazione;
 
-    #[ORM\Column(type:"integer")]
-    private $importo;
+    #[ORM\Column]
+    private int $importo;
 
-    #[ORM\Column(type:"string")]
-    private $valuta;
+    #[ORM\Column]
+    private string $valuta;
 
-    public function __construct(ESegnalazione $Segnalazione, Money $importo)
+    public function __construct(ESegnalazione $Segnalazione)
     {
         $this->id = Uuid::uuid4();
-        $this->Segnalazione = $Segnalazione;
-        $this->setImporto($importo);
     }
 
     public function getId(): UuidInterface
@@ -43,25 +38,27 @@ class ERimborso
         return $this->Segnalazione;
     }
 
-    public function getImporto(): Money
+    public function getImporto(): int
     {
-         return new Money($this->importo, new Currency($this->valuta));
+         return $this->importo;
     }
 
-    public function setId(UuidInterface $id): void
+    public function setId(UuidInterface $id): ERimborso
     {
         $this->id = $id;
+        return $this;
     }
 
-    public function setSegnalazione(ESegnalazione $Segnalazione): void
+    public function setSegnalazione(ESegnalazione $Segnalazione): ERimborso
     {
         $this->Segnalazione = $Segnalazione;
+        return $this;
     }
 
-    public function setImporto(Money $importo): void
+    public function setImporto(int $importo): ERimborso
     {
-        $this->importo =(int) $importo->getAmount();
-        $this->valuta = $importo->getCurrency()->getCode();
+        $this->importo = $importo;
+        return $this;
     }
 
     public function __toString(): string

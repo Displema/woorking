@@ -5,7 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use DateTime;
-use Model\Enum\StatoUfficio;
+use Model\Enum\StatoUfficioEnum;
 use Ramsey\Uuid\UuidInterface;
 use Ramsey\Uuid\Uuid;
 
@@ -22,17 +22,17 @@ class EUfficio
       #[ORM\JoinColumn(name:"idLocatore", referencedColumnName:"id")]
     private ELocatore $idLocatore;
 
-    #[ORM\OneToMany(targetEntity:EFoto::class, mappedBy:"Ufficio", cascade:["persist", "remove"])]
+    #[ORM\OneToMany(targetEntity:EFoto::class, mappedBy:"ufficio", cascade:["persist", "remove"])]
     private Collection $foto;
     
      #[ORM\ManyToOne(targetEntity:EIndirizzo::class)]
      #[ORM\JoinColumn(name:"IdIndirizzo", referencedColumnName:"id")]
-    private EIndirizzo $idIndirizzo;
-    
-      #[ORM\Column(type:"string")]
+    private EIndirizzo $indirizzo;
+
+     #[ORM\Column]
     private string $titolo;
 
-    #[ORM\OneToMany(targetEntity:EIntervalliDisponibilita::class, mappedBy:"Ufficio", cascade:["persist", "remove"])]
+    #[ORM\OneToMany(targetEntity:EIntervalliDisponibilita::class, mappedBy:"ufficio", cascade:["persist", "remove"])]
     private Collection $intervalliDisponibilita;
 
      #[ORM\Column(type:"integer")]
@@ -53,8 +53,8 @@ class EUfficio
      #[ORM\Column(type:"datetime", nullable:true)]
     private $dataCancellazione;
     
-     #[ORM\Column(type:"string", enumType:Enum\StatoUfficio::class)]
-    private StatoUfficio $stato;
+     #[ORM\Column(type:"string", enumType:Enum\StatoUfficioEnum::class)]
+    private StatoUfficioEnum $stato;
     
      #[ORM\Column(type:"datetime", nullable:true)]
     private ?DateTime $dataApprovazione;
@@ -65,15 +65,12 @@ class EUfficio
      #[ORM\Column(type:"string", nullable:true)]
     private ?string $motivoRifiuto;
 
-    #[ORM\OneToMany(targetEntity:EServiziAggiuntivi::class, mappedBy:"Ufficio", cascade:["persist", "remove"])]
+    #[ORM\OneToMany(targetEntity:EServiziAggiuntivi::class, mappedBy:"ufficio", cascade:["persist", "remove"])]
     private Collection $serviziAggiuntivi;
 
     public function __construct(ELocatore $idLocatore, EIndirizzo $idIndirizzo, int $prezzo)
     {
         $this->id = Uuid::uuid4();
-        $this->idLocatore = $idLocatore;
-        $this->idIndirizzo = $idIndirizzo;
-        $this->prezzo = $prezzo;
         $this->intervalliDisponibilita = new ArrayCollection();
         $this->foto = new ArrayCollection();
         $this->serviziAggiuntivi = new ArrayCollection();
@@ -133,7 +130,7 @@ class EUfficio
         return $this->dataCancellazione;
     }
 
-    public function getStato(): StatoUfficio
+    public function getStato(): StatoUfficioEnum
     {
         return $this->stato;
     }
@@ -158,107 +155,125 @@ class EUfficio
         return $this->serviziAggiuntivi;
     }
 
-    public function setId(UuidInterface $id): void
+    public function setId(UuidInterface $id): EUfficio
     {
         $this->id = $id;
+        return $this;
     }
 
-    public function setIdLocatore(ELocatore $idLocatore): void
+    public function setIdLocatore(ELocatore $idLocatore): EUfficio
     {
         $this->idLocatore = $idLocatore;
+        return $this;
     }
 
-    public function setIdIndirizzo(EIndirizzo $idIndirizzo): void
+    public function setIndirizzo(EIndirizzo $indirizzo): EUfficio
     {
-        $this->idIndirizzo = $idIndirizzo;
+        $this->indirizzo = $indirizzo;
+        return $this;
     }
 
-    public function setTitolo(string $titolo): void
+    public function setTitolo(string $titolo): EUfficio
     {
         $this->titolo = $titolo;
+        return $this;
     }
 
-    public function setPrezzo(int $prezzo): void
+    public function setPrezzo(int $prezzo): EUfficio
     {
         $this->prezzo = $prezzo;
+        return $this;
     }
 
-    public function setDescrizione(string $descrizione): void
+    public function setDescrizione(string $descrizione): EUfficio
     {
         $this->descrizione = $descrizione;
+        return $this;
     }
 
-    public function setNumeroPostazioni(int $numeroPostazioni): void
+    public function setNumeroPostazioni(int $numeroPostazioni): EUfficio
     {
         $this->numeroPostazioni = $numeroPostazioni;
+        return $this;
     }
 
-    public function setSuperficie(float $superficie): void
+    public function setSuperficie(float $superficie): EUfficio
     {
         $this->superficie = $superficie;
+        return $this;
     }
 
-    public function setDataCaricamento(DateTime $dataCaricamento): void
+    public function setDataCaricamento(DateTime $dataCaricamento): EUfficio
     {
         $this->dataCaricamento = $dataCaricamento;
+        return $this;
     }
 
-    public function setDataCancellazione(?DateTime $dataCancellazione): void
+    public function setDataCancellazione(?DateTime $dataCancellazione): EUFFicio
     {
         $this->dataCancellazione = $dataCancellazione;
+        return $this;
     }
 
-    public function setStato(StatoUfficio $stato): void
+    public function setStato(StatoUfficioEnum $stato): EUFFicio
     {
         $this->stato = $stato;
+        return $this;
     }
 
-    public function setDataApprovazione(?DateTime $dataApprovazione): void
+    public function setDataApprovazione(?DateTime $dataApprovazione): EUFFicio
     {
         $this->dataApprovazione = $dataApprovazione;
+        return $this;
     }
 
-    public function setDataRifiuto(?DateTime $dataRifiuto): void
+    public function setDataRifiuto(?DateTime $dataRifiuto): EUFFicio
     {
         $this->dataRifiuto = $dataRifiuto;
+        return $this;
     }
 
-    public function setMotivoRifiuto(?string $motivoRifiuto): void
+    public function setMotivoRifiuto(?string $motivoRifiuto): EUfficio
     {
         $this->motivoRifiuto = $motivoRifiuto;
+        return $this;
     }
-    public function addFoto(EFoto $foto) : void
+    public function addFoto(EFoto $foto) : EUFFicio
     {
         if (!$this->foto->contains($foto)) {
             $this->foto[] = $foto;
             $foto->setUfficio($this);
         }
+        return $this;
     }
-    public function removeFoto(EFoto $foto) : void
+    public function removeFoto(EFoto $foto) : EUfficio
     {
         if ($this->foto->removeElement($foto)) {
             if ($foto->getUfficio() === $this) {
                 $foto->setUfficio(null);
             }
         }
+        return $this;
     }
 
 
-    public function addServizioAggiuntivo(EServiziAggiuntivi $servizio): void
+    public function addServizioAggiuntivo(EServiziAggiuntivi $servizio): EUFFicio
     {
         if (!$this->serviziAggiuntivi->contains($servizio)) {
             $this->serviziAggiuntivi->add($servizio);
             $servizio->setUfficio($this);
         }
+        return $this;
     }
 
-    public function removeServizioAggiuntivo(EServiziAggiuntivi $servizio): void
+    public function removeServizioAggiuntivo(EServiziAggiuntivi $servizio): EUFFicio
     {
         if ($this->serviziAggiuntivi->removeElement($servizio)) {
             if ($servizio->getUfficio() === $this) {
                 $servizio->setUfficio(null);
             }
         }
+        return $this;
     }
 
     public function __toString(): string

@@ -14,25 +14,23 @@ class EFoto
      #[ORM\Column(type:"guid", unique:true)]
      
     private UuidInterface $id;
-    
-    
+
     #[ORM\Column(type:"blob")]
     private $content;
 
-    #[ORM\ManyToOne(targetEntity:EUfficio::class, inversedBy:"foto")]
-    #[ORM\JoinColumn(name:"idUfficio", referencedColumnName:"id", nullable: false)]
-    private EUfficio $Ufficio;
+    #[ORM\ManyToOne(targetEntity: EUfficio::class, cascade: ["persist", "remove"], inversedBy: "foto")]
+    private EUfficio $ufficio;
 
-    #[ORM\Column(type:"string")]
-    private $mimeType;
+    #[ORM\Column]
+    private string $mimeType;
 
-    #[ORM\Column(type:"integer")]
+    #[ORM\Column]
     private int $size;
 
     public function __construct()
     {
         // Genera l'UUID (versione 4)
-        $this->id = Uuid::uuid4();  // La libreria Ramsey\Uuid crea un UUID v4
+        $this->id = Uuid::uuid4();
     }
 
     public function getId(): UuidInterface
@@ -40,7 +38,7 @@ class EFoto
         return $this->id;
     }
 
-    public function getContent(): string
+    public function getContent()
     {
         return $this->content;
     }
@@ -59,28 +57,33 @@ class EFoto
         return $this->size;
     }
 
-    public function setId(UuidInterface $id): void
+    public function setId(UuidInterface $id): EFoto
     {
         $this->id = $id;
+        return $this;
     }
 
-    public function setContent($content): void
+    public function setContent($content): EFoto
     {
         $this->content = $content;
+        return $this;
     }
-    public function setUfficio(?EUfficio $Ufficio): void
+    public function setUfficio(?EUfficio $ufficio): EFoto
     {
-        $this->Ufficio = $Ufficio;
+        $this->ufficio = $ufficio;
+        return $this;
     }
 
-    public function setMimetype(string $mimeType): void
+    public function setMimetype(string $mimeType): EFoto
     {
         $this->mimeType = $mimeType;
+        return $this;
     }
 
-    public function setSize(int $size): void
+    public function setSize(int $size): EFoto
     {
         $this->size = $size;
+        return $this;
     }
     public function __toString(): string
     {

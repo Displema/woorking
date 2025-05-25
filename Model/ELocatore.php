@@ -17,9 +17,10 @@ class ELocatore extends EProfilo
         return $this->partitaIva;
     }
 
-    public function setPartitaIva(string $partitaIva): void
+    public function setPartitaIva(string $partitaIva): ELocatore
     {
         $this->partitaIva = $partitaIva;
+        return $this;
     }
 
     public function __toString(): string

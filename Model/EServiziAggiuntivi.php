@@ -10,17 +10,17 @@ use Ramsey\Uuid\UuidInterface;
 class EServiziAggiuntivi
 {
     #[ORM\Id]
-    #[ORM\ManyToOne(targetEntity: EUfficio::class, inversedBy: "serviziAggiuntivi")]
-    #[ORM\JoinColumn(name: "idUfficio", referencedColumnName: "id")]
-    private EUfficio $Ufficio;
+    private UuidInterface $id;
 
-    #[ORM\Id]
-    #[ORM\Column(type: "string")]
-    private $nomeServizio;
+    #[ORM\ManyToOne(targetEntity: EUfficio::class, cascade: ["persist", "remove"], inversedBy: "serviziAggiuntivi")]
+    private EUfficio $ufficio;
 
-    public function __construct(EUfficio $Ufficio, string $nomeServizio)
+    #[ORM\Column]
+    private string $nomeServizio;
+
+    public function __construct(EUfficio $ufficio, string $nomeServizio)
     {
-        $this->Ufficio = $Ufficio;
+        $this->ufficio = $ufficio;
         $this->nomeServizio = $nomeServizio;
     }
 
@@ -34,14 +34,16 @@ class EServiziAggiuntivi
         return $this->nomeServizio;
     }
    
-    public function setUfficio(?EUfficio $Ufficio):void
+    public function setUfficio(?EUfficio $ufficio): EServiziAggiuntivi
     {
-        $this->Ufficio = $Ufficio;
+        $this->ufficio = $ufficio;
+        return $this;
     }
 
-    public function setNomeServizio(string $nomeServizio):void
+    public function setNomeServizio(string $nomeServizio): EServiziAggiuntivi
     {
         $this->nomeServizio = $nomeServizio;
+        return $this;
     }
 
     public function __toString() :string

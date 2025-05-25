@@ -9,25 +9,24 @@ use Ramsey\Uuid\UuidInterface;
 #[ORM\Table(name: "indirizzi")]
 class EIndirizzo
 {
-
     #[ORM\Id]
     #[ORM\Column(type: "guid", unique: true)]
     private string $id;
 
-    #[ORM\Column(type: "string")]
-    private $via;
+    #[ORM\Column]
+    private string $via;
 
-    #[ORM\Column(type:"string")]
-    private $numeroCivico;
+    #[ORM\Column]
+    private string $numeroCivico;
 
-    #[ORM\Column(type:"string")]
-    private $citta;
+    #[ORM\Column]
+    private string $citta;
 
-    #[ORM\Column(type:"string")]
-    private $provincia;
+    #[ORM\Column(length: 2)]
+    private string $provincia;
 
-    #[ORM\Column(type:"string")]
-    private $cap;
+    #[ORM\Column(length: 5)]
+    private string $cap;
 
     public function __construct()
     {
@@ -64,34 +63,40 @@ class EIndirizzo
         return $this->cap;
     }
 
-    public function setId(UuidInterface $id): void
+    public function setId(UuidInterface $id): EIndirizzo
     {
         $this->id = $id;
+        return $this;
     }
 
-    public function setVia(string $via): void
+    public function setVia(string $via): EIndirizzo
     {
         $this->via = $via;
+        return $this;
     }
 
-    public function setNumeroCivico(string $numeroCivico): void
+    public function setNumeroCivico(string $numeroCivico): EIndirizzo
     {
         $this->numeroCivico = $numeroCivico;
+        return $this;
     }
 
-    public function setCitta(string $citta): void
+    public function setCitta(string $citta): EIndirizzo
     {
         $this->citta = $citta;
+        return $this;
     }
 
-    public function setProvincia(string $provincia): void
+    public function setProvincia(string $provincia): EIndirizzo
     {
         $this->provincia = $provincia;
+        return $this;
     }
 
-    public function setCap(string $cap): void
+    public function setCap(string $cap): EIndirizzo
     {
         $this->cap = $cap;
+        return $this;
     }
 
     public function __toString(): string
