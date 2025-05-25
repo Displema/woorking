@@ -19,8 +19,8 @@ class EUfficio
     private string $id;
     
       #[ORM\ManyToOne(targetEntity:ELocatore::class)]
-      #[ORM\JoinColumn(name:"idLocatore", referencedColumnName:"id")]
-    private ELocatore $idLocatore;
+      //#[ORM\JoinColumn(name:"idLocatore", referencedColumnName:"id")]
+    private ELocatore $locatore;
 
     #[ORM\OneToMany(targetEntity:EFoto::class, mappedBy:"ufficio", cascade:["persist", "remove"])]
     private Collection $foto;
@@ -77,9 +77,9 @@ class EUfficio
         return $this->id;
     }
 
-    public function getIdLocatore(): ELocatore
+    public function getLocatore(): ELocatore
     {
-        return $this->idLocatore;
+        return $this->locatore;
     }
 
     public function getIndirizzo(): EIndirizzo
@@ -151,9 +151,9 @@ class EUfficio
         return $this->serviziAggiuntivi;
     }
 
-    public function setIdLocatore(ELocatore $idLocatore): EUfficio
+    public function setLocatore(ELocatore $locatore): EUfficio
     {
-        $this->idLocatore = $idLocatore;
+        $this->locatore = $locatore;
         return $this;
     }
 
@@ -268,6 +268,6 @@ class EUfficio
 
     public function __toString(): string
     {
-        return "EUfficio(ID:". $this->id.", ID Locatore: $this->idLocatore, Indirizzo: $this->indirizzo, Titolo: $this->titolo, Prezzo: " . $this->prezzo . ", Descrizione: $this->descrizione, Numero Postazioni: $this->numeroPostazioni, Superficie: $this->superficie, Data Caricamento: " . $this->dataCaricamento->format('Y-m-d H:i:s') . ", Data Cancellazione: " . ($this->dataCancellazione ? $this->dataCancellazione->format('Y-m-d H:i:s') : 'null') . ", Stato:". $this->stato->value." , Data Approvazione: " . ($this->dataApprovazione ? $this->dataApprovazione->format('Y-m-d H:i:s') : 'null') . ", Data Rifiuto: " . ($this->dataRifiuto ? $this->dataRifiuto->format('Y-m-d H:i:s') : 'null') . ", Motivo Rifiuto: " . ($this->motivoRifiuto ? $this->motivoRifiuto : 'null)');
+        return "EUfficio(ID:". $this->id.", ID Locatore: $this->locatore, Indirizzo: $this->indirizzo, Titolo: $this->titolo, Prezzo: " . $this->prezzo . ", Descrizione: $this->descrizione, Numero Postazioni: $this->numeroPostazioni, Superficie: $this->superficie, Data Caricamento: " . $this->dataCaricamento->format('Y-m-d H:i:s') . ", Data Cancellazione: " . ($this->dataCancellazione ? $this->dataCancellazione->format('Y-m-d H:i:s') : 'null') . ", Stato:". $this->stato->value." , Data Approvazione: " . ($this->dataApprovazione ? $this->dataApprovazione->format('Y-m-d H:i:s') : 'null') . ", Data Rifiuto: " . ($this->dataRifiuto ? $this->dataRifiuto->format('Y-m-d H:i:s') : 'null') . ", Motivo Rifiuto: " . ($this->motivoRifiuto ? $this->motivoRifiuto : 'null)');
     }
 }
