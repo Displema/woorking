@@ -21,17 +21,20 @@ require_once "vendor/autoload.php";
 require_once "bootstrap.php";
 
 $loader = new Loader();
-$loader->addFixture(new EProfiloFixture());
-$loader->addFixture(new ELocatoreFixture());
-$loader->addFixture(new EIndirizzoFixture());
-$loader->addFixture(new EIntervalliDisponibilitaFixture());
-$loader->addFixture(new EUfficioFixture());
-$loader->addFixture(new EServiziAggiuntiviFixture());
-$loader->addFixture(new EPagamentoFixture());
-$loader->addFixture(new EPrenotazioneFixture());
-$loader->addFixture(new ERecensioneFixture());
-$loader->addFixture(new ESegnalazioneFixture());
-$loader->addFixture(new ERimborsoFixture());
+//$loader->addFixture(new EProfiloFixture());
+//$loader->addFixture(new ELocatoreFixture());
+//$loader->addFixture(new EIndirizzoFixture());
+//$loader->addFixture(new EIntervalliDisponibilitaFixture());
+//$loader->addFixture(new EUfficioFixture());
+//$loader->addFixture(new EServiziAggiuntiviFixture());
+//$loader->addFixture(new EPagamentoFixture());
+//$loader->addFixture(new EPrenotazioneFixture());
+//$loader->addFixture(new ERecensioneFixture());
+//$loader->addFixture(new ESegnalazioneFixture());
+//$loader->addFixture(new ERimborsoFixture());
+$loader->loadFromDirectory(__DIR__ . '\Fixtures');
+
+
 $entityManager = getEntityManager();
 
 $purger = new ORMPurger();
