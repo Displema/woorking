@@ -34,7 +34,7 @@ class EUfficio
      #[ORM\Column]
     private string $titolo;
 
-    #[ORM\OneToMany(targetEntity:EIntervalliDisponibilita::class, mappedBy:"ufficio", cascade:["persist", "remove"])]
+    #[ORM\OneToMany(targetEntity:EIntervalloDisponibilita::class, mappedBy:"ufficio", cascade:["persist", "remove"])]
     private Collection $intervalliDisponibilita;
 
      #[ORM\Column(type:"integer")]

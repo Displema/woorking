@@ -18,7 +18,7 @@ class ERimborso
 
     #[ORM\OneToOne(targetEntity: ESegnalazione::class, inversedBy: "rimborso")]
     //#[ORM\JoinColumn(name: "idSegnalazione", referencedColumnName: "id")]
-    private ESegnalazione $Segnalazione;
+    private ESegnalazione $segnalazione;
 
     #[ORM\Column]
     private int $importo;
@@ -35,7 +35,7 @@ class ERimborso
 
     public function getSegnalazione(): ESegnalazione
     {
-        return $this->Segnalazione;
+        return $this->segnalazione;
     }
 
     public function getImporto(): int
@@ -45,7 +45,7 @@ class ERimborso
 
     public function setSegnalazione(ESegnalazione $Segnalazione): ERimborso
     {
-        $this->Segnalazione = $Segnalazione;
+        $this->segnalazione = $Segnalazione;
         return $this;
     }
 
@@ -57,6 +57,6 @@ class ERimborso
 
     public function __toString(): string
     {
-        return "Rimborso(ID: $this->id, ID Segnalazione: $this->Segnalazione, Valore: " . $this->importo . ")";
+        return "Rimborso(ID: $this->id, ID Segnalazione: $this->segnalazione, Valore: " . $this->importo . ")";
     }
 }

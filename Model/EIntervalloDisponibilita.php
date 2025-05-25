@@ -10,7 +10,7 @@ use Ramsey\Uuid\UuidInterface;
 
 #[ORM\Entity]
 #[ORM\Table(name: "Intervalli_disponibilita")]
-class EIntervalliDisponibilita
+class EIntervalloDisponibilita
 {
 
     #[ORM\Id]
@@ -56,25 +56,25 @@ class EIntervalliDisponibilita
             return $this->fascia;
     }
 
-    public function setUfficio(EUfficio $ufficio): EintervalliDisponibilita
+    public function setUfficio(EUfficio $ufficio): EIntervalloDisponibilita
     {
         $this->ufficio = $ufficio;
         return $this;
     }
 
-    public function setDataInizio(DateTime $dataInizio): EintervalliDisponibilita
+    public function setDataInizio(DateTime $dataInizio): EIntervalloDisponibilita
     {
         $this->dataInizio = $dataInizio;
         return $this;
     }
 
-    public function setDataFine(DateTime $dataFine): EintervalliDisponibilita
+    public function setDataFine(DateTime $dataFine): EIntervalloDisponibilita
     {
         $this->dataFine = $dataFine;
         return $this;
     }
 
-    public function setFascia(FasciaOrariaEnum $fascia): EIntervalliDisponibilita
+    public function setFascia(FasciaOrariaEnum $fascia): EIntervalloDisponibilita
     {
         $this->fascia = $fascia;
         return $this;

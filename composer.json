@@ -6,7 +6,9 @@
     "doctrine/annotations": "^2.0",
     "symfony/cache": "^7.2",
     "vlucas/phpdotenv": "^5.6",
-    "ramsey/uuid-doctrine": "^2.1"
+    "ramsey/uuid-doctrine": "^2.1",
+    "doctrine/data-fixtures": "^2.0",
+    "fakerphp/faker": "^1.24"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest"
@@ -18,7 +20,9 @@
       "Model\\": "./Model",
       "TechnicalServiceLayer\\Foundation\\": "./TechnicalServiceLayer/Foundation",
       "Core\\": "./Core",
-      "Model\\Enum\\": "./Model/Enum"
+      "Model\\Enum\\": "./Model/Enum",
+      "Testing\\Fixtures\\": "./Testing/Fixtures",
+      "Testing\\": "./Testing"
     }
   }
 }

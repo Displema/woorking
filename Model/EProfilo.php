@@ -34,7 +34,7 @@ class EProfilo
     #[ORM\Column(type: "boolean")]
     private bool $isAdmin;
 
-    public function __construct(UuidInterface $id)
+    public function __construct()
     {
         //$this->id = Uuid::uuid4();
     }
