@@ -4,14 +4,17 @@ namespace Model;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Ramsey\Uuid\Doctrine\UuidGenerator;
 
 #[ORM\Entity]
 #[ORM\Table(name: "Indirizzi")]
 class EIndirizzo
 {
     #[ORM\Id]
-    #[ORM\Column(type: "guid", unique: true)]
-    private string $id;
+    #[ORM\Column(type: "uuid", unique: true)]
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private UuidInterface $id;
 
     #[ORM\Column]
     private string $via;
@@ -30,7 +33,7 @@ class EIndirizzo
 
     public function __construct()
     {
-        $this->id = Uuid::uuid4();  // Genera un UUID (versione 4)
+        //$this->id = Uuid::uuid4();  // Genera un UUID (versione 4)
     }
 
     public function getId(): string

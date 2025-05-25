@@ -3,6 +3,7 @@ namespace Model;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
@@ -14,7 +15,9 @@ use Ramsey\Uuid\UuidInterface;
 class EProfilo
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'guid', unique: true)]
+    #[ORM\Column(type: "uuid", unique: true)]
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
     #[ORM\Column(name: 'id_utente', type: 'string', length: 255)]
@@ -33,7 +36,7 @@ class EProfilo
 
     public function __construct(UuidInterface $id)
     {
-        $this->id = Uuid::uuid4();
+        //$this->id = Uuid::uuid4();
     }
     public function getId(): string
     {

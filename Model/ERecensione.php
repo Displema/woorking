@@ -2,6 +2,7 @@
 namespace Model;
 
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Model\EPrenotazione;
@@ -10,9 +11,11 @@ use Model\EPrenotazione;
  #[ORM\Table(name: "Recensioni")]
 class ERecensione
 {
-    
+
      #[ORM\Id]
-     #[ORM\Column(type:"guid", unique:true)]
+     #[ORM\Column(type: "uuid", unique: true)]
+     #[ORM\GeneratedValue(strategy: "CUSTOM")]
+     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
     
      #[ORM\OneToOne(targetEntity:EPrenotazione::class)]
@@ -27,7 +30,7 @@ class ERecensione
 
     public function __construct()
     {
-        $this->id = Uuid::uuid4();
+        //$this->id = Uuid::uuid4();
     }
 
     public function getId(): UuidInterface

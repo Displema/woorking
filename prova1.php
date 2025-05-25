@@ -3,19 +3,35 @@
 use Model\ELocatore;
 use TechnicalServiceLayer\Foundation\FEntityManager;
 use TechnicalServiceLayer\Foundation\FUfficio;
+use Model\EIndirizzo;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/bootstrap.php'; // <<--- Fondamentale
+require_once __DIR__ . '/bootstrap.php';
 
 
-$indirizzo = "Via le dita dal naso";
-$fascia = "MATTINA";
+$indirizzo_entity = new EIndirizzo();
+$indirizzo_entity->setVia("Via le dita dal naso")
+    ->setCap("12345")
+    ->setCitta("Pescaraaaa")
+    ->setProvincia("PE")
+    ->setNumeroCivico("10");
 
-FEntityManager::getInstance();
+try {
+    FEntityManager::getInstance()->getEntityManager()->persist($indirizzo_entity);
+} catch (\Doctrine\ORM\Exception\ORMException $e) {
+    echo $e->getMessage();
+}
 
-$indirizzo = "Pescara";
-$fascia = "Mattina";
-$date = new DateTime("2025-05-23");
+try {
+    $indirizzo_found = FEntityManager::getInstance()->getEntityManager()->find(EIndirizzo::class, Uuid::fromString("3dc7bb25-2323-47df-a453-51d7f9b5c90a"));
+} catch (\Doctrine\ORM\Exception\ORMException $e) {
+    echo $e->getMessage();
+}
+
+echo $indirizzo_found;
+FEntityManager::getInstance()->getEntityManager()->flush();
 
 $uffici = FUfficio::findByIndirizzoDataFascia($indirizzo, $fascia, $date);
 

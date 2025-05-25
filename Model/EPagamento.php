@@ -5,6 +5,7 @@ use Money\Currency;
 use Money\Money;
 
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
@@ -13,7 +14,9 @@ use Ramsey\Uuid\UuidInterface;
 class EPagamento
 {
     #[ORM\Id]
-    #[ORM\Column(type: "guid", unique: true)]
+    #[ORM\Column(type: "uuid", unique: true)]
+    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
     #[ORM\OneToOne(targetEntity: EPrenotazione::class, inversedBy: "pagamento")]
@@ -24,7 +27,7 @@ class EPagamento
 
     public function __construct()
     {
-        $this->id = Uuid::uuid4();
+        //$this->id = Uuid::uuid4();
     }
     public function getId(): UuidInterface
     {

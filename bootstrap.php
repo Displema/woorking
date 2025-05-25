@@ -5,6 +5,13 @@ use Doctrine\DBAL\DriverManager;
 
 require_once "./TechnicalServiceLayer/Foundation/FEntityManager.php";
 
+use Doctrine\DBAL\Types\Type;
+use Ramsey\Uuid\Doctrine\UuidType;
+
+if (!Type::hasType('uuid')) {
+    Type::addType('uuid', UuidType::class);
+}
+
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
