@@ -9,7 +9,7 @@ use Ramsey\Uuid\UuidInterface;
 class ELocatore extends EProfilo
 {
 
-    #[ORM\Column(type: "string", length: 20, nullable: false)]
+    #[ORM\Column(name: "partita_iva", type: "string", length: 20, nullable: false)]
     private string $partitaIva;
 
     public function getPartitaIva(): string

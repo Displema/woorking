@@ -40,42 +40,39 @@ class EUfficio
     #[ORM\Column(type:"string")]
     private $descrizione;
     
-     #[ORM\Column(type:"integer")]
+     #[ORM\Column(name: 'numero_postazioni', type: "integer")]
     private $numeroPostazioni;
     
       #[ORM\Column(type:"float")]
     private $superficie;
     
-    #[ORM\Column(type:"datetime")]
+    #[ORM\Column(name: 'data_cancellazione', type: "datetime")]
     private $dataCaricamento;
     
-     #[ORM\Column(type:"datetime", nullable:true)]
+     #[ORM\Column(name: 'data_cancellazione', type: "datetime", nullable: true)]
     private $dataCancellazione;
     
      #[ORM\Column(type:"string", enumType:Enum\StatoUfficioEnum::class)]
     private StatoUfficioEnum $stato;
     
-     #[ORM\Column(type:"datetime", nullable:true)]
+     #[ORM\Column(name: "data_approvazione", type: "datetime", nullable: true)]
     private ?DateTime $dataApprovazione;
     
-     #[ORM\Column(type:"datetime", nullable:true)]
+     #[ORM\Column(name: 'data_rifiuto', type: "datetime", nullable: true)]
     private ?DateTime $dataRifiuto;
     
-     #[ORM\Column(type:"string", nullable:true)]
+     #[ORM\Column(name: 'motivo_rifiuto', type: "string", nullable: true)]
     private ?string $motivoRifiuto;
 
     #[ORM\OneToMany(targetEntity:EServiziAggiuntivi::class, mappedBy:"ufficio", cascade:["persist", "remove"])]
     private Collection $serviziAggiuntivi;
 
-    public function __construct(ELocatore $idLocatore, EIndirizzo $idIndirizzo, int $prezzo)
+    public function __construct()
     {
         $this->id = Uuid::uuid4();
-        $this->intervalliDisponibilita = new ArrayCollection();
-        $this->foto = new ArrayCollection();
-        $this->serviziAggiuntivi = new ArrayCollection();
     }
 
-    public function getId(): string
+    public function getId(): UuidInterface
     {
         return $this->id;
     }
@@ -152,12 +149,6 @@ class EUfficio
     public function getServiziAggiuntivi(): Collection
     {
         return $this->serviziAggiuntivi;
-    }
-
-    public function setId(UuidInterface $id): EUfficio
-    {
-        $this->id = $id;
-        return $this;
     }
 
     public function setIdLocatore(ELocatore $idLocatore): EUfficio

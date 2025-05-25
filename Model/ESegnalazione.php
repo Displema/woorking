@@ -15,7 +15,7 @@ class ESegnalazione
     private UuidInterface $id;
 
     #[ORM\ManyToOne(targetEntity:EPrenotazione::class)]
-    #[ORM\JoinColumn(name:"idPrenotazione", referencedColumnName:"id", nullable: false)]
+    //#[ORM\JoinColumn(name:"idPrenotazione", referencedColumnName:"id", nullable: false)]
     private EPrenotazione $Prenotazione;
     
     #[ORM\Column(type:"string", nullable: false)]
@@ -24,11 +24,9 @@ class ESegnalazione
     #[ORM\OneToOne(targetEntity:ERimborso::class, mappedBy: "Segnalazione", cascade: ["persist", "remove"])]
     private ?ERimborso $rimborso = null;
 
-    public function __construct(EPrenotazione $Prenotazione, string $commento)
+    public function __construct()
     {
         $this->id = Uuid::uuid4();
-        $this->Prenotazione = $Prenotazione;
-        $this->commento = $commento;
     }
 
     public function getId(): UuidInterface
@@ -51,10 +49,6 @@ class ESegnalazione
         return $this->rimborso;
     }
 
-    public function setId(UuidInterface $id): void
-    {
-        $this->id = $id;
-    }
 
     public function setPrenotazione(EPrenotazione $Prenotazione): ESegnalazione
     {

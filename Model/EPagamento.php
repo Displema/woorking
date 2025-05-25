@@ -22,12 +22,9 @@ class EPagamento
     #[ORM\Column(type:"integer")]
     private int $importo;
 
-    public function __construct(EPrenotazione $prenotazione, int $importo)
+    public function __construct()
     {
         $this->id = Uuid::uuid4();
-        $this->prenotazione = $prenotazione;
-        $this->setImporto($importo);
-        $this->prenotazione->setPagamento($this);  //relazione bidirezionale
     }
     public function getId(): UuidInterface
     {
@@ -42,12 +39,6 @@ class EPagamento
     public function getImporto(): int
     {
         return $this->importo;
-    }
-
-    public function setId(UuidInterface $id): EPagamento
-    {
-        $this->id = $id;
-        return $this;
     }
 
     public function setPrenotazione(EPrenotazione $prenotazione): EPagamento

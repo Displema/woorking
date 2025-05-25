@@ -4,6 +4,8 @@ namespace Model;
 use Doctrine\ORM\Mapping as ORM;
 use DateTime;
 use Model\Enum\FasciaOrariaEnum;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 #[ORM\Entity]
 #[ORM\Table(name: "Intervalli_disponibilita")]
@@ -11,28 +13,24 @@ class EIntervalliDisponibilita
 {
 
     #[Orm\Id]
-    #[Orm\Column]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
-    private int $id;
+    #[Orm\Column(type: "guid")]
+    private UuidInterface $id;
 
     #[ORM\ManyToOne(cascade: ["persist", "remove"], inversedBy: "intervalliDisponibilita")]
     private EUfficio $ufficio;
 
-    #[ORM\Column(type: "datetime")]
+    #[ORM\Column(name: "data_inizio", type: "datetime")]
     private DateTime $dataInizio;
 
     #[ORM\Column(type:"string", enumType:Enum\FasciaOrariaEnum::class)]
     private FasciaOrariaEnum $fascia;
 
-    #[ORM\Column(type: "datetime")]
+    #[ORM\Column(name: "data_fine", type: "datetime")]
     private DateTime $dataFine;
 
-    public function __construct(EUfficio $Ufficio, DateTime $dataInizio, DateTime $dataFine, FasciaOrariaEnum $fascia)
+    public function __construct()
     {
-        $this->ufficio = $Ufficio;
-        $this->dataInizio = $dataInizio;
-        $this->dataFine = $dataFine;
-        $this->fascia = $fascia;
+        $this->id = Uuid::uuid4();
     }
 
     public function getUfficio(): EUfficio

@@ -15,9 +15,9 @@ class EProfilo
 {
     #[ORM\Id]
     #[ORM\Column(type: 'guid', unique: true)]
-    private String $id;
+    private UuidInterface $id;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(name: 'id_utente', type: 'string', length: 255)]
     private string $idUtente;
 
     #[ORM\Column(type: 'string', length: 40)]
@@ -65,11 +65,17 @@ class EProfilo
         return $this->isAdmin;
     }
 
-    public function setId(UuidInterface $id): EProfilo
+    public function getIdUtente(): string
     {
-        $this->id = $id;
+        return $this->idUtente;
+    }
+
+    public function setIdUtente(string $idUtente): EProfilo
+    {
+        $this->idUtente = $idUtente;
         return $this;
     }
+
 
     public function setNome(string $nome): EProfilo
     {

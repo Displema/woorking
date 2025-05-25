@@ -14,34 +14,28 @@ class EPrenotazione
 {
       #[ORM\Id]
       #[ORM\Column(type:"guid", unique:true)]
-    private string $id;
+    private UuidInterface $id;
     
-     #[ORM\ManyToOne(targetEntity:EUfficio::class)]
-     #[ORM\JoinColumn(name:"idUfficio", referencedColumnName:"id")]
-     
-    private EUfficio $idUfficio;
+     #[ORM\ManyToOne]
+     //#[ORM\JoinColumn(name:"idUtente", referencedColumnName:"id")]
+    private EUfficio $ufficio;
     
      #[ORM\ManyToOne(targetEntity:EProfilo::class)]
-     #[ORM\JoinColumn(name:"idUtente", referencedColumnName:"id")]
-     
-    private EProfilo $idUtente;
+    //#[ORM\JoinColumn(name:"idUtente", referencedColumnName:"id")]
+    private EProfilo $utente;
     
      #[ORM\Column(type:"string", enumType:Enum\FasciaOrariaEnum::class)]
-     
     private FasciaOrariaEnum $fascia;
     
      #[ORM\Column(type:"datetime")]
-    
     private $data;
 
     #[ORM\OneToOne(targetEntity:EPagamento::class, mappedBy: "prenotazione", cascade: ["persist", "remove"])]
     private ?EPagamento $pagamento = null;
 
-    public function __construct(EUfficio $idUfficio, EProfilo $idUtente)
+    public function __construct()
     {
         $this->id = Uuid::uuid4();
-        $this->idUfficio = $idUfficio;
-        $this->idUtente = $idUtente;
     }
 
     public function getId(): string
@@ -49,14 +43,14 @@ class EPrenotazione
         return $this->id;
     }
 
-    public function getIdUfficio(): EUfficio
+    public function getUfficio(): EUfficio
     {
-        return $this->idUfficio;
+        return $this->ufficio;
     }
 
-    public function getIdUtente(): EProfilo
+    public function getUtente(): EProfilo
     {
-        return $this->idUtente;
+        return $this->utente;
     }
 
     public function getFascia(): FasciaOrariaEnum
@@ -74,21 +68,14 @@ class EPrenotazione
         return $this->pagamento;
     }
 
-
-
-    public function setId(UuidInterface $id): void
+    public function setUfficio(EUfficio $ufficio): void
     {
-        $this->id = $id;
+        $this->ufficio = $ufficio;
     }
 
-    public function setIdUfficio(EUfficio $idUfficio): void
+    public function setUtente(EProfilo $utente): void
     {
-        $this->idUfficio = $idUfficio;
-    }
-
-    public function setIdUtente(EProfilo $idUtente): void
-    {
-        $this->idUtente = $idUtente;
+        $this->utente = $utente;
     }
 
     public function setFascia(FasciaOrariaEnum $fascia): void
@@ -108,6 +95,6 @@ class EPrenotazione
 
     public function __toString(): string
     {
-        return "EPrenotazione(ID:". $this->id->__toString() .", ID Ufficio:" .$this->idUfficio->__toString()  . ", ID Utente:". $this->idUtente->__toString().", Fascia:". $this->fascia->value .", Data: " . $this->data->format('Y-m-d H:i:s').")";
+        return "EPrenotazione(ID:". $this->id->__toString() .", ID Ufficio:" .$this->ufficio->__toString()  . ", ID Utente:". $this->utente->__toString().", Fascia:". $this->fascia->value .", Data: " . $this->data->format('Y-m-d H:i:s').")";
     }
 }

@@ -14,13 +14,13 @@ class ERimborso
     private UuidInterface $id;
 
     #[ORM\OneToOne(targetEntity: ESegnalazione::class, inversedBy: "rimborso")]
-    #[ORM\JoinColumn(name: "idSegnalazione", referencedColumnName: "id")]
+    //#[ORM\JoinColumn(name: "idSegnalazione", referencedColumnName: "id")]
     private ESegnalazione $Segnalazione;
 
     #[ORM\Column]
     private int $importo;
 
-    public function __construct(ESegnalazione $Segnalazione)
+    public function __construct()
     {
         $this->id = Uuid::uuid4();
     }
@@ -38,12 +38,6 @@ class ERimborso
     public function getImporto(): int
     {
          return $this->importo;
-    }
-
-    public function setId(UuidInterface $id): ERimborso
-    {
-        $this->id = $id;
-        return $this;
     }
 
     public function setSegnalazione(ESegnalazione $Segnalazione): ERimborso

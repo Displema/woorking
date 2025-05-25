@@ -16,7 +16,7 @@ class EIndirizzo
     #[ORM\Column]
     private string $via;
 
-    #[ORM\Column]
+    #[ORM\Column(name: "numero_civico")]
     private string $numeroCivico;
 
     #[ORM\Column]
@@ -62,13 +62,7 @@ class EIndirizzo
     {
         return $this->cap;
     }
-
-    public function setId(UuidInterface $id): EIndirizzo
-    {
-        $this->id = $id;
-        return $this;
-    }
-
+    
     public function setVia(string $via): EIndirizzo
     {
         $this->via = $via;

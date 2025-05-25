@@ -13,23 +13,21 @@ class ERecensione
     
      #[ORM\Id]
      #[ORM\Column(type:"guid", unique:true)]
-     private string $id;
+    private UuidInterface $id;
     
      #[ORM\OneToOne(targetEntity:EPrenotazione::class)]
-     #[ORM\JoinColumn(name: "idPrenotazione", referencedColumnName: "id", unique: true, nullable: false)]
-    private EPrenotazione $idPrenotazione;
+     //#[ORM\JoinColumn(name: "idPrenotazione", referencedColumnName: "id", unique: true, nullable: false)]
+    private EPrenotazione $prenotazione;
 
      #[ORM\Column]
     private int $valutazione;
     
      #[ORM\Column]
-
     private string $commento;
 
-    public function __construct(EPrenotazione $idPrenotazione)
+    public function __construct()
     {
         $this->id = Uuid::uuid4();
-        $this->idPrenotazione = $idPrenotazione;
     }
 
     public function getId(): UuidInterface
@@ -38,9 +36,9 @@ class ERecensione
     }
 
 
-    public function getIdPrenotazione(): EPrenotazione
+    public function getPrenotazione(): EPrenotazione
     {
-        return $this->idPrenotazione;
+        return $this->prenotazione;
     }
 
     public function getValutazione(): int
@@ -53,15 +51,9 @@ class ERecensione
         return $this->commento;
     }
 
-    public function setId(UuidInterface $id): ERecensione
+    public function setPrenotazione(EPrenotazione $prenotazione): ERecensione
     {
-        $this->id = $id;
-        return $this;
-    }
-
-    public function setIdPrenotazione(EPrenotazione $idPrenotazione): ERecensione
-    {
-        $this->idPrenotazione = $idPrenotazione;
+        $this->prenotazione = $prenotazione;
         return $this;
     }
 
@@ -79,6 +71,6 @@ class ERecensione
 
     public function __toString(): string
     {
-        return "ERecensione(ID:". $this->id->__tostring() .", ID Prenotazione:". $this->idPrenotazione->__toString() .", Valutazione: $this->valutazione, Commento: $this->commento)";
+        return "ERecensione(ID:". $this->id->__tostring() .", ID Prenotazione:". $this->prenotazione->__toString() .", Valutazione: $this->valutazione, Commento: $this->commento)";
     }
 }

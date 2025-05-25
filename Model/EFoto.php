@@ -21,7 +21,7 @@ class EFoto
     #[ORM\ManyToOne(targetEntity: EUfficio::class, cascade: ["persist", "remove"], inversedBy: "foto")]
     private EUfficio $ufficio;
 
-    #[ORM\Column]
+    #[ORM\Column(name: "mime_type")]
     private string $mimeType;
 
     #[ORM\Column]
@@ -56,13 +56,6 @@ class EFoto
     {
         return $this->size;
     }
-
-    public function setId(UuidInterface $id): EFoto
-    {
-        $this->id = $id;
-        return $this;
-    }
-
     public function setContent($content): EFoto
     {
         $this->content = $content;

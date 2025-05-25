@@ -16,13 +16,12 @@ class EServiziAggiuntivi
     #[ORM\ManyToOne(targetEntity: EUfficio::class, cascade: ["persist", "remove"], inversedBy: "serviziAggiuntivi")]
     private EUfficio $ufficio;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'nome_servizio')]
     private string $nomeServizio;
 
-    public function __construct(EUfficio $ufficio, string $nomeServizio)
+    public function __construct()
     {
-        $this->ufficio = $ufficio;
-        $this->nomeServizio = $nomeServizio;
+        $this->id = Uuid::uuid4();
     }
 
     public function getUfficio(): EUfficio
