@@ -10,6 +10,7 @@ use Ramsey\Uuid\UuidInterface;
 class EServiziAggiuntivi
 {
     #[ORM\Id]
+    #[Orm\Column(type: "guid")]
     private UuidInterface $id;
 
     #[ORM\ManyToOne(targetEntity: EUfficio::class, cascade: ["persist", "remove"], inversedBy: "serviziAggiuntivi")]
@@ -26,7 +27,7 @@ class EServiziAggiuntivi
 
     public function getUfficio(): EUfficio
     {
-        return $this->Ufficio;
+        return $this->ufficio;
     }
 
     public function getNomeServizio(): string
@@ -48,6 +49,6 @@ class EServiziAggiuntivi
 
     public function __toString() :string
     {
-        return "EServiziAggiuntivi(ID: $this->Ufficio, Nome Servizio: $this->nomeServizio)";
+        return "EServiziAggiuntivi(ID: $this->ufficio, Nome Servizio: $this->nomeServizio)";
     }
 }

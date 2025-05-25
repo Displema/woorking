@@ -26,7 +26,6 @@ class EUfficio
     private Collection $foto;
     
      #[ORM\ManyToOne(targetEntity:EIndirizzo::class)]
-     #[ORM\JoinColumn(name:"IdIndirizzo", referencedColumnName:"id")]
     private EIndirizzo $indirizzo;
 
      #[ORM\Column]
@@ -86,9 +85,9 @@ class EUfficio
         return $this->idLocatore;
     }
 
-    public function getIdIndirizzo(): EIndirizzo
+    public function getIndirizzo(): EIndirizzo
     {
-        return $this->idIndirizzo;
+        return $this->indirizzo;
     }
     public function getFoto(): Collection
     {
@@ -278,6 +277,6 @@ class EUfficio
 
     public function __toString(): string
     {
-        return "EUfficio(ID:". $this->id.", ID Locatore: $this->idLocatore, ID Indirizzo: $this->idIndirizzo, Titolo: $this->titolo, Prezzo: " . $this->prezzo . ", Descrizione: $this->descrizione, Numero Postazioni: $this->numeroPostazioni, Superficie: $this->superficie, Data Caricamento: " . $this->dataCaricamento->format('Y-m-d H:i:s') . ", Data Cancellazione: " . ($this->dataCancellazione ? $this->dataCancellazione->format('Y-m-d H:i:s') : 'null') . ", Stato:". $this->stato->value." , Data Approvazione: " . ($this->dataApprovazione ? $this->dataApprovazione->format('Y-m-d H:i:s') : 'null') . ", Data Rifiuto: " . ($this->dataRifiuto ? $this->dataRifiuto->format('Y-m-d H:i:s') : 'null') . ", Motivo Rifiuto: " . ($this->motivoRifiuto ? $this->motivoRifiuto : 'null)');
+        return "EUfficio(ID:". $this->id.", ID Locatore: $this->idLocatore, Indirizzo: $this->indirizzo, Titolo: $this->titolo, Prezzo: " . $this->prezzo . ", Descrizione: $this->descrizione, Numero Postazioni: $this->numeroPostazioni, Superficie: $this->superficie, Data Caricamento: " . $this->dataCaricamento->format('Y-m-d H:i:s') . ", Data Cancellazione: " . ($this->dataCancellazione ? $this->dataCancellazione->format('Y-m-d H:i:s') : 'null') . ", Stato:". $this->stato->value." , Data Approvazione: " . ($this->dataApprovazione ? $this->dataApprovazione->format('Y-m-d H:i:s') : 'null') . ", Data Rifiuto: " . ($this->dataRifiuto ? $this->dataRifiuto->format('Y-m-d H:i:s') : 'null') . ", Motivo Rifiuto: " . ($this->motivoRifiuto ? $this->motivoRifiuto : 'null)');
     }
 }

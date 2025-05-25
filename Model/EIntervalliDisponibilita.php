@@ -11,6 +11,7 @@ class EIntervalliDisponibilita
 {
 
     #[Orm\Id]
+    #[Orm\Column]
     #[ORM\GeneratedValue(strategy: "AUTO")]
     private int $id;
 
@@ -36,7 +37,7 @@ class EIntervalliDisponibilita
 
     public function getUfficio(): EUfficio
     {
-        return $this->Ufficio;
+        return $this->ufficio;
     }
 
     public function getDataInizio(): DateTime
@@ -80,6 +81,6 @@ class EIntervalliDisponibilita
 
     public function __toString(): string
     {
-        return "Intervallo Disponibilità (ID Ufficio: $this->Ufficio, Data Inizio: " . $this->dataInizio->format('Y-m-d H:i:s') . ", Data Fine: " . $this->dataFine->format('Y-m-d H:i:s') . ")";
+        return "Intervallo Disponibilità (Ufficio: $this->ufficio, Data Inizio: " . $this->dataInizio->format('Y-m-d H:i:s') . ", Data Fine: " . $this->dataFine->format('Y-m-d H:i:s') . ")";
     }
 }

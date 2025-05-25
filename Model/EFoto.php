@@ -45,7 +45,7 @@ class EFoto
 
     public function getUfficio(): EUfficio
     {
-        return $this->Ufficio;
+        return $this->ufficio;
     }
     public function getMimeType(): string
     {

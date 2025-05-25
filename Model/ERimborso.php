@@ -20,9 +20,6 @@ class ERimborso
     #[ORM\Column]
     private int $importo;
 
-    #[ORM\Column]
-    private string $valuta;
-
     public function __construct(ESegnalazione $Segnalazione)
     {
         $this->id = Uuid::uuid4();
