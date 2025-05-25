@@ -46,7 +46,7 @@ class EUfficio
       #[ORM\Column(type:"float")]
     private $superficie;
     
-    #[ORM\Column(name: 'data_cancellazione', type: "datetime")]
+    #[ORM\Column(name: 'data_caricamento', type: "datetime")]
     private $dataCaricamento;
     
      #[ORM\Column(name: 'data_cancellazione', type: "datetime", nullable: true)]

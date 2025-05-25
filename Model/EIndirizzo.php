@@ -6,7 +6,7 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 #[ORM\Entity]
-#[ORM\Table(name: "indirizzi")]
+#[ORM\Table(name: "Indirizzi")]
 class EIndirizzo
 {
     #[ORM\Id]
@@ -62,7 +62,7 @@ class EIndirizzo
     {
         return $this->cap;
     }
-    
+
     public function setVia(string $via): EIndirizzo
     {
         $this->via = $via;
