@@ -1,8 +1,9 @@
 <?php
-
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\DriverManager;
+
+require_once "./TechnicalServiceLayer/Foundation/FEntityManager.php";
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();

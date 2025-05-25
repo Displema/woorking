@@ -1,9 +1,12 @@
 <?php
 
+use Model\ELocatore;
 use TechnicalServiceLayer\Foundation\FEntityManager;
 use TechnicalServiceLayer\Foundation\FUfficio;
 
-require "vendor/autoload.php";
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/bootstrap.php'; // <<--- Fondamentale
+
 
 $indirizzo = "Via le dita dal naso";
 $fascia = "MATTINA";

@@ -2,29 +2,34 @@
 namespace TechnicalServiceLayer\Foundation;
 
 use Exception;
+use Model\EUfficio;
 use TechnicalServiceLayer\Foundation\FEntityManager;
 
 class FUfficio
 {
 
-    public static function findbyIndirizzoDataFascia($indirizzo, $fascia, $date)
+    public static function findByIndirizzoDataFascia($indirizzo, $fascia, $date)
     {
-        $em= FEntityManager::getEntityManager();
+        $em = FEntityManager::getEntityManager();
+
         try {
-            $query = "SELECT e FROM EUfficio e
-                    JOIN e.intervalliDisponibilita idisp
-                    JOIN e.idIndirizzo indirizzo
-                    WHERE indirizzo.citta = :indirizzo
-                    AND idisp.fascia = :fascia
-                    AND idisp.dataInizio <= :data AND idisp.dataFine >= :data
-";
-            $createquery= $em->createQuery($query);
-            $createquery->setParameter("fascia", $fascia);
-            $createquery->setParameter("data", $date);
-            $createquery->setParameter("indirizzo", $indirizzo);
-            return $createquery->getResult();
-        } catch (Exception $e) {
-            echo"Error:".$e->getMessage();
+            $qb = $em->createQueryBuilder();
+
+            $qb->select('e')
+                ->from(EUfficio::class/** @type EUfficio */, 'e')
+                ->join('e.intervalliDisponibilita', 'idisp')
+                ->join('e.indirizzo', 'indirizzo')
+                ->where('indirizzo.via = :indirizzo')
+                ->andWhere('idisp.fascia = :fascia')
+                ->andWhere('idisp.dataInizio <= :data')
+                ->andWhere('idisp.dataFine >= :data')
+                ->setParameter('indirizzo', $indirizzo)
+                ->setParameter('fascia', $fascia)
+                ->setParameter('data', $date);
+
+            return $qb->getQuery()->getResult();
+        } catch (\Exception $e) {
+            echo "Error: " . $e->getMessage();
             return [];
         }
     }

@@ -4,8 +4,7 @@ namespace TechnicalServiceLayer\Foundation;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Exception;
-
-use TechnicalServiceLayer\Foundation\FPersistentManager;
+use function getEntityManager;
 
 class FEntityManager
 {
