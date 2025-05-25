@@ -20,7 +20,7 @@ class EIndirizzoFixture extends AbstractFixture
                 ->setProvincia(strtoupper($faker->randomLetter() . $faker->randomLetter()))
                 ->setCitta($faker->city())
                 ->setVia($faker->streetAddress())
-            ->setNumeroCivico($faker->randomDigit(2, true));
+            ->setNumeroCivico($faker->randomDigitNotNull(2, true));
             $manager->persist($indirizzo);
             $this->addReference('EIndirizzo_' . $i, $indirizzo);
         }

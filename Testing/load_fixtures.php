@@ -34,10 +34,12 @@ $loader = new Loader();
 //$loader->addFixture(new ERimborsoFixture());
 $loader->loadFromDirectory(__DIR__ . '\Fixtures');
 
-
 $entityManager = getEntityManager();
 
 $purger = new ORMPurger();
 $executor = new ORMExecutor($entityManager, $purger);
-$executor->purge(); // facoltativo, pulisce il DB
+
+// ESEGUIRE SE SI VUOLE PULIRE IL DB
+//$executor->purge();
+//
 $executor->execute($loader->getFixtures());
