@@ -8,7 +8,8 @@
     "vlucas/phpdotenv": "^5.6",
     "ramsey/uuid-doctrine": "^2.1",
     "doctrine/data-fixtures": "^2.0",
-    "fakerphp/faker": "^1.24"
+    "fakerphp/faker": "^1.24",
+    "twig/twig": "^3.21"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest"
@@ -23,7 +24,9 @@
       "Core\\": "./Core",
       "Model\\Enum\\": "./Model/Enum",
       "Testing\\Fixtures\\": "./Testing/Fixtures",
-      "Testing\\": "./Testing"
+      "Testing\\": "./Testing",
+      "Twig\\": "./TwigTesting",
+      "TechnicalServiceLayer\\Repository\\": "./TechnicalServiceLayer/Repository"
     }
   }
 }
