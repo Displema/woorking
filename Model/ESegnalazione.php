@@ -6,8 +6,9 @@ use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Model\EPrenotazione;
+use TechnicalServiceLayer\Repository\ESegnalazioneRepository;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: ESegnalazioneRepository::class)]
 #[ORM\Table(name:"Segnalazioni")]
 class ESegnalazione
 {

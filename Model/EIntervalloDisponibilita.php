@@ -7,8 +7,9 @@ use Model\Enum\FasciaOrariaEnum;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use TechnicalServiceLayer\Repository\EIntervalloDisponibilitaRepository;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: EIntervalloDisponibilitaRepository::class)]
 #[ORM\Table(name: "Intervalli_disponibilita")]
 class EIntervalloDisponibilita
 {

@@ -9,8 +9,9 @@ use Model\Enum\StatoUfficioEnum;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\UuidInterface;
 use Ramsey\Uuid\Uuid;
+use TechnicalServiceLayer\Repository\EUfficioRepository;
 
- #[ORM\Entity]
+#[ORM\Entity(repositoryClass: EUfficioRepository::class)]
  #[ORM\Table(name: "Uffici")]
 class EUfficio
 {

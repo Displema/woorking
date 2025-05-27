@@ -5,8 +5,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use TechnicalServiceLayer\Repository\ESegnalazioneRepository;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: ESEgnalazioneRepository::class)]
 #[ORM\Table(name: "Servizi_Aggiuntivi")]
 class EServiziAggiuntivi
 {
