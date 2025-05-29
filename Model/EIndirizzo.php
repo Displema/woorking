@@ -9,6 +9,7 @@ use TechnicalServiceLayer\Repository\EUtenteRepository;
 
 #[ORM\Entity(repositoryClass: EIndirizzoRepository::class)]
 #[ORM\Table(name: "Indirizzi")]
+
 class EIndirizzo
 {
     #[ORM\Id]

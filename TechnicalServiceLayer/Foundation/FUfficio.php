@@ -33,4 +33,27 @@ class FUfficio
             return [];
         }
     }
+    public static function  findby($indirizzo, $date,$fascia): mixed
+    {
+        $em = FEntityManager::getInstance()->getEntityManager();
+        try {
+            $query = "SELECT e FROM Model\EUfficio e 
+                     JOIN e.intervalliDisponibilita  idisp
+                     JOIN e.indirizzo  indirizzo
+                     WHERE indirizzo.via = :indirizzo
+                     AND idisp.dataInizio <= :data
+                     AND idisp.dataFine >= :data   
+                      AND idisp.fascia = :fascia";
+            $createquery = $em->createQuery($query);
+            $createquery->setParameter("indirizzo", $indirizzo);
+            $createquery->setParameter("data", $date);
+            $createquery->setParameter("fascia", $fascia);
+            return $createquery->getResult();
+
+        } catch (\Exception $e) {
+            echo "Error: " . $e->getMessage();
+            return [];
+        }
+
+    }
 }

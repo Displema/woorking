@@ -18,9 +18,9 @@ class ESegnalazione
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
-    #[ORM\OneToOne(targetEntity:EPrenotazione::class)]
-    //#[ORM\JoinColumn(name:"idPrenotazione", referencedColumnName:"id", nullable: false)]
-    private EPrenotazione $prenotazione;
+    #[ORM\ManyToOne(targetEntity:EUfficio::class,cascade: ["persist", "remove"], inversedBy: "segnalazioni")]
+    //#[ORM\JoinColumn(name:"idUfficio", referencedColumnName:"id", nullable: false)]
+    private EUfficio $ufficio;
     
     #[ORM\Column]
     private string $commento;
@@ -38,9 +38,9 @@ class ESegnalazione
         return $this->id;
     }
 
-    public function getPrenotazione(): EPrenotazione
+    public function getUfficio(): EUfficio
     {
-        return $this->prenotazione;
+        return $this->ufficio;
     }
 
     public function getCommento(): string
@@ -54,9 +54,9 @@ class ESegnalazione
     }
 
 
-    public function setPrenotazione(EPrenotazione $Prenotazione): ESegnalazione
+    public function setUfficio(EUfficio $Ufficio): ESegnalazione
     {
-        $this->prenotazione = $Prenotazione;
+        $this->Ufficio = $Ufficio;
         return $this;
     }
 
@@ -74,6 +74,6 @@ class ESegnalazione
 
     public function __toString(): string
     {
-        return "ESegnalazione(ID:". $this->id->__tostring().", ID Prenotazione:". $this->prenotazione->__toString().", Commento: $this->commento)";
+        return "ESegnalazione(ID:". $this->id->__tostring().", ID Prenotazione:". $this->ufficio->__toString().", Commento: $this->commento)";
     }
 }
