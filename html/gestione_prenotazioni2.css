@@ -1,0 +1,88 @@
+header {
+  background-color: black;
+  color: #fff;
+  height: 80px;
+  display: flex;
+  align-items: center; /* centra verticalmente */
+  padding: 0 20px; /* solo padding orizzontale */
+}
+
+#navbar-container {
+  width: 15rem;
+  flex-shrink: 0;
+}
+
+.container{
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo img{
+    width: 65px; 
+    
+}
+
+
+
+nav ul{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+nav ul li{
+    margin-right:  20px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 10px;
+    display: block; /* Rende l'intera area cliccabile */
+}
+nav ul li a:hover {
+    text-decoration: none; /* togli la sottolineatura */
+    
+}
+
+
+body {
+  font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+h1, h2 {
+  color: #222;
+}
+
+.card {
+  box-shadow: 0 4px 8px rgb(0 0 0 / 0.05);
+  border-radius: 8px;
+}
+
+.card-title {
+  margin-bottom: 0.8rem;
+}
+
+.badge {
+  font-size: 0.9rem;
+  padding: 0.3em 0.8em;
+  border-radius: 12px;
+}
+
+.bg-green {
+  background-color: #28a745;
+  color: white;
+}
+
+.bg-gray {
+  background-color: #6c757d;
+  color: white;
+}
