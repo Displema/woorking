@@ -470,3 +470,5 @@ composer.lock
 .env
 /phpcs.xml
 .vscode/launch.json
+
+.idea
