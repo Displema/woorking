@@ -10,7 +10,7 @@
 </head>
 <body class="text-white">
 
-<div id="navbar-placeholder"></div>
+{% include 'navbar/navbar.html.twig' %}
 
 <div class="container form-container text-dark">
     <h2 class="mb-4 text-center">Segnala questo annuncio</h2>
@@ -49,21 +49,9 @@
     </form>
 </div>
 
-<div id="footer-placeholder"></div>
+{% include 'Footer/footer.html.twig' %}
 
 <script>
-    // Caricamento navbar e footer
-    fetch("/Nuovohtml/navbar/navbar1.html")
-        .then(res => res.text())
-        .then(data => {
-            document.getElementById("navbar-placeholder").innerHTML = data;
-        });
-
-    fetch("/Nuovohtml/footer/footer.html")
-        .then(res => res.text())
-        .then(data => {
-            document.getElementById("footer-placeholder").innerHTML = data;
-        });
 
     // Gestione mostra/nascondi textarea e required su "Altro"
     const radios = document.querySelectorAll('input[name="motivo"]');
