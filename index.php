@@ -3,8 +3,8 @@
 use Model\EIndirizzo;
 use Core\Router;
 
-require __DIR__ . '/src/vendor/autoload.php';
-require __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/bootstrap.php';
 
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);

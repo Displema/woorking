@@ -9,8 +9,9 @@ use Model\Enum\StatoUfficioEnum;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\UuidInterface;
 use Ramsey\Uuid\Uuid;
+use TechnicalServiceLayer\Repository\EUfficioRepository;
 
- #[ORM\Entity]
+#[ORM\Entity(repositoryClass: EUfficioRepository::class)]
  #[ORM\Table(name: "Uffici")]
 class EUfficio
 {
@@ -67,6 +68,9 @@ class EUfficio
      #[ORM\Column(name: 'motivo_rifiuto', type: "string", nullable: true)]
     private ?string $motivoRifiuto;
 
+    #[ORM\OneToMany(targetEntity:ESegnalazione::class, mappedBy:"ufficio", cascade:["persist", "remove"])]
+     private Collection $segnalazioni;
+
     #[ORM\OneToMany(targetEntity:EServiziAggiuntivi::class, mappedBy:"ufficio", cascade:["persist", "remove"])]
     private Collection $serviziAggiuntivi;
 
@@ -119,6 +123,10 @@ class EUfficio
         return $this->superficie;
     }
 
+    public function getsegnalazione(): Collection{
+        return $this->segnalazioni;
+    }
+
     public function getDataCaricamento(): DateTime
     {
         return $this->dataCaricamento;
@@ -159,6 +167,8 @@ class EUfficio
         $this->locatore = $locatore;
         return $this;
     }
+
+
 
     public function setIndirizzo(EIndirizzo $indirizzo): EUfficio
     {

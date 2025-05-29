@@ -12,13 +12,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/html/uffici.css">
+    <link rel="stylesheet" href="/html/uffici/uffici.css">
 </head>
 
 <body>
 
 <!-- NAVBAR -->
-{% include '../../navbar.html.twig' %}
+{% include 'navbar/navbar.html.twig' %}
 
 <!-- RISULTATI -->
 <div class="container-fluid text-center py-5 bg-black text-white">
@@ -31,9 +31,9 @@
         {%for ufficio in uffici %}
         <div class="col-12">
             <div class="ufficio-card d-flex flex-column flex-md-row mx-auto">
-                <img src="{{ ufficio.fotoBase64 }}" alt="Ufficio Milano" class="ufficio-img">
+                <img src="{{ ufficio.fotoBase64 }}" alt="Foto Ufficio" class="ufficio-img">
                 <div class="ufficio-info">
-                    <a href="/Nuovohtml/ufficio/dettaglioffice1.html" class="btn-prenota"><i class="fa-solid fa-calendar-check"></i> Prenota</a>
+                    <a href="/View/VDettaglioOffice.php?id={{ufficio.ufficio.id}}" class="btn-prenota"><i class="fa-solid fa-calendar-check"></i> Prenota</a>
                     <h2>{{ ufficio.ufficio.titolo }}</h2>
                     <p><strong>Indirizzo: </strong>{{ufficio.ufficio.indirizzo}}</p>
                     <p><strong>Posti disponibili: </strong>{{ ufficio.ufficio.numeroPostazioni }} </p>
@@ -46,7 +46,7 @@
 </div>
 
 <!-- FOOTER -->
-        {% include '../../footer.html.twig' %}
+        {% include 'Footer/footer.html.twig' %}
 
 <!-- Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

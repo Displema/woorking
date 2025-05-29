@@ -1,22 +1,23 @@
 <?php
-namespace TechnicalServiceLayer\Foundation;
+namespace TechnicalServiceLayer\Repository;
 
-use Exception;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\Common\Collections\Collection;
 use TechnicalServiceLayer\Foundation\FEntityManager;
 
-class FRecensione
+class ERecensioneRepository extends EntityRepository
 {
-
     public static function getRecensioneByUfficio($idufficio)
     {
         FEntityManager::getInstance();
         $em = FEntityManager::getEntityManager();
         try {
             $query = "SELECT e FROM Model\ERecensione e
-            JOIN e.idPrenotazione p 
-            JOIN p.idUfficio u
+            JOIN e.prenotazione p 
+            JOIN p.ufficio u
             WHERE u.id = :idufficio";
-        
+
             $createquery = $em->createQuery($query);
             $createquery->setParameter("idufficio", $idufficio);
 

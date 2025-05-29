@@ -8,8 +8,10 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 use DateTime;
+use TechnicalServiceLayer\Repository\EProfiloRepository;
+use TechnicalServiceLayer\Repository\EUtenteRepository;
 
- #[ORM\Entity]
+#[ORM\Entity(repositoryClass: EProfiloRepository::class)]
  #[ORM\Table(name: "Prenotazioni")]
 class EPrenotazione
 {

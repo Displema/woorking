@@ -4,7 +4,8 @@ use TechnicalServiceLayer\Foundation\FEntityManager;
 
 require_once 'C:\Users\39327\Desktop\UFFICI\vendor\autoload.php';
 require_once 'C:\Users\39327\Desktop\UFFICI\bootstrap.php';
-
+use controller\CSearchOffice;
+require_once 'C:\Users\39327\Desktop\UFFICI\controller\CsearchOffice.php';
 $em = FEntityManager::getInstance()->getEntityManager();
 
 // Inizializza Twig
@@ -18,6 +19,7 @@ $twig = new \Twig\Environment($loader);
 $luogo = $_GET['luogo'] ?? '';
 $data = $_GET['data'] ?? '';
 $fascia = $_GET['fascia'] ?? '';
+/*
 
 if ($luogo && $data && $fascia) {
     $dateObj = new DateTime($data);
@@ -42,9 +44,8 @@ if ($luogo && $data && $fascia) {
             'fotoBase64' => $fotoBlob,
         ];
     }
-
+*/
+$Result = CSearchOffice::search($luogo,$data,$fascia);
     // Render Twig
-    echo $twig->render('/uffici.html.twig', ['uffici' => $ufficiConFoto]);
-} else {
-    echo "Parametri mancanti.";
-}
+    echo $twig->render('/uffici/uffici.html.twig', ['uffici' => $Result]);
+

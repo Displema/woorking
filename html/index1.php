@@ -9,7 +9,7 @@ use Model\EUfficio;
 use TechnicalServiceLayer\Foundation\FEntityManager;
 
 $em = FEntityManager::getInstance()->getEntityManager();
-$loader = new \Twig\Loader\FilesystemLoader(dirname(__DIR__ . '/homeaccess.html.twig'));
+$loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../html');
 $twig = new \Twig\Environment($loader);
 /*
 $indirizzo = "Via Bacchisio 6";
@@ -45,4 +45,4 @@ foreach ($uffici as $ufficio) {
     ];
 }
 */
-echo $twig->render('homeaccess.html.twig');
+echo $twig->render('home/homeaccess.html.twig');
