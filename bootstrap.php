@@ -3,7 +3,7 @@ use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\DriverManager;
 
-//require_once "./TechnicalServiceLayer/Foundation/FEntityManager.php";
+require_once "./TechnicalServiceLayer/Foundation/FEntityManager.php";
 
 use Doctrine\DBAL\Types\Type;
 use Ramsey\Uuid\Doctrine\UuidType;

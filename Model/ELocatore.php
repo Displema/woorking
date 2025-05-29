@@ -3,8 +3,10 @@ namespace Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\UuidInterface;
+use TechnicalServiceLayer\Repository\ELocatoreRepository;
+use TechnicalServiceLayer\Repository\EUtenteRepository;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: ELocatoreRepository::class)]
 #[ORM\Table(name: "Profili_Locatori")]
 class ELocatore extends EProfilo
 {

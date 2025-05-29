@@ -2,11 +2,12 @@
 namespace Model;
 
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
+use TechnicalServiceLayer\Repository\EIndirizzoRepository;
+use TechnicalServiceLayer\Repository\EUtenteRepository;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: EIndirizzoRepository::class)]
 #[ORM\Table(name: "Indirizzi")]
 class EIndirizzo
 {

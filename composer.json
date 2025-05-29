@@ -24,7 +24,9 @@
       "Core\\": "./Core",
       "Model\\Enum\\": "./Model/Enum",
       "Testing\\Fixtures\\": "./Testing/Fixtures",
-      "Testing\\": "./Testing"
+      "Testing\\": "./Testing",
+      "Twig\\": "./TwigTesting",
+      "TechnicalServiceLayer\\Repository\\": "./TechnicalServiceLayer/Repository"
     }
   }
 }
