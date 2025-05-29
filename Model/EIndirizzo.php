@@ -8,6 +8,7 @@ use Ramsey\Uuid\Doctrine\UuidGenerator;
 
 #[ORM\Entity]
 #[ORM\Table(name: "Indirizzi")]
+
 class EIndirizzo
 {
     #[ORM\Id]

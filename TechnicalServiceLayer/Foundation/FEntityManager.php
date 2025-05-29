@@ -198,4 +198,8 @@ class FEntityManager
             return [];
         }
     }
+    public static function searchoffice($indirizzo, $date, $fascia)
+    {
+        return FUfficio::findbyIndirizzoDataFascia($indirizzo, $date, $fascia);
+    }
 }

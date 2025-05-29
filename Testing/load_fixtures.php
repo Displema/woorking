@@ -4,18 +4,6 @@ namespace Testing;
 use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
-use Model\EPagamento;
-use Testing\Fixtures\EIndirizzoFixture;
-use Testing\Fixtures\EPagamentoFixture;
-use Testing\Fixtures\ERecensioneFixture;
-use Testing\Fixtures\EPrenotazioneFixture;
-use Testing\Fixtures\ERimborsoFixture;
-use Testing\Fixtures\EServiziAggiuntiviFixture;
-use Testing\Fixtures\EProfiloFixture;
-use Testing\Fixtures\ELocatoreFixture;
-use Testing\Fixtures\EUfficioFixture;
-use Testing\Fixtures\EIntervalliDisponibilitaFixture;
-use Testing\Fixtures\ESegnalazioneFixture;
 
 require_once "vendor/autoload.php";
 require_once "bootstrap.php";
