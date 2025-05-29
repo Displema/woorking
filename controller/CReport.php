@@ -1,5 +1,5 @@
 <?php
-namespace controller;
+namespace Controller;
 use DateTime;
 use Doctrine\ORM\EntityManager;
 use Model\ESegnalazione;

@@ -4,7 +4,7 @@ use TechnicalServiceLayer\Foundation\FEntityManager;
 
 require_once 'C:\Users\39327\Desktop\UFFICI\vendor\autoload.php';
 require_once 'C:\Users\39327\Desktop\UFFICI\bootstrap.php';
-use controller\CSearchOffice;
+use Controller\CPhoto;
 require_once 'C:\Users\39327\Desktop\UFFICI\controller\CsearchOffice.php';
 $em = FEntityManager::getInstance()->getEntityManager();
 
@@ -45,7 +45,7 @@ if ($luogo && $data && $fascia) {
         ];
     }
 */
-$Result = CSearchOffice::search($luogo,$data,$fascia);
+$Result = CPhoto::search($luogo,$data,$fascia);
     // Render Twig
     echo $twig->render('/uffici/uffici.html.twig', ['uffici' => $Result]);
 

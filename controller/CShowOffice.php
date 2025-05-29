@@ -1,5 +1,5 @@
 <?php
-namespace controller;
+namespace Controller;
 use DateTime;
 use Model\EFoto;
 use Model\ERecensione;

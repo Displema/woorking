@@ -2,7 +2,7 @@
 namespace Model;
 
 use Doctrine\ORM\Mapping as ORM;
-use Model\Enum\FasciaOrariaEnum;
+use Model\Enum\UserEnum;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -29,8 +29,8 @@ class EPrenotazione
     //#[ORM\JoinColumn(name:"idUtente", referencedColumnName:"id")]
     private EProfilo $utente;
     
-     #[ORM\Column(type:"string", enumType:Enum\FasciaOrariaEnum::class)]
-    private FasciaOrariaEnum $fascia;
+     #[ORM\Column(type:"string", enumType:Enum\UserEnum::class)]
+    private UserEnum $fascia;
     
      #[ORM\Column(type:"datetime")]
     private $data;
@@ -61,7 +61,7 @@ class EPrenotazione
         return $this->utente;
     }
 
-    public function getFascia(): FasciaOrariaEnum
+    public function getFascia(): UserEnum
     {
         return $this->fascia;
     }
@@ -88,7 +88,7 @@ class EPrenotazione
         return $this;
     }
 
-    public function setFascia(FasciaOrariaEnum $fascia): EPrenotazione
+    public function setFascia(UserEnum $fascia): EPrenotazione
     {
         $this->fascia = $fascia;
         return $this;

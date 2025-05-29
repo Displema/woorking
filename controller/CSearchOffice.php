@@ -1,5 +1,5 @@
 <?php
-namespace controller;
+namespace Controller;
 use DateTime;
 use Model\EUfficio;
 use TechnicalServiceLayer\Foundation\FUfficio;

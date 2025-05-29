@@ -3,7 +3,7 @@ namespace Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use DateTime;
-use Model\Enum\FasciaOrariaEnum;
+use Model\Enum\UserEnum;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -26,8 +26,8 @@ class EIntervalloDisponibilita
     #[ORM\Column(name: "data_inizio", type: "datetime")]
     private DateTime $dataInizio;
 
-    #[ORM\Column(type:"string", enumType:Enum\FasciaOrariaEnum::class)]
-    private FasciaOrariaEnum $fascia;
+    #[ORM\Column(type:"string", enumType:Enum\UserEnum::class)]
+    private UserEnum $fascia;
 
     #[ORM\Column(name: "data_fine", type: "datetime")]
     private DateTime $dataFine;
@@ -52,7 +52,7 @@ class EIntervalloDisponibilita
         return $this->dataFine;
     }
     
-    public function getFascia(): FasciaOrariaEnum
+    public function getFascia(): UserEnum
     {
             return $this->fascia;
     }
@@ -75,7 +75,7 @@ class EIntervalloDisponibilita
         return $this;
     }
 
-    public function setFascia(FasciaOrariaEnum $fascia): EIntervalloDisponibilita
+    public function setFascia(UserEnum $fascia): EIntervalloDisponibilita
     {
         $this->fascia = $fascia;
         return $this;

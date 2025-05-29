@@ -4,7 +4,7 @@ use TechnicalServiceLayer\Foundation\FEntityManager;
 require_once 'C:\Users\39327\Desktop\UFFICI\vendor\autoload.php';
 require_once 'C:\Users\39327\Desktop\UFFICI\bootstrap.php';
 
-use controller\CSearchOffice;
+use Controller\CPhoto;
 require_once 'C:\Users\39327\Desktop\UFFICI\controller\CShowOffice.php';
 
 
@@ -19,5 +19,5 @@ $twig = new \Twig\Environment($loader);
 
 // Leggi parametri GET
 $id = $_GET['id'] ?? '';
- $recensioni = \controller\CShowOffice::ShowRecensini($id);
+ $recensioni = \Controller\CShowOffice::ShowRecensini($id);
     echo $twig->render('/recensioni/recensioni.html.twig',['recensioni' => $recensioni]);
