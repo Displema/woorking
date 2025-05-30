@@ -30,7 +30,8 @@
       "Testing\\": "./Testing",
       "Twig\\": "./TwigTesting",
       "TechnicalServiceLayer\\Repository\\": "./TechnicalServiceLayer/Repository",
-      "Routes\\": "./Routes"
+      "Routes\\": "./Routes",
+      "View\\": "./View"
     }
   }
 }
