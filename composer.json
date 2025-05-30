@@ -23,13 +23,15 @@
     "psr-4": {
       "Model\\": "./Model",
       "TechnicalServiceLayer\\Foundation\\": "./TechnicalServiceLayer/Foundation",
+      "TechnicalServiceLayer\\Repository\\": "./TechnicalServiceLayer/Repository",
+      "TechnicalServiceLayer\\Utility\\": "./TechnicalServiceLayer/Utility",
       "Core\\": "./Core",
       "Model\\Enum\\": "./Model/Enum",
       "Testing\\Fixtures\\": "./Testing/Fixtures",
       "Controller\\": "./Controller",
       "Testing\\": "./Testing",
       "Twig\\": "./TwigTesting",
-      "TechnicalServiceLayer\\Repository\\": "./TechnicalServiceLayer/Repository",
+
       "Routes\\": "./Routes",
       "View\\": "./View"
     }
