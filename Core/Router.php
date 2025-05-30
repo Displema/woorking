@@ -28,6 +28,7 @@ class Router
     public function dispatch(string $requestUri, string $requestMethod): void
     {
         $requestUri = parse_url($requestUri, PHP_URL_PATH);
+
         foreach ($this->routes as $route) {
             if ($route['method'] !== strtoupper($requestMethod)) {
                 continue;
@@ -36,7 +37,14 @@ class Router
             $pattern = "@^" . preg_replace('/\{(\w+)\}/', '(?P<\1>[^/]+)', $route['raw']) . "$@D";
 
             if (preg_match($pattern, $requestUri, $matches)) {
-                $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+                $routeParams = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+
+                $queryParams = $_GET ?? [];
+
+                $bodyParams = $this->parseBody();
+
+                // Unifica tutti i parametri
+                $params = array_merge($routeParams, $queryParams, $bodyParams);
 
                 if (is_callable($route['handler'])) {
                     call_user_func_array($route['handler'], $params);
@@ -54,7 +62,6 @@ class Router
     private function callController(string $handler, array $params): void
     {
         [$class, $method] = explode('@', $handler);
-
         $class = "Controller\\$class";
 
         if (class_exists($class) && method_exists($class, $method)) {
@@ -69,5 +76,25 @@ class Router
     private function parseRoute(string $route): string
     {
         return rtrim($route, '/') ?: '/';
+    }
+
+    private function parseBody(): array
+    {
+        $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+
+        if (stripos($contentType, 'application/json') === 0) {
+            $raw = file_get_contents('php://input');
+            return json_decode($raw, true) ?? [];
+        }
+
+        if (stripos($contentType, 'application/x-www-form-urlencoded') === 0) {
+            return $_POST;
+        }
+
+        if (stripos($contentType, 'multipart/form-data') === 0) {
+            return array_merge($_POST, $_FILES);
+        }
+
+        return [];
     }
 }
