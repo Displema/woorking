@@ -28,6 +28,7 @@
       "Model\\Enum\\": "./Model/Enum",
       "Testing\\Fixtures\\": "./Testing/Fixtures",
       "Controller\\": "./Controller",
+      "View\\": "./View",
       "Testing\\": "./Testing",
       "Routes\\": "./Routes",
       "View\\": "./View"

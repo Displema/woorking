@@ -1,9 +1,8 @@
 <?php
 use TechnicalServiceLayer\Foundation\FUfficio;
 use TechnicalServiceLayer\Foundation\FEntityManager;
-require_once 'C:\Users\39327\Desktop\UFFICI\vendor\autoload.php';
-require_once 'C:\Users\39327\Desktop\UFFICI\bootstrap.php';
-
+require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__.'/../bootstrap.php';
 
 
 
@@ -20,6 +19,6 @@ $twig = new \Twig\Environment($loader);
 $id = $_GET['id'] ?? '';
 
 
-$Result = \Controller\CShowOffice::Show($id);
+$Result = \controller\COffice::Show($id);
 $ufficio = $Result[0];
 echo $twig->render('/DettaglioOffice/DettaglioOffice.html.twig', ['ufficio' => $ufficio]);

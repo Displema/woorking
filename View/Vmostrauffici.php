@@ -1,51 +1,47 @@
 <?php
-use TechnicalServiceLayer\Foundation\FUfficio;
-use TechnicalServiceLayer\Foundation\FEntityManager;
+namespace View;
 
-require_once 'C:\Users\39327\Desktop\UFFICI\vendor\autoload.php';
-require_once 'C:\Users\39327\Desktop\UFFICI\bootstrap.php';
-use Controller\CPhoto;
-require_once 'C:\Users\39327\Desktop\UFFICI\controller\CsearchOffice.php';
-$em = FEntityManager::getInstance()->getEntityManager();
+require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__.'/../bootstrap.php';
+use \controller\COffice;
 
-// Inizializza Twig
-$loader = new \Twig\Loader\FilesystemLoader([
-    __DIR__ . '/../html',  // vai su di un livello e poi html
-    __DIR__               // oppure solo la cartella corrente View
-]);
-$twig = new \Twig\Environment($loader);
 
-// Leggi parametri GET
-$luogo = $_GET['luogo'] ?? '';
-$data = $_GET['data'] ?? '';
-$fascia = $_GET['fascia'] ?? '';
-/*
+class Vmostrauffici
+{
+private $loader;
 
-if ($luogo && $data && $fascia) {
-    $dateObj = new DateTime($data);
+// Start Twig
 
-    // Cerca uffici
-    $uffici = FUfficio::findby($luogo, $dateObj, $fascia);
+public function __construct()  {
+    $this->loader = new \Twig\Loader\FilesystemLoader([__DIR__ . '/../html',  // on the directory up
+        __DIR__       ]);
+}
 
-    // Aggiungi foto base64
-    $ufficiConFoto = [];
-    foreach ($uffici as $ufficio) {
-        $fotoBlob = null;
-        $fotoEntity = $em->getRepository(\Model\EFoto::class)->findOneBy(['ufficio' => $ufficio->getId()]);
+public function startsearch(){
+    $twig = new \Twig\Environment($this->loader);
+    echo $twig->render('/home/homeaccess.html.twig');
+}
+// Read params GET
+public function showuffici($Result,$data,$fascia){
+     $twig = new \Twig\Environment($this->loader);
+    echo $twig->render('/uffici/uffici.html.twig', ['uffici' => $Result,'data' => $data,'fascia' => $fascia]);
+}
 
-        if ($fotoEntity) {
-            $stream = $fotoEntity->getContent();
-            $fotoData = is_resource($stream) ? stream_get_contents($stream) : $stream;
-            $fotoBlob = 'data:image/jpeg;base64,' . base64_encode($fotoData);
-        }
+public function showOfficedetails( $Result,$data,$fascia){
+    $twig = new \Twig\Environment($this->loader);
+    $ufficio = $Result[0];
+    echo $twig->render('/DettaglioOffice/DettaglioOffice.html.twig', ['ufficio' => $ufficio,'data' => $data,'fascia' => $fascia]);
+}
+public function showconfirmedpage1(){
+    $twig = new \Twig\Environment($this->loader);
+    echo $twig->render('/conferme/confermaprenotazione.html.twig');
+}
 
-        $ufficiConFoto[] = [
-            'ufficio' => $ufficio,
-            'fotoBase64' => $fotoBlob,
-        ];
-    }
-*/
-$Result = CPhoto::search($luogo,$data,$fascia);
-    // Render Twig
-    echo $twig->render('/uffici/uffici.html.twig', ['uffici' => $Result]);
+public function showAllRecension($recensione,$ufficio){
+    $twig = new \Twig\Environment($this->loader);
+    echo $twig->render('/recensioni/recensioni.html.twig', ['recensioni' => $recensione,'ufficio' => $ufficio]);
+}
 
+
+
+}

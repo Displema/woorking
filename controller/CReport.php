@@ -8,11 +8,31 @@ use PHP_CodeSniffer\Reports\Report;
 use TechnicalServiceLayer\Foundation\FUfficio;
 
 use TechnicalServiceLayer\Foundation\FEntityManager;
+use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
+use View\VReport;
 
 
-class CSearchOffice {
-    public static function savereport( $report) {
+class CReport {
+
+    public function showFormReport($id){
+        $view = new VReport();
+        $view->FormReport($id);
+    }
+    public static function showConfirmOfReport($id) {
+        $commento = $_POST['motivo'] ?? null;
+        echo $commento;
+        if($commento == 'Altro'){
+            $commento = $_POST['altroTesto'] ?? null;
+        }
+
      $em = FEntityManager::getInstance()->getEntityManager();
-     $em->
+     $ufficio=$em->getRepository(EUfficio::class)->find($id);
+     $Report= new ESegnalazione();
+     $Report->setCommento($commento);
+     $Report->setUfficio($ufficio);
+     $em->getRepository(ESegnalazione::class)->SaveReport($Report);
+
+     $view = new VReport();
+     $view->ShowConfirmSendReport();
     }
 }
