@@ -103,8 +103,6 @@ class CAuth
     public function loginUser(string $email, string $password, string $rememberMe = "0"): void
     {
         try {
-
-
             if ((bool) $rememberMe) {
                 // Remember the user for 30 days
                 $duration = 60*60*24*30;
