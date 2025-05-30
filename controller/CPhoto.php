@@ -21,11 +21,13 @@ class CPhoto
             echo "Foto non trovato";
         }
         header("Content-Type: " . $foto->getMimeType());
+
+        header("Content-Length: " . $foto->getSize());
         if (is_resource($foto->getContent())) {
             $content = stream_get_contents($foto->getContent());
         }
 
-        if (!empty($content)) {
+        if (empty($content)) {
             echo "404 not found";
         }
 
