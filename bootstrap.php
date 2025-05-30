@@ -2,12 +2,9 @@
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\DriverManager;
-
-require_once "./TechnicalServiceLayer/Foundation/FEntityManager.php";
-
 use Doctrine\DBAL\Types\Type;
 use Ramsey\Uuid\Doctrine\UuidType;
-
+require_once 'C:\Users\Lenovo\Desktop\woorking\vendor/autoload.php';
 if (!Type::hasType('uuid')) {
     Type::addType('uuid', UuidType::class);
 }

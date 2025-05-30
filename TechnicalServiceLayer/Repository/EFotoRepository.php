@@ -33,4 +33,19 @@ class EFotoRepository extends EntityRepository
 
         return new ArrayCollection($result);
     }
+
+
+    /**
+     * @param EUfficio $ufficio
+     * @return EFoto|null
+     */
+    public function getFirstPhotoByOffice(EUfficio $ufficio): ?EFoto
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.ufficio = :ufficio')
+            ->setParameter('ufficio', $ufficio)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

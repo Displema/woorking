@@ -8,6 +8,8 @@
       <sourceFolder url="file://$MODULE_DIR$/./TechnicalServiceLayer/Foundation" isTestSource="false" packagePrefix="TechnicalServiceLayer\Foundation\" />
       <sourceFolder url="file://$MODULE_DIR$/./Testing" isTestSource="false" packagePrefix="Testing\" />
       <sourceFolder url="file://$MODULE_DIR$/./Testing/Fixtures" isTestSource="false" packagePrefix="Testing\Fixtures\" />
+      <sourceFolder url="file://$MODULE_DIR$/./TechnicalServiceLayer/Repository" isTestSource="false" packagePrefix="TechnicalServiceLayer\Repository\" />
+      <sourceFolder url="file://$MODULE_DIR$/./TwigTesting" isTestSource="false" packagePrefix="Twig\" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/annotations" />

@@ -1,53 +1,64 @@
-// Carico il primo modale
-fetch('modal_dettagli_ufficio.html')
-.then(response => response.text())
-.then(html => {
-    document.getElementById('modal-container').innerHTML = html;
 
-    // Tab switching
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content-section').forEach(s => s.style.display = 'none');
-        btn.classList.add('active');
-        document.getElementById(btn.dataset.tab).style.display = 'block';
-    });
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.btn-dettagli').forEach(button => {
+        button.addEventListener('click', () => {
+            // Leggo tutti i data- attributi dal bottone
+
+            const titolo = button.getAttribute('data-titolo') || '';
+            const descrizione = button.getAttribute('data-descrizione') || '';
+            const prezzo = button.getAttribute('data-prezzo') || '';
+            const superficie = button.getAttribute('data-superficie') || '';
+            const fascia = button.getAttribute('data-fascia') || '';
+            const indirizzo = button.getAttribute('data-indirizzo') || '';
+            const postazioni = button.getAttribute('data-postazioni') || '';
+            const servizi = button.getAttribute('data-servizi') || '';
+
+            // Inserisco nei campi del modale
+            document.getElementById('modalTitoloHeader').textContent = `🏢 ${titolo}`;
+            document.getElementById('modalNomeUfficio').textContent = titolo;
+            document.getElementById('modalDescrizione').textContent = descrizione;
+            document.getElementById('modalPrezzo').textContent = prezzo;
+            document.getElementById('modalSuperficie').textContent = superficie;
+            document.getElementById('modalFascia').textContent = fascia;
+            document.getElementById('modalIndirizzo').textContent = indirizzo;
+            document.getElementById('modalPostazioni').textContent = postazioni;
+            document.getElementById('modalServizi').textContent = servizi;
+        });
     });
 });
 
-//carico il secondo modale
-fetch('modal_conferma_cancella.html')
-.then(response => response.text())
-.then(html => {
-document.getElementById('modal-container').innerHTML += html;
+document.addEventListener('DOMContentLoaded', () => {
+    let cardToDelete = null;
 
-let cardToDelete = null;
-
-document.querySelectorAll('.btn-cancella').forEach(btn => {
-    btn.addEventListener('click', () => {
-    cardToDelete = btn.closest('.col-md-6');
+    // Quando clicchi il pulsante "Cancella", salva la card da eliminare
+    document.querySelectorAll('.btn-cancella').forEach(btn => {
+        btn.addEventListener('click', () => {
+            cardToDelete = btn.closest('.col-md-6'); // o .col-lg-4 se preferisci
+        });
     });
-});
 
-// Aspetta che il DOM sia aggiornato e il modale inizializzato
-setTimeout(() => {
+    // Quando clicchi "Conferma" nel modale
     const confermaBtn = document.getElementById('conferma-cancella-btn');
-    confermaBtn.addEventListener('click', () => {
-    if (cardToDelete) {
-        cardToDelete.remove();
-        cardToDelete = null;
-        const modalEl = document.getElementById('modal-conferma-cancella');       
-        let instance = bootstrap.Modal.getInstance(modalEl);
-        // Se l'istanza non esiste, la creiamo noi
-        if (!instance) {
-            instance = new bootstrap.Modal(modalEl);
+    if (confermaBtn) {
+        confermaBtn.addEventListener('click', () => {
+            if (cardToDelete) {
+                cardToDelete.remove();
+                cardToDelete = null;
+
+                const modalEl = document.getElementById('modal-conferma-cancella');
+                let instance = bootstrap.Modal.getInstance(modalEl);
+                if (!instance) {
+                    instance = new bootstrap.Modal(modalEl);
+                }
+                instance.hide();
             }
-        // Chiudi il modale
-        instance.hide();
-        }
-    });
-}, 100); // leggero ritardo per garantire che il modale sia pronto
+        });
+    }
 });
+
+
+
 
 
 

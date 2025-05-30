@@ -4,9 +4,10 @@ namespace Model;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\UuidInterface;
+use TechnicalServiceLayer\Repository\EFotoRepository;
 use TechnicalServiceLayer\Repository\EIntervalloDisponibilitaRepository;
 
-#[ORM\Entity(repositoryClass: EIntervalloDisponibilitaRepository::class)]
+#[ORM\Entity(repositoryClass: EFotoRepository::class)]
 #[ORM\Table(name: "Foto")]
 class EFoto
 {
