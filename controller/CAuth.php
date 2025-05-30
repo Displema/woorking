@@ -1,33 +1,29 @@
 <?php
 namespace Controller;
 
-use Couchbase\User;
 use DateTime;
 use Delight\Auth\AttemptCancelledException;
+use Delight\Auth\Auth;
 use Delight\Auth\AuthError;
+use Delight\Auth\InvalidEmailException;
+use Delight\Auth\InvalidPasswordException;
+use Delight\Auth\TooManyRequestsException;
+use Delight\Auth\UserAlreadyExistsException;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Model\ELocatore;
 use Model\Enum\UserEnum;
 use Model\EProfilo;
 use TechnicalServiceLayer\Utility\USession;
+use View\VRedirect;
+use View\VAuth;
 
 require_once __DIR__ . "/../bootstrap.php";
 
 class CAuth
 {
-    public \Delight\Auth\Auth $auth_manager;
-    private \Doctrine\ORM\EntityManager $entity_manager;
-
-    public function getAuthManager(): \Delight\Auth\Auth
-    {
-        return $this->auth_manager;
-    }
-
-    public function setAuthManager(\Delight\Auth\Auth $auth_manager): CAuth
-    {
-        $this->auth_manager = $auth_manager;
-        return $this;
-    }
+    public Auth $auth_manager;
+    private EntityManager $entity_manager;
 
     public function __construct()
     {
@@ -35,6 +31,29 @@ class CAuth
         $this->auth_manager = getAuth();
     }
 
+    public function showLoginForm(): void
+    {
+        $currentUser = USession::getSessionElement("user");
+        if ($currentUser) {
+            $redirectView = new VRedirect();
+            $redirectView->redirect("/home");
+        }
+
+        $authView = new VAuth();
+        $authView->showLoginForm();
+    }
+
+    public function showRegisterForm(): void
+    {
+        $currentUser = USession::isSetSessionElement("user");
+        if ($currentUser) {
+            $redirectView = new VRedirect();
+            $redirectView->redirect("/home");
+        }
+
+        $authView = new VAuth();
+        $authView->showRegisterForm();
+    }
     public function registerUser(
         string $email,
         string $password,
@@ -57,6 +76,9 @@ class CAuth
             die("Wrong user type");
         }
 
+        if (strlen($password) < 8) {
+            die("Please enter a stronger password");
+        }
 
         try {
             // Using callback:null ensures that the email address is verified on the spot
@@ -87,23 +109,28 @@ class CAuth
 
             $this->entity_manager->persist($profile);
             $this->entity_manager->flush();
-        } catch (\Delight\Auth\InvalidEmailException $e) {
+        } catch (InvalidEmailException $e) {
             die('Invalid email address');
-        } catch (\Delight\Auth\InvalidPasswordException $e) {
+        } catch (InvalidPasswordException $e) {
             die('Invalid password');
-        } catch (\Delight\Auth\UserAlreadyExistsException $e) {
+        } catch (UserAlreadyExistsException $e) {
             die('User already exists');
-        } catch (\Delight\Auth\TooManyRequestsException $e) {
+        } catch (TooManyRequestsException $e) {
             die('Too many requests');
-        } catch (AuthError $e) {
         } catch (ORMException $e) {
         }
     }
 
     public function loginUser(string $email, string $password, string $rememberMe = "0"): void
     {
+        $currentUser = USession::isSetSessionElement("user");
+        if ($currentUser !== null) {
+            $view = new VRedirect();
+            $view->redirect("/home");
+        }
+
         try {
-            if ((bool) $rememberMe) {
+            if ($rememberMe) {
                 // Remember the user for 30 days
                 $duration = 60*60*24*30;
             } else {
@@ -118,13 +145,13 @@ class CAuth
             USession::setSessionElement("user", $profile);
 
             echo "User is logged in. Your profile is $profile";
-        } catch (\Delight\Auth\InvalidEmailException $e) {
+        } catch (InvalidEmailException $e) {
             die('Wrong email address');
-        } catch (\Delight\Auth\InvalidPasswordException $e) {
+        } catch (InvalidPasswordException $e) {
             die('Wrong password');
         } catch (\Delight\Auth\EmailNotVerifiedException $e) {
             die('Email not verified');
-        } catch (\Delight\Auth\TooManyRequestsException $e) {
+        } catch (TooManyRequestsException $e) {
             die('Too many requests');
         } catch (AttemptCancelledException|AuthError $e) {
         }

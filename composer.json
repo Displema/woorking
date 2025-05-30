@@ -22,7 +22,6 @@
   "autoload": {
     "psr-4": {
       "Model\\": "./Model",
-      "TechnicalServiceLayer\\Foundation\\": "./TechnicalServiceLayer/Foundation",
       "TechnicalServiceLayer\\Repository\\": "./TechnicalServiceLayer/Repository",
       "TechnicalServiceLayer\\Utility\\": "./TechnicalServiceLayer/Utility",
       "Core\\": "./Core",
@@ -30,8 +29,6 @@
       "Testing\\Fixtures\\": "./Testing/Fixtures",
       "Controller\\": "./Controller",
       "Testing\\": "./Testing",
-      "Twig\\": "./TwigTesting",
-
       "Routes\\": "./Routes",
       "View\\": "./View"
     }

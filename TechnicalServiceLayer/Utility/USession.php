@@ -60,6 +60,7 @@ class USession
      */
     public static function getSessionElement($id)
     {
+
         return $_SESSION[$id];
     }
 

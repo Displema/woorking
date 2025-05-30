@@ -24,20 +24,20 @@
                 </h3>
 
                 <!-- FORM LOGIN -->
-                <form id="login-form">
+                <form id="login-form" action="/login" method="post">
                     <div class="mb-3">
                         <label for="login-email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="login-email" required>
+                        <input name="email" type="email" class="form-control" id="login-email" required>
                     </div>
                     <div class="mb-3">
                         <label for="login-password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="login-password" required>
+                        <input name="password" type="password" class="form-control" id="login-password" required>
                     </div>
                     <button type="submit" class="btn btn-danger w-100">Accedi</button>
                 </form>
 
                 <!-- FORM REGISTRAZIONE (nascosto inizialmente) -->
-                <form id="register-form" style="display: none;">
+                <form id="register-form" style="display: none;" action="/register" method="post">
                     <div class="mb-3">
                         <label for="reg-nome" class="form-label">Nome</label>
                         <input type="text" class="form-control" id="reg-nome" required>
