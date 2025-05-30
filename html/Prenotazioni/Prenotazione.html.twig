@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Le Tue Prenotazioni</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/html/Prenotazioni/Prenotazioni.css" />
+</head>
+<body>
+<!--NAVBAR-->
+{% include "navbar/navbar.html.twig" %}
+
+<main class="flex-grow-1">
+    <div class="container py-5">
+        <h2 class="text-center mb-4">Le tue prenotazioni</h2>
+
+        <!-- Toggle -->
+        <div class="d-flex justify-content-center gap-3 mb-5">
+            <button class="btn btn-toggle active" id="btn-attive">Attive</button>
+            <button class="btn btn-toggle" id="btn-passate">Passate</button>
+        </div>
+
+        <!-- Prenotazioni -->
+        <div id="lista-prenotazioni">
+            {%for prenotations in prenotation %}
+            <!-- Prenotazione Attiva -->
+            <div class="card card-custom mb-4 d-flex flex-row p-3 align-items-center prenotazione attiva">
+                <img src="{{ prenotations.photo }}" class="card-img me-3" alt="Ufficio">
+                <div class="flex-grow-1">
+                    <h5 class="mb-1 text-danger">{{ prenotations.ufficio.titolo }}</h5>
+                    <p class="mb-2">{{ prenotazone.ufficio.descrizione }}</p>
+                    <button class="btn btn-outline-secondary" onclick="window.location.href='/SendReview/{{ prenotations.prenotazione.id }}'">Lascia una recensione</button>
+
+                </div>
+                <button class="btn-visualizza" onclick="window.location.href='/ShowPrenotationDetails/{{ prenotations.prenotazione.id }}'">Visualizza</button>
+            </div>
+            {% endfor %}
+            {%for prenotation1 in oldPrenotation %}
+            <!-- Prenotazione Passata -->
+            <div class="card card-custom mb-4 d-flex flex-row p-3 align-items-center prenotazione passata d-none">
+                <img src="{{ prenotation1.photo }}" class="card-img me-3" alt="Ufficio">
+                <div class="flex-grow-1">
+                    <h5 class="mb-1 text-danger">{{ prenotation1.ufficio.titolo }}</h5>
+                    <p class="mb-2">{{ prenotation1.ufficio.descrizione }}</p>
+                    <button class="btn btn-outline-secondary" onclick="window.location.href='/SendReview/{{ prenotation1.prenotazione.id }}'">Lascia una recensione</button>
+                </div>
+                <button class="btn-visualizza" onclick="window.location.href='/ShowPrenotationDetails/{{ prenotation1.prenotazione.id }}'">Visualizza</button>
+            </div>
+
+            {% endfor %}
+        </div>
+    </div>
+</main>
+<!--FOOTER-->
+{% include "Footer/footer.html.twig" %}
+
+
+<script>
+    const btnAttive = document.getElementById("btn-attive");
+    const btnPassate = document.getElementById("btn-passate");
+    const prenotazioni = document.querySelectorAll(".prenotazione");
+
+    btnAttive.addEventListener("click", () => {
+        btnAttive.classList.add("active");
+        btnPassate.classList.remove("active");
+        prenotazioni.forEach(card => {
+            card.classList.toggle("d-none", card.classList.contains("passata"));
+        });
+    });
+
+    btnPassate.addEventListener("click", () => {
+        btnPassate.classList.add("active");
+        btnAttive.classList.remove("active");
+        prenotazioni.forEach(card => {
+            card.classList.toggle("d-none", card.classList.contains("attiva"));
+        });
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

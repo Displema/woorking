@@ -1,0 +1,101 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%; /* importante! */
+}
+
+body {
+    background-color: #222;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* CORRETTO */
+}
+main {
+    flex: 1;
+}
+
+
+
+.btn-toggle {
+    background-color: #444;
+    color: white;
+    border-radius: 20px;
+    padding: 0.5rem 1.2rem;
+    transition: background 0.3s;
+}
+
+.btn-toggle.active {
+    background-color: #dc3545;
+}
+
+.card-custom {
+    background-color: white;
+    border: none;
+    border-radius: 16px;
+    position: relative; /* necessario per posizionare il pulsante in alto a destra */
+    transition: transform 0.2s;
+    padding: 1rem;
+    color: #000;
+}
+
+.card-custom:hover {
+    transform: scale(1.01);
+}
+
+.card-img {
+    width: 120px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.card-body p {
+    color: #000;
+}
+.recensione-text {
+    color: #888; /* grigio per "lascia una recensione" */
+    font-weight: 500;
+    margin-top: 0.5rem;
+}
+.btn-outline-secondary:hover {
+    background-color: #000;
+    color: white;
+    border-color: #000;
+}
+
+
+
+.btn-visualizza {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background-color: #dc3545;
+    border: none;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 0.9rem;
+}
+
+.btn-visualizza:hover {
+    background-color: #b02a37;
+}
+
+.btn-outline-light {
+    border-radius: 20px;
+}
+
+.btn-link-custom {
+    color: #dc3545;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.btn-link-custom:hover {
+    text-decoration: underline;
+}

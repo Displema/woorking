@@ -1,24 +1,47 @@
 <?php
+namespace View;
 
-use TechnicalServiceLayer\Foundation\FEntityManager;
-require_once 'C:\Users\39327\Desktop\UFFICI\vendor\autoload.php';
-require_once 'C:\Users\39327\Desktop\UFFICI\bootstrap.php';
+require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__.'/../bootstrap.php';
 use \controller\COffice;
-$em = FEntityManager::getInstance()->getEntityManager();
+
+
+class Vmostrauffici
+{
+private $loader;
 
 // Start Twig
-$loader = new \Twig\Loader\FilesystemLoader([
-    __DIR__ . '/../html',  // on the directory up
-    __DIR__               // current directory of view
-]);
-$twig = new \Twig\Environment($loader);
 
+public function __construct()  {
+    $this->loader = new \Twig\Loader\FilesystemLoader([__DIR__ . '/../html',  // on the directory up
+        __DIR__       ]);
+}
+
+public function startsearch(){
+    $twig = new \Twig\Environment($this->loader);
+    echo $twig->render('/home/homeaccess.html.twig');
+}
 // Read params GET
-$luogo = $_GET['luogo'] ?? '';
-$data = $_GET['data'] ?? '';
-$fascia = $_GET['fascia'] ?? '';
-//Call to  function to search office and show them
-$Result = COffice::search($luogo,$data,$fascia);
-    // Render Twig
-    echo $twig->render('/uffici/uffici.html.twig', ['uffici' => $Result]);
+public function showuffici($Result,$data,$fascia){
+     $twig = new \Twig\Environment($this->loader);
+    echo $twig->render('/uffici/uffici.html.twig', ['uffici' => $Result,'data' => $data,'fascia' => $fascia]);
+}
 
+public function showOfficedetails( $Result,$data,$fascia){
+    $twig = new \Twig\Environment($this->loader);
+    $ufficio = $Result[0];
+    echo $twig->render('/DettaglioOffice/DettaglioOffice.html.twig', ['ufficio' => $ufficio,'data' => $data,'fascia' => $fascia]);
+}
+public function showconfirmedpage1(){
+    $twig = new \Twig\Environment($this->loader);
+    echo $twig->render('/conferme/confermaprenotazione.html.twig');
+}
+
+public function showAllRecension($recensione,$ufficio){
+    $twig = new \Twig\Environment($this->loader);
+    echo $twig->render('/recensioni/recensioni.html.twig', ['recensioni' => $recensione,'ufficio' => $ufficio]);
+}
+
+
+
+}

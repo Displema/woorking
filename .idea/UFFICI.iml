@@ -10,7 +10,9 @@
       <sourceFolder url="file://$MODULE_DIR$/./Testing/Fixtures" isTestSource="false" packagePrefix="Testing\Fixtures\" />
       <sourceFolder url="file://$MODULE_DIR$/./TechnicalServiceLayer/Repository" isTestSource="false" packagePrefix="TechnicalServiceLayer\Repository\" />
       <sourceFolder url="file://$MODULE_DIR$/./TwigTesting" isTestSource="false" packagePrefix="Twig\" />
-      <sourceFolder url="file://$MODULE_DIR$/./controller" isTestSource="false" packagePrefix="controller\" />
+      <sourceFolder url="file://$MODULE_DIR$/./Controller" isTestSource="false" packagePrefix="Controller\" />
+      <sourceFolder url="file://$MODULE_DIR$/./Routes" isTestSource="false" packagePrefix="Routes\" />
+      <sourceFolder url="file://$MODULE_DIR$/./View" isTestSource="false" packagePrefix="View\" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/annotations" />

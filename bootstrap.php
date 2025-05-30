@@ -42,3 +42,18 @@ function getEntityManager(): EntityManager
     // Ora crea EntityManager passando la connessione e la configurazione
     return new EntityManager($connection, $config);
 }
+
+function getAuth(): \Delight\Auth\Auth
+{
+    $connectionParams = [
+        'dbname' => "login",
+        'user' => $_ENV['DB_USER'],
+        'password' => $_ENV['DB_PASSWORD'],
+        'port' => $_ENV['DB_PORT'],
+        'host' => $_ENV['DB_HOST'],
+        'driver' => $_ENV['DB_DRIVER'],
+    ];
+
+    $db = \Delight\Db\PdoDatabase::fromDsn(new \Delight\Db\PdoDsn("mysql:dbname=my-db;host=localhost;charset=utf8mb4", 'root', 'passwordroot'));
+    return new \Delight\Auth\Auth($db);
+}
