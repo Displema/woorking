@@ -9,7 +9,7 @@ use TechnicalServiceLayer\Foundation\FEntityManager;
 
 class EUfficioRepository extends EntityRepository
 {
-    public static function findByIndirizzoDataFascia($indirizzo, $fascia, $date)
+    public function findByIndirizzoDataFascia($indirizzo, $fascia, $date)
     {
         $em = FEntityManager::getEntityManager();
 
@@ -34,7 +34,7 @@ class EUfficioRepository extends EntityRepository
             return [];
         }
     }
-    public static function  findbythree($indirizzo, $date,$fascia): mixed
+    public function findbythree($indirizzo, $date,$fascia): mixed
     {
         $em = FEntityManager::getInstance()->getEntityManager();
         try {
@@ -55,6 +55,5 @@ class EUfficioRepository extends EntityRepository
             echo "Error: " . $e->getMessage();
             return [];
         }
-
     }
 }

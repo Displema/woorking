@@ -9,13 +9,4 @@ use TechnicalServiceLayer\Foundation\FEntityManager;
 
 class EPrenotazioneRepository extends EntityRepository
 {
-
-    public function savePrenotation( EPrenotazione $prenotazione ){
-        $em = FEntityManager::getInstance()->getEntityManager();
-        $em->persist($prenotazione); // inserisce in "pending"
-        $em->flush();
-    }
-
-
-
 }

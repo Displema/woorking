@@ -8,7 +8,7 @@ use TechnicalServiceLayer\Foundation\FEntityManager;
 
 class ERecensioneRepository extends EntityRepository
 {
-    public static function getRecensioneByUfficio($idufficio)
+    public function getReviewByOffice($idufficio)
     {
         FEntityManager::getInstance();
         $em = FEntityManager::getEntityManager();

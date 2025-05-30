@@ -1,27 +1,27 @@
 <?php
 namespace Controller;
+
 use DateTime;
+use Doctrine\ORM\EntityManager;
 use Model\Enum\FasciaOrariaEnum;
 use Model\EPrenotazione;
 use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
 use View\Vmostrauffici;
 use Model\ERecensione;
 use Model\EUfficio;
-use TechnicalServiceLayer\Foundation\FUfficio;
-
-use TechnicalServiceLayer\Foundation\FEntityManager;
 use View\VRecensioni;
-
 
 class COffice
 {
-    public  function Show($id,$data,$fascia)
-
+    private EntityManager $entity_manager;
+    public function __construct()
     {
-
-
+        $this->entity_manager = getEntityManager();
+    }
+    public function show($id, $data, $fascia): void
+    {
         $ufficiphoto=[];
-        $em = FEntityManager::getInstance()->getEntityManager();
+        $em = getEntityManager();
         $fotoUrl=[];
         $ufficio = $em->getRepository(EUfficio::class)->find($id);
         $fotoUfficio = $em->getRepository(\Model\EFoto::class)->findBy(['ufficio' => $ufficio->getId()]);
@@ -29,7 +29,6 @@ class COffice
             if ($foto) {
                 $idPhoto = $foto->getId();
                 $fotoUrl[] = "/static/img/" . $idPhoto;
-
             }
         }
 
@@ -37,54 +36,44 @@ class COffice
         $ufficiphoto[]=[
         'ufficio' => $ufficio,
         'foto' => $fotoUrl
-    ];
+        ];
         $view = new Vmostrauffici();
-        $view->showOfficedetails($ufficiphoto,$data,$fascia);
+        $view->showOfficedetails($ufficiphoto, $data, $fascia);
     }
 
-    public static function ShowRecensioni($id){
-        $em = FEntityManager::getInstance()->getEntityManager();
+    public function showReviews($id)
+    {
         $recensione = [];
-        $reporec=$em->getRepository(ERecensione::class);
-        $recensione = $reporec->getRecensioneByUfficio($id);
-        $ufficio = $em->getRepository(EUfficio::class)->find($id);
+        $repo=$this->entity_manager->getRepository(ERecensione::class);
+        $recensione = $repo->getReviewByOffice($id);
+        $ufficio = $this->entity_manager->getRepository(EUfficio::class)->find($id);
 
 
         $view = new VRecensioni();
-        $view->showAllRecension($recensione,$ufficio);
-
+        $view->showAllRecension($recensione, $ufficio);
     }
 
-    public static function GetOffice($id){
-        $em = FEntityManager::getInstance()->getEntityManager();
-        $office=$em->getRepository(EUfficio::class)->find($id);
-        return $office ;
-    }
+//    public function GetOffice($id)
+//    {
+//        return $this->entity_manager->getRepository(EUfficio::class)->find($id);
+//    }
 
-    public function search()
-
+    public function search(string $place, string $date, string $fascia)
     {
-        $em = FEntityManager::getInstance()->getEntityManager();
-        $repo=$em->getRepository(EUfficio::class);
-        $luogo=$_GET['luogo'];
-        $data=$_GET['data'];
-        $fascia=$_GET['fascia'];
+        $repo=$this->entity_manager->getRepository(EUfficio::class);
+//        $luogo=$_GET['luogo'];
+//        $data=$_GET['data'];
+//        $fascia=$_GET['fascia'];
 
-
-
-
-
-        $date = new DateTime($data);
-        $uffici = $repo->findbythree($luogo,$date,$fascia);
+        $date = new DateTime($date);
+        $uffici = $repo->findbythree($place, $date, $fascia);
         $ufficiConFoto = [];
         foreach ($uffici as $ufficio) {
-
-            $fotoEntity = $em->getRepository(\Model\EFoto::class)->findOneBy(['ufficio' => $ufficio->getId()]);
-
+            $repository = $this->entity_manager->getRepository(\Model\EFoto::class);
+            $fotoEntity = $repository->findOneBy(['ufficio' => $ufficio->getId()]);
             if ($fotoEntity) {
-               $idPhoto = $fotoEntity->getId();
-
-               $fotoUrl = $fotoEntity ? "/static/img/" . $idPhoto : null;
+                $idPhoto = $fotoEntity->getId();
+                $fotoUrl = "/static/img/$idPhoto";
                 $foto = $fotoUrl;
             }
 
@@ -95,28 +84,31 @@ class COffice
         }
 
 
-      $view= new Vmostrauffici();
-      $view->showuffici($ufficiConFoto,$data,$fascia);
-
+        $view= new Vmostrauffici();
+        $view->showuffici($ufficiConFoto, $date, $fascia);
     }
 
-    public function startsearch(){
+    public function startSearch(): void
+    {
         $view= new Vmostrauffici();
         $view->startsearch();
     }
 
 
-    public function showconfirmedPrenotation($idUfficio,$data,$fascia){
+    public function showReservationConfirm($idUfficio, $data, $fascia): void
+    {
         $FasciaEnum=FasciaOrariaEnum::from($fascia);
-        $em = FEntityManager::getInstance()->getEntityManager();
-        $ufficio = $em->getRepository(EUfficio::class)->find($idUfficio);
+
+        $ufficio = $this->entity_manager->getRepository(EUfficio::class)->find($idUfficio);
         $prenotazione = new EPrenotazione();
-        $prenotazione->setData(new DateTime($data));
-        $prenotazione->setUfficio($ufficio);
-        $prenotazione->setFascia($FasciaEnum);
-       $prenotazionerepo=$em->getRepository(EPrenotazione::class);
-       $prenotazionerepo->savePrenotation($prenotazione);
+        $prenotazione
+            ->setData(new DateTime($data))
+            ->setUfficio($ufficio)
+            ->setFascia($fascia);
+
+        $this->entity_manager->persist($prenotazione);
+        $this->entity_manager->flush();
         $view= new Vmostrauffici();
-       $view->showconfirmedpage1();
+        $view->showconfirmedpage1();
     }
 }
