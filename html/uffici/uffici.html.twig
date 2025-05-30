@@ -33,7 +33,7 @@
             <div class="ufficio-card d-flex flex-column flex-md-row mx-auto">
                 <img src="{{ ufficio.fotoBase64 }}" alt="Foto Ufficio" class="ufficio-img">
                 <div class="ufficio-info">
-                    <a href="/View/VDettaglioOffice.php?id={{ufficio.ufficio.id}}" class="btn-prenota"><i class="fa-solid fa-calendar-check"></i> Prenota</a>
+                    <a href="/DetailsOffice/{{ ufficio.ufficio.id }}/{{ data }}/{{ fascia }}" class="btn-prenota"><i class="fa-solid fa-calendar-check"></i> Prenota</a>
                     <h2>{{ ufficio.ufficio.titolo }}</h2>
                     <p><strong>Indirizzo: </strong>{{ufficio.ufficio.indirizzo}}</p>
                     <p><strong>Posti disponibili: </strong>{{ ufficio.ufficio.numeroPostazioni }} </p>

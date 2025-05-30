@@ -10,9 +10,8 @@
     "doctrine/data-fixtures": "^2.0",
     "fakerphp/faker": "^1.24",
     "twig/twig": "^3.21",
-    "symfony/http-foundation": "^7.3",
-    "symfony/orm-pack": "^2.4",
-    "doctrine/dbal": "^4.2"
+    "doctrine/dbal": "^4.2",
+    "delight-im/auth": "^8.3"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest"
@@ -27,10 +26,12 @@
       "Core\\": "./Core",
       "Model\\Enum\\": "./Model/Enum",
       "Testing\\Fixtures\\": "./Testing/Fixtures",
-      "controller\\": "./controller",
+      "Controller\\": "./Controller",
+      "View\\": "./View",
       "Testing\\": "./Testing",
       "Twig\\": "./TwigTesting",
-      "TechnicalServiceLayer\\Repository\\": "./TechnicalServiceLayer/Repository"
+      "TechnicalServiceLayer\\Repository\\": "./TechnicalServiceLayer/Repository",
+      "Routes\\": "./Routes"
     }
   }
 }

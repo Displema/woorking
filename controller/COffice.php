@@ -1,44 +1,45 @@
 <?php
-namespace controller;
+namespace Controller;
 use DateTime;
-use Model\EFoto;
+use Model\Enum\FasciaOrariaEnum;
+use Model\EPrenotazione;
+use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
+use View\Vmostrauffici;
 use Model\ERecensione;
 use Model\EUfficio;
 use TechnicalServiceLayer\Foundation\FUfficio;
 
 use TechnicalServiceLayer\Foundation\FEntityManager;
+use View\VRecensioni;
 
 
 class COffice
 {
-    public static function Show($id)
+    public  function Show($id,$data,$fascia)
 
     {
+
+
         $ufficiphoto=[];
         $em = FEntityManager::getInstance()->getEntityManager();
-        $fotoBase64List=[];
+        $fotoUrl=[];
         $ufficio = $em->getRepository(EUfficio::class)->find($id);
         $fotoUfficio = $em->getRepository(\Model\EFoto::class)->findBy(['ufficio' => $ufficio->getId()]);
         foreach ($fotoUfficio as $foto) {
-
             if ($foto) {
-                $stream = $foto->getContent();
-                $fotoData = is_resource($stream) ? stream_get_contents($stream) : $stream;
-                $fotoBlob = 'data:image/jpeg;base64,' . base64_encode($fotoData);
-                $fotoBase64List[] = $fotoBlob;
+                $idPhoto = $foto->getId();
+                $fotoUrl[] = "/static/img/" . $idPhoto;
+
             }
-
-
-
-
         }
-       // echo "Foto trovate: " . count($fotoUfficio); // <-- debug
+
 
         $ufficiphoto[]=[
         'ufficio' => $ufficio,
-        'foto' => $fotoBase64List
+        'foto' => $fotoUrl
     ];
-        return $ufficiphoto;
+        $view = new Vmostrauffici();
+        $view->showOfficedetails($ufficiphoto,$data,$fascia);
     }
 
     public static function ShowRecensioni($id){
@@ -46,7 +47,12 @@ class COffice
         $recensione = [];
         $reporec=$em->getRepository(ERecensione::class);
         $recensione = $reporec->getRecensioneByUfficio($id);
-        return $recensione;
+        $ufficio = $em->getRepository(EUfficio::class)->find($id);
+
+
+        $view = new VRecensioni();
+        $view->showAllRecension($recensione,$ufficio);
+
     }
 
     public static function GetOffice($id){
@@ -55,35 +61,62 @@ class COffice
         return $office ;
     }
 
-    public static function search($luogo,$data,$fascia)
+    public function search()
 
     {
         $em = FEntityManager::getInstance()->getEntityManager();
         $repo=$em->getRepository(EUfficio::class);
-        //creation of dateobj Datetime with the date in input
+        $luogo=$_GET['luogo'];
+        $data=$_GET['data'];
+        $fascia=$_GET['fascia'];
+
+
+
+
 
         $date = new DateTime($data);
         $uffici = $repo->findbythree($luogo,$date,$fascia);
         $ufficiConFoto = [];
         foreach ($uffici as $ufficio) {
-            $fotoBlob = null;
+
             $fotoEntity = $em->getRepository(\Model\EFoto::class)->findOneBy(['ufficio' => $ufficio->getId()]);
 
             if ($fotoEntity) {
-                $stream = $fotoEntity->getContent();
-                $fotoData = is_resource($stream) ? stream_get_contents($stream) : $stream;
-                $fotoBlob = 'data:image/jpeg;base64,' . base64_encode($fotoData);
+               $idPhoto = $fotoEntity->getId();
+
+               $fotoUrl = $fotoEntity ? "/static/img/" . $idPhoto : null;
+                $foto = $fotoUrl;
             }
 
             $ufficiConFoto[] = [
                 'ufficio' => $ufficio,
-                'fotoBase64' => $fotoBlob,
+                'fotoBase64' => $foto,
             ];
         }
-        return $ufficiConFoto;
 
 
+      $view= new Vmostrauffici();
+      $view->showuffici($ufficiConFoto,$data,$fascia);
 
     }
 
+    public function startsearch(){
+        $view= new Vmostrauffici();
+        $view->startsearch();
+    }
+
+
+    public function showconfirmedPrenotation($idUfficio,$data,$fascia){
+        $FasciaEnum=FasciaOrariaEnum::from($fascia);
+        $em = FEntityManager::getInstance()->getEntityManager();
+        $ufficio = $em->getRepository(EUfficio::class)->find($idUfficio);
+        $prenotazione = new EPrenotazione();
+        $prenotazione->setData(new DateTime($data));
+        $prenotazione->setUfficio($ufficio);
+        $prenotazione->setFascia($FasciaEnum);
+       $prenotazionerepo=$em->getRepository(EPrenotazione::class);
+       $prenotazionerepo->savePrenotation($prenotazione);
+        $view= new Vmostrauffici();
+       $view->showconfirmedpage1();
+    }
 }

@@ -1,64 +1,73 @@
 <?php
-
 namespace Core;
-
-use JsonException;
 
 class Router
 {
-    private $routes = [];
+    private array $routes = [];
 
-    public function get($pattern, $callback): void
+    public function get(string $path, callable|string $handler): void
     {
-        $this->addRoute('GET', $pattern, $callback);
+        $this->addRoute('GET', $path, $handler);
     }
 
-    public function post($pattern, $callback): void
+    public function post(string $path, callable|string $handler): void
     {
-        $this->addRoute('POST', $pattern, $callback);
+        $this->addRoute('POST', $path, $handler);
     }
 
-    private function addRoute($method, $pattern, $callback): void
+    public function addRoute(string $method, string $path, callable|string $handler): void
     {
         $this->routes[] = [
-            'method' => $method,
-            'pattern' => '#^' . $pattern . '$#',
-            'callback' => $callback,
+            'method' => strtoupper($method),
+            'path' => $this->parseRoute($path),
+            'handler' => $handler,
+            'raw' => $path
         ];
     }
 
-    /**
-     * @throws JsonException
-     */
-    public function dispatch($method, $uri)
+    public function dispatch(string $requestUri, string $requestMethod): void
     {
-        $path = parse_url($uri, PHP_URL_PATH);
+        $requestUri = parse_url($requestUri, PHP_URL_PATH);
         foreach ($this->routes as $route) {
-            if ($route['method'] === $method &&
-                preg_match($route['pattern'], $path, $matches)) {
-                array_shift($matches); // remove full match (e.g. /user/42 -> 42)
+            if ($route['method'] !== strtoupper($requestMethod)) {
+                continue;
+            }
 
-                $matches[] = $_GET;
-                // If POST and JSON, parse and add as last argument
-                if ($method === 'POST') {
-                    $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
-                    if (str_contains($contentType, 'application/json')) {
-                        $json = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
-                        $matches[] = $json;
-                    } else {
-                        // Optionally: add $_POST for form-encoded data
-                        $matches[] = $_POST;
-                    }
+            $pattern = "@^" . preg_replace('/\{(\w+)\}/', '(?P<\1>[^/]+)', $route['raw']) . "$@D";
+
+            if (preg_match($pattern, $requestUri, $matches)) {
+                $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+
+                if (is_callable($route['handler'])) {
+                    call_user_func_array($route['handler'], $params);
+                } elseif (is_string($route['handler'])) {
+                    $this->callController($route['handler'], $params);
                 }
-
-                return call_user_func_array($route['callback'], $matches);
+                return;
             }
         }
 
-
-        // If no route matches
         http_response_code(404);
         echo "404 Not Found";
-        return null;
+    }
+
+    private function callController(string $handler, array $params): void
+    {
+        [$class, $method] = explode('@', $handler);
+
+        $class = "Controller\\$class";
+
+        if (class_exists($class) && method_exists($class, $method)) {
+            $controller = new $class;
+            call_user_func_array([$controller, $method], $params);
+        } else {
+            http_response_code(500);
+            echo "Handler not found: $handler";
+        }
+    }
+
+    private function parseRoute(string $route): string
+    {
+        return rtrim($route, '/') ?: '/';
     }
 }
