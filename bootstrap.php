@@ -55,5 +55,5 @@ function getAuth(): \Delight\Auth\Auth
     ];
 
     $db = \Delight\Db\PdoDatabase::fromDsn(new \Delight\Db\PdoDsn("mysql:dbname=my-db;host=localhost;charset=utf8mb4", 'root', 'passwordroot'));
-    return new \Delight\Auth\Auth($db);
+    return new \Delight\Auth\Auth($db, throttling: false);
 }
