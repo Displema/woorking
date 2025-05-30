@@ -20,7 +20,7 @@ class ESegnalazioneFixture extends AbstractFixture implements DependentFixtureIn
             $segnalazione = new ESegnalazione();
             $segnalazione
                 ->setCommento($faker->text($maxNbChars = 50))
-                ->setUfficio($this->getReference('EUffici_' . $i, EUfficio::class));
+                ->setUfficio($this->getReference('EUfficio_' . $i, EUfficio::class));
             $manager->persist($segnalazione);
             $this->addReference('ESegnalazione_' . $i, $segnalazione);
         }
@@ -30,7 +30,7 @@ class ESegnalazioneFixture extends AbstractFixture implements DependentFixtureIn
     public function getDependencies(): array
     {
         return array(
-            EPrenotazioneFixture::class,
+            EUfficioFixture::class,
         );
     }
 }

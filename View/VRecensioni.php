@@ -4,8 +4,8 @@ use TechnicalServiceLayer\Foundation\FEntityManager;
 require_once 'C:\Users\39327\Desktop\UFFICI\vendor\autoload.php';
 require_once 'C:\Users\39327\Desktop\UFFICI\bootstrap.php';
 
-use controller\CSearchOffice;
-require_once 'C:\Users\39327\Desktop\UFFICI\controller\CShowOffice.php';
+use controller\COffice;
+
 
 
 $em = FEntityManager::getInstance()->getEntityManager();
@@ -19,5 +19,6 @@ $twig = new \Twig\Environment($loader);
 
 // Leggi parametri GET
 $id = $_GET['id'] ?? '';
- $recensioni = \controller\CShowOffice::ShowRecensini($id);
-    echo $twig->render('/recensioni/recensioni.html.twig',['recensioni' => $recensioni]);
+ $recensioni = COffice::ShowRecensioni($id);
+ $office=COffice::GetOffice($id);
+    echo $twig->render('/recensioni/recensioni.html.twig',['recensioni' => $recensioni,'ufficio'=> $office]);

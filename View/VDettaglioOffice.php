@@ -20,6 +20,6 @@ $twig = new \Twig\Environment($loader);
 $id = $_GET['id'] ?? '';
 
 
-$Result = \controller\CShowOffice::Show($id);
+$Result = \controller\COffice::Show($id);
 $ufficio = $Result[0];
 echo $twig->render('/DettaglioOffice/DettaglioOffice.html.twig', ['ufficio' => $ufficio]);

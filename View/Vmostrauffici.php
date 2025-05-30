@@ -1,51 +1,24 @@
 <?php
-use TechnicalServiceLayer\Foundation\FUfficio;
-use TechnicalServiceLayer\Foundation\FEntityManager;
 
+use TechnicalServiceLayer\Foundation\FEntityManager;
 require_once 'C:\Users\39327\Desktop\UFFICI\vendor\autoload.php';
 require_once 'C:\Users\39327\Desktop\UFFICI\bootstrap.php';
-use controller\CSearchOffice;
-require_once 'C:\Users\39327\Desktop\UFFICI\controller\CsearchOffice.php';
+use \controller\COffice;
 $em = FEntityManager::getInstance()->getEntityManager();
 
-// Inizializza Twig
+// Start Twig
 $loader = new \Twig\Loader\FilesystemLoader([
-    __DIR__ . '/../html',  // vai su di un livello e poi html
-    __DIR__               // oppure solo la cartella corrente View
+    __DIR__ . '/../html',  // on the directory up
+    __DIR__               // current directory of view
 ]);
 $twig = new \Twig\Environment($loader);
 
-// Leggi parametri GET
+// Read params GET
 $luogo = $_GET['luogo'] ?? '';
 $data = $_GET['data'] ?? '';
 $fascia = $_GET['fascia'] ?? '';
-/*
-
-if ($luogo && $data && $fascia) {
-    $dateObj = new DateTime($data);
-
-    // Cerca uffici
-    $uffici = FUfficio::findby($luogo, $dateObj, $fascia);
-
-    // Aggiungi foto base64
-    $ufficiConFoto = [];
-    foreach ($uffici as $ufficio) {
-        $fotoBlob = null;
-        $fotoEntity = $em->getRepository(\Model\EFoto::class)->findOneBy(['ufficio' => $ufficio->getId()]);
-
-        if ($fotoEntity) {
-            $stream = $fotoEntity->getContent();
-            $fotoData = is_resource($stream) ? stream_get_contents($stream) : $stream;
-            $fotoBlob = 'data:image/jpeg;base64,' . base64_encode($fotoData);
-        }
-
-        $ufficiConFoto[] = [
-            'ufficio' => $ufficio,
-            'fotoBase64' => $fotoBlob,
-        ];
-    }
-*/
-$Result = CSearchOffice::search($luogo,$data,$fascia);
+//Call to  function to search office and show them
+$Result = COffice::search($luogo,$data,$fascia);
     // Render Twig
     echo $twig->render('/uffici/uffici.html.twig', ['uffici' => $Result]);
 
