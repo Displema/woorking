@@ -16,11 +16,12 @@ class CHome
 
     public function index()
     {
+        $view = new VHome();
         if (USession::isSetSessionElement('user')) {
-            echo USession::getSessionElement('user');
+
         }
 
-        $view = new VHome();
+
         $view->index();
     }
 }
