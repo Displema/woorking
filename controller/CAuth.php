@@ -100,9 +100,11 @@ class CAuth
         }
     }
 
-    public function loginUser(string $email, string $password, string $rememberMe): void
+    public function loginUser(string $email, string $password, string $rememberMe = "0"): void
     {
         try {
+
+
             if ((bool) $rememberMe) {
                 // Remember the user for 30 days
                 $duration = 60*60*24*30;
@@ -115,7 +117,7 @@ class CAuth
             $repo = $this->entity_manager->getRepository(EProfilo::class);
             $profile = $repo->findOneBy(['idUtente' => $userid]);
 
-            USession::setSessionElement("User", $profile);
+            USession::setSessionElement("user", $profile);
 
             echo "User is logged in. Your profile is $profile";
         } catch (\Delight\Auth\InvalidEmailException $e) {
