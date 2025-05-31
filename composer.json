@@ -9,8 +9,7 @@
     "ramsey/uuid-doctrine": "^2.1",
     "doctrine/data-fixtures": "^2.0",
     "fakerphp/faker": "^1.24",
-    "twig/twig": "^3.21",
-    "doctrine/dbal": "^4.2"
+    "twig/twig": "^3.21"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest"
@@ -22,12 +21,14 @@
     "psr-4": {
       "Model\\": "./Model",
       "TechnicalServiceLayer\\Foundation\\": "./TechnicalServiceLayer/Foundation",
+      "Controller\\": "./controller",
       "Core\\": "./Core",
       "Model\\Enum\\": "./Model/Enum",
       "Testing\\Fixtures\\": "./Testing/Fixtures",
       "Testing\\": "./Testing",
       "Twig\\": "./TwigTesting",
-      "TechnicalServiceLayer\\Repository\\": "./TechnicalServiceLayer/Repository"
+      "TechnicalServiceLayer\\Repository\\": "./TechnicalServiceLayer/Repository",
+      "View\\": "./View"
     }
   }
 }

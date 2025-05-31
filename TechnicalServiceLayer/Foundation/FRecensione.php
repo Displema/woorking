@@ -12,7 +12,7 @@ class FRecensione
         FEntityManager::getInstance();
         $em = FEntityManager::getEntityManager();
         try {
-            $query = "SELECT e FROM ERecensione e
+            $query = "SELECT e FROM Model\ERecensione e
             JOIN e.idPrenotazione p 
             JOIN p.idUfficio u
             WHERE u.id = :idufficio";

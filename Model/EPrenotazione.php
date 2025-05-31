@@ -3,15 +3,17 @@ namespace Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Model\Enum\FasciaOrariaEnum;
+use Model\Enum\UserEnum;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 use DateTime;
+use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
 use TechnicalServiceLayer\Repository\EProfiloRepository;
 use TechnicalServiceLayer\Repository\EUtenteRepository;
 
-#[ORM\Entity(repositoryClass: EProfiloRepository::class)]
+#[ORM\Entity(repositoryClass: EPrenotazioneRepository::class)]
  #[ORM\Table(name: "Prenotazioni")]
 class EPrenotazione
 {
@@ -38,8 +40,6 @@ class EPrenotazione
     #[ORM\OneToOne(targetEntity:EPagamento::class, mappedBy: "prenotazione", cascade: ["persist", "remove"])]
     private ?EPagamento $pagamento = null;
 
-     #[ORM\OneToOne(targetEntity:ESegnalazione::class, mappedBy: "prenotazione", cascade: ["persist", "remove"])]
-    private ?ESegnalazione $segnalazione = null;
 
     public function __construct()
     {

@@ -1,0 +1,137 @@
+/* RESET BASE */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #222;
+    color: #fff;
+}
+
+/* NAVBAR */
+.navbar {
+    background-color: #000;
+    padding: 1.5rem 2rem;
+}
+
+.navbar-brand img {
+    width: 50px;
+}
+
+.nav-link {
+    color: white !important;
+    font-size: 1.1rem;
+    margin-left: 1rem;
+}
+
+.nav-link:hover {
+    color: #e74c3c !important;
+}
+
+/* RISULTATI TITOLO */
+.risultati-wrapper h1 {
+    text-align: center;
+    background-color: #000;
+    color: white;
+    padding: 40px 0;
+}
+
+/* UFFICIO CONTAINER */
+.ufficio-container {
+    padding: 40px 15px;
+    background-color: #222;
+}
+
+/* CARD UFFICIO */
+.ufficio-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.ufficio-img {
+    width: 100%;
+    max-width: 40%;
+    object-fit: cover;
+    height: auto;
+}
+
+.ufficio-info {
+    position: relative;
+    padding: 30px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.ufficio-info h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #111;
+}
+
+.ufficio-info p {
+    font-size: 1.05rem;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.prezzo {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #e74c3c;
+    text-align: right;
+}
+
+.btn-prenota {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 30px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.3s ease, transform 0.2s;
+}
+
+.btn-prenota:hover {
+    background: linear-gradient(135deg, #ff6f61, #e74c3c);
+    transform: scale(1.05);
+}
+
+/* FOOTER */
+/* Footer */
+footer {
+    font-size: 0.95rem;
+}
+
+footer h5 {
+    font-size: 1.1rem;
+}
+
+footer a:hover {
+    color: #5e0505 !important;
+}
+.bg-dark {
+    background-color: #000 !important;
+    color: #fff !important;
+}
+
+

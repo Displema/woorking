@@ -1,0 +1,17 @@
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+#content-wrapper {
+    flex: 1 0 auto; /* permette al contenuto di crescere */
+}
+#footer-placeholder {
+    flex-shrink: 0; /* il footer non si riduce */
+}
+

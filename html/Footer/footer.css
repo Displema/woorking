@@ -1,0 +1,19 @@
+footer {
+    font-size: 0.95rem;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+footer h5 {
+    font-size: 1.1rem;
+}
+
+footer a:hover {
+    color: #5e0505 !important;
+}
+
+.bg-dark {
+    background-color: #000 !important;
+    color: #fff !important;
+}

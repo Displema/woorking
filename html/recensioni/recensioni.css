@@ -1,0 +1,21 @@
+body{
+    background-color: #222 !important;
+}
+.star-rating {
+    font-size: 2rem;
+    color: #ccc;
+    cursor: pointer;
+}
+
+.star-rating .fa-star.checked {
+    color: #f39c12;
+}
+
+.form-container {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin-top: 5%;
+    margin-bottom: 5%;
+}

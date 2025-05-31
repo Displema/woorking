@@ -7,14 +7,14 @@
   <!-- Tabler CSS -->
   <link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/css/tabler.min.css" rel="stylesheet">
   <!-- CSS Personalizzato -->
-  <link href="home.css" rel="stylesheet">
+  <link href="/html/home_locatore/homeLocatore.css" rel="stylesheet">
   <!-- FontAwesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
   
     <!-- Creo la navbar -->
-  <div id="navbar-container"></div>
+    {% include '/navbar/NavBarLocatore.html.twig' %}
 
 
   <!-- Contenuto principale -->
@@ -25,11 +25,6 @@
   <!-- Titolo -->
   <div class="flex-grow-1 text-center text-md-start mb-3 mb-md-0">
     <h1 class="welcome-title">Bentornato in Cooworking</h1>
-
-
-
-
-
 
 
 
@@ -104,8 +99,6 @@
 
   <!-- Tabler JS -->
   <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/js/tabler.min.js"></script>
-  <!-- Navbar -->
-  <script src="/js/navbar.js"></script>
-
+  </div>
 </body>
 </html>

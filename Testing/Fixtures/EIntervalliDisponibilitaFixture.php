@@ -8,7 +8,7 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Model\EIntervalloDisponibilita;
-use Model\Enum\FasciaOrariaEnum;
+use Model\Enum\UserEnum;
 use Model\EUfficio;
 
 class EIntervalliDisponibilitaFixture extends AbstractFixture implements DependentFixtureInterface
@@ -21,7 +21,7 @@ class EIntervalliDisponibilitaFixture extends AbstractFixture implements Depende
             $intervallo = new EIntervalloDisponibilita();
             $intervallo
                 ->setUfficio($this->getReference('EUfficio_' . $i, EUfficio::class))
-                ->setFascia($faker->randomElement(FasciaOrariaEnum::class))
+                ->setFascia($faker->randomElement(UserEnum::class))
                 ->setDataInizio($faker->dateTimeBetween('-120 days', '-60 days'))
                 ->setDataFine($faker->dateTimeBetween('now', '+60 days'));
             $manager->persist($intervallo);

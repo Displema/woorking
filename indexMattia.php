@@ -7,9 +7,9 @@ use Model\EServiziAggiuntivi;
 use Model\EUfficio;
 
 
-require_once 'C:\Users\Lenovo\Desktop\woorking\bootstrap.php';
-require_once 'C:\Users\Lenovo\Desktop\woorking\vendor/autoload.php';
-
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/bootstrap.php';
+/*
 $entity_manager = getEntityManager();
 
 $uffici = $entity_manager->getRepository(EUfficio::class)->findAll();
@@ -34,12 +34,19 @@ foreach ($uffici as $ufficio) {
     ];
 
 }
-$loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/Templates');
+$loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '\html');
 $twig = new \Twig\Environment($loader, [
     'cache' => false,
 ]);
 
-echo $twig->render('gestione_uffici.html.twig', [
+echo $twig->render('/gestione_uffici/gestione_uffici.html.twig', [
 
     'uffici' => $UfficiCompleti,
 ]);
+*/
+//loading route file
+$router = require __DIR__ . '/Routes/web.php';
+
+//execution of dispatch
+$router->dispatch($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
+

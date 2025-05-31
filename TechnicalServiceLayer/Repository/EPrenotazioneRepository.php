@@ -1,10 +1,26 @@
 <?php
 namespace TechnicalServiceLayer\Repository;
 
-use Doctrine\Common\Collections\ArrayCollection;
+
 use Doctrine\ORM\EntityRepository;
-use Doctrine\Common\Collections\Collection;
+
+use Model\EPrenotazione;
+use Model\EUfficio;
 
 class EPrenotazioneRepository extends EntityRepository
 {
+
+    /**
+     * @param EUfficio $ufficio
+     * @return EPrenotazione|null
+     */
+    public function getPrenotazioneByUfficio(EUfficio $ufficio): ?EPrenotazione
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.ufficio = :ufficio')
+            ->setParameter('ufficio', $ufficio)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+    }
 }

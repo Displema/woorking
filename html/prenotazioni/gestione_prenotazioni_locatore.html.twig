@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestione Prenotazioni - Coworking</title>
+  
+  <!-- Tabler Core CSS -->
+  <link href="https://unpkg.com/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet"/>
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <!-- CSS personalizzato -->
+  <link rel="stylesheet" href="/html/prenotazioni/gestione_prenotazioni.css" />
+</head>
+
+<body>
+<!-- Creo la navbar -->
+{% include '/navbar/NavBarLocatore.html.twig' %}
+
+    <!-- Main Content -->
+    <div class="page-wrapper main-content">
+      <!-- Header -->
+      <div class="container-xl mt-5">
+        <h1 class="mb-3">Gestione Prenotazioni</h1>
+        <p class="text-muted mb-4">Visualizza e gestisci tutte le prenotazioni attive e passate del tuo spazio coworking.</p>
+
+
+        <!-- Tabs -->
+        <div class="tabs">
+          <div class="tab active" data-tab="attive">Prenotazioni Attive</div>
+          <div class="tab" data-tab="passate">Prenotazioni Passate</div>
+        </div>
+
+
+        <!-- Prenotazioni Attive -->
+        <div id="attive" class="tab-content">
+          {% for ufficio in ufficiPresente %}
+          <div class="prenotazione">
+            <img src="{{ ufficio.foto }}" alt="Ufficio 1" />
+            <div class="prenotazione-info">
+              <h5>{{ ufficio.utente.nome }} {{ ufficio.utente.cognome }}</h5>
+              <p><strong>Data:</strong> {{ ufficio.prenotazioni.data|date("Y-m-d H:i:s")  }}</p>
+              <p><strong>Telefono:</strong> {{ ufficio.utente.telefono }}</p>
+              <p><strong>Email:</strong> </p>
+            </div>
+            <a href="#" class="btn-dettagli" data-bs-toggle="modal" data-bs-target="#modal-dettagliP"
+               data-nome="{{ ufficio.utente.nome }}"
+               data-cognome="{{ ufficio.utente.cognome }}"
+               data-data="{{ ufficio.prenotazioni.data|date('d M Y') }}"
+               data-telefono="{{ ufficio.utente.telefono }}"
+               data-email="{{ ufficio.utente.email }}"
+               data-nome-ufficio="{{ ufficio.ufficio.titolo }}"
+               data-descrizione="{{ ufficio.ufficio.descrizione }}"
+               data-prezzo="{{ ufficio.ufficio.prezzo }}"
+               data-superficie="{{ ufficio.ufficio.superficie }}"
+               data-fascia="{{ ufficio.intervallo.fascia.value }}"
+               data-indirizzo="{{ ufficio.ufficio.indirizzo }}"
+               data-postazioni="{{ ufficio.ufficio.numeroPostazioni }}"
+               data-servizi="{{ ufficio.servizio }}">
+              Dettagli
+            </a>
+
+          </div>
+          {% endfor %}
+        </div>
+
+
+        <!-- Prenotazioni Passate -->
+        <div id="passate" class="tab-content" style="display:none;">
+          {% for ufficio in ufficiPassati %}
+          <div class="prenotazione">
+            <img src="{{ ufficio.foto}} " alt="Ufficio 3" />
+            <div class="prenotazione-info">
+              <h5>{{ ufficio.utente.nome }} {{ ufficio.utente.cognome }}</h5>
+              <p><strong>Data:</strong> {{ ufficio.prenotazioni.data|date("Y-m-d H:i:s")  }}</p>
+              <p><strong>Telefono:</strong> {{ ufficio.utente.telefono }}</p>
+              <p><strong>Email:</strong> </p>
+            </div>
+            <a href="#" class="btn-dettagliP" data-bs-toggle="modal" data-bs-target="#modal-dettagliP"
+               data-nome="{{ ufficio.utente.nome }}"
+               data-cognome="{{ ufficio.utente.cognome }}"
+               data-data="{{ ufficio.prenotazioni.data|date('d M Y') }}"
+               data-telefono="{{ ufficio.utente.telefono }}"
+               data-email="{{ ufficio.utente.email }}"
+               data-nome-ufficio="{{ ufficio.ufficio.titolo }}"
+               data-descrizione="{{ ufficio.ufficio.descrizione }}"
+               data-prezzo="{{ ufficio.ufficio.prezzo }}"
+               data-superficie="{{ ufficio.ufficio.superficie }}"
+               data-fascia="{{ ufficio.intervallo.fascia.value }}"
+               data-indirizzo="{{ ufficio.ufficio.indirizzo }}"
+               data-postazioni="{{ ufficio.ufficio.numeroPostazioni }}"
+               data-servizi="{{ ufficio.servizio }}">
+              Dettagli
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+
+  <!-- creo il modal che viene chiamato dallo script js -->
+{% include '/prenotazioni/modal_dettagli.html.twig' %}
+
+
+  <!-- Tabler Core JS -->
+  <script src="https://unpkg.com/@tabler/core@latest/dist/js/tabler.min.js"></script>
+
+
+  <!-- Chiamo lo script per il modal e le tabs-->
+  <script src="\js\gestione_prenotazioni.js"></script>
+
+ 
+</body>
+</html>
