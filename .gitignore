@@ -471,4 +471,5 @@ composer.lock
 /phpcs.xml
 .vscode/launch.json
 
-.idea
+.idea/
+.iml

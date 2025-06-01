@@ -34,7 +34,7 @@ class EProfilo
     #[ORM\Column(type: "date", nullable: false)]
     private DateTime $dataNascita;
     #[ORM\Column(type: "boolean")]
-    private bool $isAdmin;
+    private bool $isAdmin = false;
 
     public function __construct()
     {

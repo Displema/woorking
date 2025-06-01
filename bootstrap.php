@@ -1,9 +1,11 @@
 <?php
+
+use Delight\Auth\Auth;
+use Delight\Db\PdoDatabase;
+use Delight\Db\PdoDsn;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\DriverManager;
-
-
 use Doctrine\DBAL\Types\Type;
 use Ramsey\Uuid\Doctrine\UuidType;
 
@@ -43,7 +45,7 @@ function getEntityManager(): EntityManager
     return new EntityManager($connection, $config);
 }
 
-function getAuth(): \Delight\Auth\Auth
+function getAuth(): Auth
 {
     $connectionParams = [
         'dbname' => "login",
@@ -54,6 +56,10 @@ function getAuth(): \Delight\Auth\Auth
         'driver' => $_ENV['DB_DRIVER'],
     ];
 
-    $db = \Delight\Db\PdoDatabase::fromDsn(new \Delight\Db\PdoDsn("mysql:dbname=my-db;host=localhost;charset=utf8mb4", 'root', 'passwordroot'));
-    return new \Delight\Auth\Auth($db);
+    $db = PdoDatabase::fromDsn(new PdoDsn(
+        "mysql:dbname=my-db;host=localhost;charset=utf8mb4",
+        'root',
+        'passwordroot'
+    ));
+    return new Auth($db, throttling: false);
 }
