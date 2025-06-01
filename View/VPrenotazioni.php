@@ -18,13 +18,18 @@ class VPrenotazioni
             __DIR__]);
     }
 
-    public function showPrenotation($prenotation,$oldPrenotation){
+    public function showPrenotation($reservation,$oldreservation){
         $twig = new \Twig\Environment($this->loader);
-        echo $twig->render('/Prenotazioni/Prenotazione.html.twig', ['prenotation' => $prenotation,'oldPrenotation'=>$oldPrenotation]);
+        echo $twig->render('/Prenotazioni/Prenotazione.html.twig', ['reservations' => $reservation,'oldreservations'=>$oldreservation]);
     }
 
-    public function showPrenotationDetails($prenotation){
+    public function showReservationDetails($reservation){
         $twig = new \Twig\Environment($this->loader);
-        echo $twig->render('Prenotazioni/VisualizzaPrenotazioni.html.twig', ['prenotation' => $prenotation]);
+        echo $twig->render('Prenotazioni/VisualizzaPrenotazioni.html.twig', ['reservations' => $reservation]);
+    }
+
+    public function showplacenotavaible(){
+        $twig = new \Twig\Environment($this->loader);
+        echo $twig->render('/conferme/Postinondisponibili.html.twig');
     }
 }

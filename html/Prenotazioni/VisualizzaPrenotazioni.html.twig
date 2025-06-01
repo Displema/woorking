@@ -18,10 +18,10 @@
     <div class="row g-4">
 
         <!-- Galleria Immagini -->
-        {% for prenotations in prenotation %}
+        {% for reservation in reservations %}
         <div class="col-lg-6">
             <div class="galleria-foto d-flex flex-wrap gap-3">
-                {% for photo in prenotations.foto %}
+                {% for photo in reservation.photo %}
                 <img src="{{ photo }}" class="img-fluid rounded" alt="Foto 1">
                 {%endfor %}
             </div>
@@ -30,14 +30,14 @@
         <!-- Info Ufficio -->
         <div class="col-lg-6">
             <div class="info-ufficio">
-                <h1 class="mb-3">{{ prenotations.ufficio.titolo }}</h1>
-                <p><strong>Indirizzo:</strong> {{ prenotations.ufficio.indirizzo }}</p>
-                <p><strong>Posti disponibili:</strong>{{ prenotations.ufficio.numeroPostazioni}}</p>
-                <p><strong>Contatti:</strong> info@affittaufficio.it - +39 0123 456789</p>
-                <p><strong>Descrizione:</strong> {{ prenotations.ufficio.descrizione }}</p>
+                <h1 class="mb-3">{{ reservation.office.titolo }}</h1>
+                <p><strong>Indirizzo: </strong> {{ reservation.office.indirizzo }}</p>
+                <p><strong>Posti disponibili: </strong>{{reservation.office.numeroPostazioni}}</p>
+                <p><strong>Contatti: </strong> info@affittaufficio.it - +39 0123 456789</p>
+                <p><strong>Descrizione: </strong> {{ reservation.office.descrizione }}</p>
 
                 <hr>
-                <p><strong>Prenotato il:</strong> <span class="text-primary">{{ prenotations.prenotazione.data|date('d/m/Y')  }}</span> per la fascia della <span class="text-primary">{{ prenotation.prenotazione.fascia }}</span> </p>
+                <p><strong>Prenotato il:</strong> <span class="text-primary">{{ reservation.reservation.data|date('d/m/Y')  }}</span> per la fascia della <span class="text-primary">{{ prenotation.prenotazione.fascia }}</span> </p>
                 <p><strong>Prenotazione effettuata il:</strong> <span class="text-success">12/04/2026</span> alle ore <span class="text-success">08:40</span></p>
             </div>
         </div>

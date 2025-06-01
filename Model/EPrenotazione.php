@@ -24,7 +24,7 @@ class EPrenotazione
      #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
     
-     #[ORM\ManyToOne]
+     #[ORM\ManyToOne(targetEntity: EUfficio::class,cascade: ["persist"])]
      //#[ORM\JoinColumn(name:"idUtente", referencedColumnName:"id")]
     private EUfficio $ufficio;
     
@@ -95,7 +95,7 @@ class EPrenotazione
         return $this;
     }
 
-    public function setData(DateTime $data): EPRenotazione
+    public function setData(DateTime $data): EPrenotazione
     {
         $this->data = $data;
         return $this;

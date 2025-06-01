@@ -17,8 +17,17 @@ class VRecensioni
             __DIR__       ]);
     }
 
-    public function showAllRecension($recensione,$ufficio){
+    public function showAllRecension($review,$office){
         $twig = new \Twig\Environment($this->loader);
-        echo $twig->render('/recensioni/recensioni.html.twig', ['recensioni' => $recensione,'ufficio' => $ufficio]);
+        echo $twig->render('/recensioni/recensioni.html.twig', ['reviews' => $review,'office' => $office]);
+    }
+    public function formreview($idreservation){
+        $twig = new \Twig\Environment($this->loader);
+        echo $twig->render('/recensioni/lasciaunarecensione.html.twig',['reservation' => $idreservation]);
+    }
+
+    public function confirmreview(){
+        $twig = new \Twig\Environment($this->loader);
+        echo $twig->render('/conferme/confermarecensione.html.twig');
     }
 }
