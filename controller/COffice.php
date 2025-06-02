@@ -4,13 +4,14 @@ namespace Controller;
 use DateTime;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
+use Model\EFoto;
 use Model\Enum\FasciaOrariaEnum;
 use Model\Enum\StatoUfficioEnum;
 use Model\EPrenotazione;
 use Model\EProfilo;
 use Exception;
 use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
-use View\Vmostrauffici;
+use View\VOffice;
 
 use Model\ERecensione;
 use Model\ERimborso;
@@ -20,13 +21,7 @@ use Model\EUfficio;
 use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
 use TechnicalServiceLayer\Repository\EUfficioRepository;
 use TechnicalServiceLayer\Utility\USession;
-
-
-use TechnicalServiceLayer\Foundation\FUfficio;
-
-use TechnicalServiceLayer\Foundation\FEntityManager;
 use View\VPrenotazioni;
-
 use View\VRecensioni;
 use View\VRedirect;
 use View\VResource;
@@ -41,52 +36,41 @@ class COffice
         $this->entity_manager = getEntityManager();
     }
 
-    public  function Show($id,$date,$fascia)
-
+    public function show($id, $date, $fascia): void
     {
+        $officeDetails=[];
+        $photoUrls=[];
+        $office = $this->entity_manager->getRepository(EUfficio::class)->find($id);
+        if (!$office) {
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
+        }
 
-
-        $officephoto=[];
-        $em = $this->entity_manager;
-        $photoUrl=[];
-        $office = $em->getRepository(EUfficio::class)->find($id);
-        $photooffice = $em->getRepository(\Model\EFoto::class)->findBy(['ufficio' => $office->getId()]);
-        foreach ($photooffice as $photo) {
+        $photosRepo = $this->entity_manager->getRepository(EFoto::class);
+        $photos = $photosRepo->findBy(['ufficio' => $office->getId()]);
+        foreach ($photos as $photo) {
             if ($photo) {
-                $idPhoto = $photo->getId();
-                $photoUrl[] = "/static/img/" . $idPhoto;
-
-
+                $photoUrls[] = '/static/img/' . $photo->getId();
             }
         }
 
-
-        $officephoto[]=[
-
+        $officeDetails[]= [
         'ufficio' => $office,
-        'foto' => $photoUrl
+        'foto' => $photoUrls
         ];
-        $view = new Vmostrauffici();
-        $view->showOfficedetails($officephoto, $date, $fascia);
+        $view = new VOffice();
+        $view->showOfficeDetails($officeDetails, $date, $fascia);
     }
 
-
-
-    public function GetOffice($id)
+    public function confirmReservation($date, $idOffice, $fascia)
     {
-        $em = $this->entity_manager;
-        return $em->getRepository(EUfficio::class)->find($id);
-    }
-
-
-
-    public function showconfirmedReservation($date,$idOffice,$fascia){
         $FasciaEnum=FasciaOrariaEnum::from($fascia);
         $em = $this->entity_manager;
         $em->beginTransaction();
         try {
             $office = $em->getRepository(EUfficio::class)->find($idOffice, \Doctrine\DBAL\LockMode::PESSIMISTIC_WRITE);
-            $reservationCount = $em->getRepository(EPrenotazione::class)->CountByOfficeDateFascia($idOffice, $date, $fascia);
+            $reservationCount = $em->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($idOffice, $date, $fascia);
             echo $reservationCount;
             $placesAvaible = $office->getNumeroPostazioni();
             echo $placesAvaible;
@@ -108,16 +92,16 @@ class COffice
             $em->flush();
             $em->commit();
 
-            $view = new Vmostrauffici();
+            $view = new VOffice();
             $view->showconfirmedpage1();
         } catch (Exception $e) {
             $em->rollback();
             echo $e->getMessage();
         }
-
     }
 
-    public  function ShowReview($id){
+    public function ShowReview($id)
+    {
         $em = $this->entity_manager;
         $review = [];
         $reporec=$em->getRepository(ERecensione::class);
@@ -127,55 +111,48 @@ class COffice
 
 
         $view = new VRecensioni();
-        $view->showAllRecension($review,$office);
-
+        $view->showAllRecension($review, $office);
     }
 
-    public function startsearch()
+    public function search(string $query, string $date, string $slot): void
     {
-        $view= new Vmostrauffici();
-        $view->startsearch();
-    }
+        $repo=$this->entity_manager->getRepository(EUfficio::class);
 
-    public function search(string $query, string $date, string $slot)
+        $place = $query;
+        try {
+            $date_parsed = new DateTime($date);
+        } catch (\Exception $e) {
+            $view = new VStatus();
+            $view->showStatus(400);
+            return;
+        }
 
-    {
-        $em = $this->entity_manager;
-        $repo=$em->getRepository(EUfficio::class);
-        // $place=$_GET['place'];
-        //$date1=$_GET['date'];
-        //$fascia=$_GET['fascia'];
+        $fascia = $slot;
+        $offices= $repo->findbythree($place, $date_parsed, $fascia);
 
-
-        $place= $query;
-        $date_parsed = new DateTime($date);
-        $fascia= $slot;
-        $offices= $repo->findbythree($place,$date_parsed,$fascia);
         $officewithphoto=[];
-        $reporeservaton=$em->getRepository(EPrenotazione::class);
+
+        $reservationRepo=$this->entity_manager->getRepository(EPrenotazione::class);
+
         $photoEntity = [];
         foreach ($offices as $office) {
-            if ($office->isHidden()){
+            if ($office->isHidden()) {
                 continue;
             }
-            $reservationcount=$reporeservaton->CountByOfficeDateFascia($office,$date_parsed,$fascia);
+            $reservationcount=$reservationRepo->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $fascia);
             $placeavaible= $office->getNumeroPostazioni();
-            if($reservationcount<$placeavaible){
-
-
-                $photoEntity = $em->getRepository(\Model\EFoto::class)->findOneBy(['ufficio' => $office->getId()]);
+            if ($reservationcount<$placeavaible) {
+                $photoEntity = $this->entity_manager->getRepository(\Model\EFoto::class)->findOneBy(['ufficio' => $office->getId()]);
 
                 if ($photoEntity) {
                     $idPhoto = $photoEntity->getId();
 
                     $photoUrl = $photoEntity ? "/static/img/" . $idPhoto : null;
-
-                }else {
+                } else {
                     $photoUrl = "https://cdn.pixabay.com/photo/2024/07/20/17/12/warning-8908707_1280.png";
                 }
-            } else{
+            } else {
                 continue;
-
             }
             $officewithphoto[] = [
                 'office' => $office,
@@ -184,10 +161,8 @@ class COffice
             ];
         }
 
-        $view= new Vmostrauffici();
-        $view->showuffici($officewithphoto,$date,$fascia);
-
-
+        $view= new VOffice();
+        $view->showuffici($officewithphoto, $date, $fascia);
     }
 
 
@@ -218,7 +193,7 @@ class COffice
         try {
             $this->entity_manager->persist($office);
             $this->entity_manager->flush();
-        } catch (ORMException $e) {
+        } catch (ORMException) {
             $view = new VStatus();
             $view->showStatus(500);
         }
@@ -233,7 +208,7 @@ class COffice
     {
         try {
             $user = USession::requireAdmin();
-        } catch (UserNotAuthenticatedException $e) {
+        } catch (UserNotAuthenticatedException) {
             $view = new VStatus();
             $view->showStatus(403);
             return;
@@ -260,8 +235,8 @@ class COffice
     public function deleteOffice(string $id, string $shouldRefund = '0'): void
     {
         try {
-            $user = USession::requireAdmin();
-        } catch (UserNotAuthenticatedException $e) {
+            USession::requireAdmin();
+        } catch (UserNotAuthenticatedException) {
             $view = new VStatus();
             $view->showStatus(403);
             return;
@@ -304,7 +279,7 @@ class COffice
                     $this->entity_manager->persist($refund);
                     $this->entity_manager->persist($report);
                     $this->entity_manager->flush();
-                } catch (ORMException $e) {
+                } catch (ORMException) {
                     $view = new VStatus();
                     $view->showStatus(500);
                 }
@@ -318,7 +293,7 @@ class COffice
             $this->entity_manager->persist($office);
             $this->entity_manager->flush();
             $this->entity_manager->commit();
-        } catch (ORMException $e) {
+        } catch (ORMException) {
             $view = new VStatus();
             $view->showStatus(500);
         }
