@@ -5,14 +5,14 @@
       <sourceFolder url="file://$MODULE_DIR$/./Core" isTestSource="false" packagePrefix="Core\" />
       <sourceFolder url="file://$MODULE_DIR$/./Model" isTestSource="false" packagePrefix="Model\" />
       <sourceFolder url="file://$MODULE_DIR$/./Model/Enum" isTestSource="false" packagePrefix="Model\Enum\" />
-      <sourceFolder url="file://$MODULE_DIR$/./TechnicalServiceLayer/Foundation" isTestSource="false" packagePrefix="TechnicalServiceLayer\Foundation\" />
       <sourceFolder url="file://$MODULE_DIR$/./Testing" isTestSource="false" packagePrefix="Testing\" />
       <sourceFolder url="file://$MODULE_DIR$/./Testing/Fixtures" isTestSource="false" packagePrefix="Testing\Fixtures\" />
       <sourceFolder url="file://$MODULE_DIR$/./TechnicalServiceLayer/Repository" isTestSource="false" packagePrefix="TechnicalServiceLayer\Repository\" />
-      <sourceFolder url="file://$MODULE_DIR$/./TwigTesting" isTestSource="false" packagePrefix="Twig\" />
       <sourceFolder url="file://$MODULE_DIR$/./Controller" isTestSource="false" packagePrefix="Controller\" />
       <sourceFolder url="file://$MODULE_DIR$/./Routes" isTestSource="false" packagePrefix="Routes\" />
       <sourceFolder url="file://$MODULE_DIR$/./View" isTestSource="false" packagePrefix="View\" />
+      <sourceFolder url="file://$MODULE_DIR$/./TechnicalServiceLayer/Exceptions" isTestSource="false" packagePrefix="TechnicalServiceLayer\Exceptions\" />
+      <sourceFolder url="file://$MODULE_DIR$/./TechnicalServiceLayer/Utility" isTestSource="false" packagePrefix="TechnicalServiceLayer\Utility\" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/annotations" />
