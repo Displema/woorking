@@ -99,7 +99,7 @@ class COffice
 
 
         $view= new Vmostrauffici();
-        $view->showuffici($ufficiConFoto, $date_parsed, $fascia);
+        $view->showuffici($ufficiConFoto, $date, $slot);
     }
 
     public function startsearch()

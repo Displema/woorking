@@ -31,7 +31,7 @@
         {%for office in offices %}
         <div class="col-12">
             <div class="ufficio-card d-flex flex-column flex-md-row mx-auto">
-                <img src="{{ office.photo }}" alt="Foto Ufficio" class="ufficio-img">
+                <img src="{{ office.fotoBase64 }}" alt="Foto Ufficio" class="ufficio-img">
                 <div class="ufficio-info">
                     <a href="/search/showoffice/detailsoffice/{{ office.office.id }}/{{ date }}/{{ fascia }}" class="btn-prenota"><i class="fa-solid fa-calendar-check"></i> Prenota</a>
                     <h2>{{ office.office.titolo }}</h2>
