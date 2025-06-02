@@ -20,7 +20,7 @@ class ERecensioneFixture extends AbstractFixture implements DependentFixtureInte
             $recensione
                 ->setCommento($faker->text($maxNbChars = 50))
                 ->setValutazione($faker->randomDigit())
-                ->setPrenotazione($this->getReference('EPrenotazione_' . $i, EPrenotazione::class));
+                ->setPrenotazione($this->getReference('EPrenotazione_' . $i . '_0', EPrenotazione::class));
             $manager->persist($recensione);
             $this->addReference('ERecensione_' . $i, $recensione);
         }

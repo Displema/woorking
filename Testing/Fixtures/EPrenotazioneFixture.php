@@ -18,22 +18,23 @@ class EPrenotazioneFixture extends AbstractFixture implements DependentFixtureIn
         $faker = Factory::create('it_IT');
 
         for ($i = 0; $i < 10; $i++) {
-            $intervallo = $this->getReference('EIntervallo_Disponibilita_' . $i, EIntervalloDisponibilita::class);
-            $pagamento = $this->getReference('EPagamento_' . $i, EPagamento::class);
-            $fascia = $intervallo->getFascia();
-            $prenotazione = new EPrenotazione();
-            $prenotazione
-                ->setFascia($fascia)
-                ->setData($faker->dateTimeBetween($intervallo->getDataInizio(), $intervallo->getDataFine()))
-                ->setUfficio($intervallo->getUfficio())
-                ->setUtente($this->getReference('EProfilo_' . $i, EProfilo::class))
-                ->setPagamento($pagamento)
-            ;
+            for ($j = 0; $j < 5; $j++) {
+                $intervallo = $this->getReference('EIntervallo_Disponibilita_' . $i, EIntervalloDisponibilita::class);
+                $pagamento = $this->getReference('EPagamento_' . $i, EPagamento::class);
+                $fascia = $intervallo->getFascia();
+                $prenotazione = new EPrenotazione();
+                $prenotazione
+                    ->setFascia($fascia)
+                    ->setData($faker->dateTimeBetween($intervallo->getDataInizio(), $intervallo->getDataFine()))
+                    ->setUfficio($intervallo->getUfficio())
+                    ->setUtente($this->getReference('EProfilo_' . $i, EProfilo::class))
+                    ->setPagamento($pagamento)
+                ;
 
-            $pagamento->setPrenotazione($prenotazione);
-
-            $manager->persist($prenotazione);
-            $this->addReference('EPrenotazione_' . $i, $prenotazione);
+                $pagamento->setPrenotazione($prenotazione);
+                $manager->persist($prenotazione);
+                $this->addReference('EPrenotazione_' . $i . '_' . $j, $prenotazione);
+            }
         }
         $manager->flush();
     }

@@ -13,7 +13,7 @@ class EPagamentoFixture extends AbstractFixture
     {
         $faker = Factory::create('it_IT');
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             $pagamento = new EPagamento();
             $pagamento
                 ->setImporto((int) $faker->randomFloat($nbMaxDecimals = 2, $min = 0, $max = 10000));
