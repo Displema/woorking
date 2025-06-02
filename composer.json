@@ -31,7 +31,7 @@
       "View\\": "./View",
       "Testing\\": "./Testing",
       "Routes\\": "./Routes",
-      "View\\": "./View"
+      "TechnicalServiceLayer\\Exceptions\\": "./TechnicalServiceLayer/Exceptions"
     }
   }
 }

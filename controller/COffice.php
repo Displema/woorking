@@ -1,27 +1,34 @@
 <?php
 namespace Controller;
+
 use DateTime;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\ORMException;
 use Model\Enum\FasciaOrariaEnum;
+use Model\Enum\StatoUfficioEnum;
 use Model\EPrenotazione;
-use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
-use View\Vmostrauffici;
 use Model\ERecensione;
+use Model\ERimborso;
 use Model\EUfficio;
-use TechnicalServiceLayer\Foundation\FUfficio;
-
-use TechnicalServiceLayer\Foundation\FEntityManager;
+use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
+use TechnicalServiceLayer\Repository\EUfficioRepository;
+use TechnicalServiceLayer\Utility\USession;
+use View\Vmostrauffici;
 use View\VRecensioni;
-
+use View\VRedirect;
+use View\VStatus;
 
 class COffice
 {
-    public  function Show($id,$data,$fascia)
-
+    private EntityManager $entityManager;
+    public function __construct()
     {
-
-
+        $this->entity_manager = getEntityManager();
+    }
+    public function Show($id, $data, $fascia)
+    {
         $ufficiphoto=[];
-        $em = FEntityManager::getInstance()->getEntityManager();
+        $em = $this->entity_manager;
         $fotoUrl=[];
         $ufficio = $em->getRepository(EUfficio::class)->find($id);
         $fotoUfficio = $em->getRepository(\Model\EFoto::class)->findBy(['ufficio' => $ufficio->getId()]);
@@ -29,7 +36,6 @@ class COffice
             if ($foto) {
                 $idPhoto = $foto->getId();
                 $fotoUrl[] = "/static/img/" . $idPhoto;
-
             }
         }
 
@@ -37,86 +43,194 @@ class COffice
         $ufficiphoto[]=[
         'ufficio' => $ufficio,
         'foto' => $fotoUrl
-    ];
+        ];
         $view = new Vmostrauffici();
-        $view->showOfficedetails($ufficiphoto,$data,$fascia);
+        $view->showOfficedetails($ufficiphoto, $data, $fascia);
     }
 
-    public static function ShowRecensioni($id){
-        $em = FEntityManager::getInstance()->getEntityManager();
+    public function ShowRecensioni($id)
+    {
+        $em = $this->entity_manager;
         $recensione = [];
-        $reporec=$em->getRepository(ERecensione::class);
-        $recensione = $reporec->getRecensioneByUfficio($id);
+        $repo=$em->getRepository(ERecensione::class);
+        $recensione = $repo->getRecensioneByUfficio($id);
         $ufficio = $em->getRepository(EUfficio::class)->find($id);
 
 
         $view = new VRecensioni();
-        $view->showAllRecension($recensione,$ufficio);
-
+        $view->showAllRecension($recensione, $ufficio);
     }
 
-    public static function GetOffice($id){
-        $em = FEntityManager::getInstance()->getEntityManager();
-        $office=$em->getRepository(EUfficio::class)->find($id);
-        return $office ;
-    }
-
-    public function search()
-
+    public function GetOffice($id)
     {
-        $em = FEntityManager::getInstance()->getEntityManager();
+        $em = $this->entity_manager;
+        return $em->getRepository(EUfficio::class)->find($id);
+    }
+
+    public function search(string $query, string $date, string $slot)
+    {
+        $em = $this->entity_manager;
         $repo=$em->getRepository(EUfficio::class);
-        $luogo=$_GET['luogo'];
-        $data=$_GET['data'];
-        $fascia=$_GET['fascia'];
+//        $luogo=$_GET['luogo'];
+//        $data=$_GET['data'];
+//        $fascia=$_GET['fascia'];
 
+        $luogo= $query;
+        $date_parsed = new DateTime($date);
+        $fascia= $slot;
 
-
-
-
-        $date = new DateTime($data);
-        $uffici = $repo->findbythree($luogo,$date,$fascia);
+        $uffici = $repo->findbythree($luogo, $date_parsed, $fascia);
         $ufficiConFoto = [];
         foreach ($uffici as $ufficio) {
-
             $fotoEntity = $em->getRepository(\Model\EFoto::class)->findOneBy(['ufficio' => $ufficio->getId()]);
 
             if ($fotoEntity) {
-               $idPhoto = $fotoEntity->getId();
-
-               $fotoUrl = $fotoEntity ? "/static/img/" . $idPhoto : null;
-                $foto = $fotoUrl;
+                $idPhoto = $fotoEntity->getId();
+                $fotoUrl = "/static/img/$idPhoto";
+            } else {
+                $fotoUrl = "https://cdn.pixabay.com/photo/2024/07/20/17/12/warning-8908707_1280.png";
             }
 
             $ufficiConFoto[] = [
                 'ufficio' => $ufficio,
-                'fotoBase64' => $foto,
+                'fotoBase64' => $fotoUrl,
             ];
         }
 
 
-      $view= new Vmostrauffici();
-      $view->showuffici($ufficiConFoto,$data,$fascia);
-
+        $view= new Vmostrauffici();
+        $view->showuffici($ufficiConFoto, $date_parsed, $fascia);
     }
 
-    public function startsearch(){
+    public function startsearch()
+    {
         $view= new Vmostrauffici();
         $view->startsearch();
     }
 
 
-    public function showconfirmedPrenotation($idUfficio,$data,$fascia){
+    public function showconfirmedPrenotation($idUfficio, $data, $fascia)
+    {
         $FasciaEnum=FasciaOrariaEnum::from($fascia);
-        $em = FEntityManager::getInstance()->getEntityManager();
+        $em = $this->entity_manager;
         $ufficio = $em->getRepository(EUfficio::class)->find($idUfficio);
         $prenotazione = new EPrenotazione();
         $prenotazione->setData(new DateTime($data));
         $prenotazione->setUfficio($ufficio);
         $prenotazione->setFascia($FasciaEnum);
-       $prenotazionerepo=$em->getRepository(EPrenotazione::class);
-       $prenotazionerepo->savePrenotation($prenotazione);
+        $prenotazionerepo=$em->getRepository(EPrenotazione::class);
+        $prenotazionerepo->savePrenotation($prenotazione);
         $view= new Vmostrauffici();
-       $view->showconfirmedpage1();
+        $view->showconfirmedpage1();
+    }
+
+    public function rejectPending(string $id, string $reason): void
+    {
+        try {
+            $user = USession::requireAdmin();
+        } catch (UserNotAuthenticatedException $e) {
+            $view = new VStatus();
+            $view->showStatus(403);
+            return;
+        }
+
+        $repo = $this->entity_manager->getRepository(EUfficio::class);
+        $office = $repo->find($id);
+        if (!$office) {
+            //TODO: show bad request
+        }
+
+        if (StatoUfficioEnum::tryFrom(!$office->getStato()) === StatoUfficioEnum::InAttesa) {
+            // TODO: show bad request
+        }
+
+        $office->setReason($reason);
+        $office->setStato(StatoUfficioEnum::NonApprovato);
+
+        try {
+            $this->entity_manager->persist($office);
+            $this->entity_manager->flush();
+        } catch (ORMException $e) {
+            $view = new VStatus();
+            $view->showStatus(500);
+        }
+
+
+        $view = new VRedirect();
+        // TODO: remove placeholder string and add correct view
+        $view->redirect('/rejectedoffice');
+    }
+
+    public function confirmPending(string $id)
+    {
+        try {
+            $user = USession::requireAdmin();
+        } catch (UserNotAuthenticatedException $e) {
+            $view = new VStatus();
+            $view->showStatus(403);
+            return;
+        }
+
+        $repo = $this->entity_manager->getRepository(EUfficio::class);
+        $office = $repo->find($id);
+        if (!$office) {
+            //TODO: like on reject
+        }
+
+        if (StatoUfficioEnum::tryFrom(!$office->getStato()) === StatoUfficioEnum::InAttesa) {
+            // TODO: show bad request
+        }
+
+        $office->setStato(StatoUfficioEnum::Approvato);
+        $this->entity_manager->persist($office);
+        $this->entity_manager->flush();
+
+        $view = new VRedirect();
+        $view->redirect('/approvedoffice');
+    }
+
+    public function deleteOffice(string $id, string $shouldRefund = '0'): void
+    {
+        try {
+            $user = USession::requireAdmin();
+        } catch (UserNotAuthenticatedException $e) {
+            $view = new VStatus();
+            $view->showStatus(403);
+            return;
+        }
+
+        /** @var EUfficioRepository $officeRepo */
+        $officeRepo = $this->entity_manager->getRepository(EUfficio::class);
+        $office = $officeRepo->find($id);
+        if (!$office) {
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
+        }
+
+        $reservations = $officeRepo->getActiveReservations($office);
+        if (!$reservations->isEmpty() && $shouldRefund) {
+            foreach ($reservations as $reservation) {
+                $refund = new ERimborso();
+                $refund->setImporto($reservation->getPagamento()->getImporto());
+                try {
+                    $this->entity_manager->persist($refund);
+                    $this->entity_manager->flush();
+                } catch (ORMException $e) {
+                    $view = new VStatus();
+                    $view->showStatus(500);
+                }
+            }
+        }
+
+        try {
+            $this->entity_manager->beginTransaction();
+            $this->entity_manager->remove($office);
+            $this->entity_manager->flush();
+            $this->entity_manager->commit();
+        } catch (ORMException $e) {
+            $view = new VStatus();
+            $view->showStatus(500);
+        }
     }
 }
