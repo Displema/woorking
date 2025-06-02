@@ -29,7 +29,10 @@ $router->get('/home','CHome@showHome');
 //route to manage reservations
 $router->get('/prenotazioni', 'CSearchOffice@showPrenotazioni');
 
-//route to add office
+//route to the layout to add an office
 $router->get('/aggiunta', 'CSearchOffice@addOffice');
+
+//route to add office
+$router->post('/aggiuntaUfficio', 'CSearchOffice@addOfficeInDB');
 
 return $router;

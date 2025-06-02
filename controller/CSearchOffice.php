@@ -2,7 +2,10 @@
 namespace Controller;
 use DateTime;
 use Model\EFoto;
+use Model\EIndirizzo;
 use Model\EIntervalloDisponibilita;
+use Model\Enum\FasciaOrariaEnum;
+use Model\Enum\StatoUfficioEnum;
 use Model\EPrenotazione;
 use Model\EServiziAggiuntivi;
 use Model\EUfficio;
@@ -108,14 +111,15 @@ class CSearchOffice {
 
             $serviziStringa = implode(', ', $servizi);
             if($data < $oggi){
-            $UfficiCompletiPassati[] = [
+                $UfficiCompletiPassati[] = [
                 'ufficio' => $ufficio,
                 'foto' => $fotoUrl,
                 'prenotazioni' => $prenotazioni,
                 'utente' => $utente,
                 'intervallo' => $intervallo,
                 'servizio' => $serviziStringa
-            ];} else {
+            ];
+            } else {
                 $UfficiCompletiPresenti[] = [
                     'ufficio' => $ufficio,
                     'foto' => $fotoUrl,
@@ -134,6 +138,86 @@ class CSearchOffice {
     public function addOffice(){
         $view = new VUffici();
         $view->addOfficeV();
+    }
+
+
+    public function addOfficeInDB(){
+        $em = FEntityManager::getInstance()->getEntityManager();
+        $ufficio = new EUfficio();
+        $indirizzo = new Eindirizzo();
+        $intervallo = new EIntervalloDisponibilita();
+
+        $indirizzo->setProvincia($_POST['provincia']);
+        $indirizzo->setCitta($_POST['comune']);
+        $indirizzo->setCap($_POST['cap']);
+        $indirizzo->setNumeroCivico($_POST['civico']);
+        $indirizzo->setVia($_POST['indirizzo']);
+
+        $ufficio->setTitolo($_POST['nome-ufficio']);
+        $ufficio->setPrezzo($_POST['prezzo']);
+        $ufficio->setDescrizione($_POST['descrizione']);
+        $ufficio->setNumeroPostazioni($_POST['postazioni']);
+        $ufficio->setSuperficie($_POST['superficie']);
+        $ufficio->setDataCaricamento(new \DateTime());
+        $ufficio->setStato(StatoUfficioEnum::InAttesa);
+        $ufficio->setIndirizzo($indirizzo);
+
+        $intervallo->setDataInizio(new \DateTime($_POST['data_inizio']));
+        $intervallo->setDataFine(new \DateTime($_POST['data_fine']));
+        $intervallo->setFascia(FasciaOrariaEnum::from($_POST['fascia']));
+        $intervallo->setUfficio($ufficio);
+
+        $em->persist($indirizzo);
+        $em->persist($ufficio);
+        $em->persist($intervallo);
+        $em->flush();
+
+        // Photos
+        if (!empty($_FILES['foto']) && isset($_FILES['foto']['tmp_name'])) {
+
+            foreach ($_FILES['foto']['tmp_name'] as $key => $tmpName) {
+                if (is_uploaded_file($tmpName)) {
+                    $content = file_get_contents($tmpName);
+                    $mimeType = $_FILES['foto']['type'][$key];
+                    $size = $_FILES['foto']['size'][$key];
+
+                    $foto = new EFoto();
+                    $foto->setContent($content);
+                    $foto->setMimeType($mimeType);
+                    $foto->setSize($size);
+                    $foto->setUfficio($ufficio);
+
+                    $em->persist($foto);
+                }
+            }
+            //Salva tutte le foto in una volta sola
+            $em->flush();
+        }
+
+        // Prendo i servizi dalle checkbox
+        var_dump($_POST['servizi']);
+        $listaServizi = $_POST['servizi'] ?? [];
+
+       // Se è stato compilato "altro", aggiungo quel servizio
+        if (!empty($_POST['altro-servizio'])) {
+            $nomeAltro = trim($_POST['altro-servizio']);
+            if ($nomeAltro !== '') {
+                $listaServizi[] = $nomeAltro;
+            }
+        }
+
+        // Salvo i servizi nel DB
+        foreach ($listaServizi as $nomeServizio) {
+            $servizio = new EServiziAggiuntivi();
+            $servizio->setNomeServizio($nomeServizio);
+            $servizio->setUfficio($ufficio);
+            $em->persist($servizio);
+
+        }
+        $em->flush();
+        header('Location: /uffici');
+        exit;
+
     }
 
 }

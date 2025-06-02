@@ -48,7 +48,7 @@
                         data-fascia="{{ ufficio.intervallo.fascia.value }}"
                         data-indirizzo="{{ ufficio.ufficio.indirizzo }}"
                         data-postazioni="{{ ufficio.ufficio.numeroPostazioni }}"
-                        data-servizi="{{ ufficio.servizi.nomeServizio }}">
+                        data-servizi="{{ ufficio.servizi|map(s => s.nomeServizio)|join(', ') }}">
                   <i class="fa fa-eye me-1"></i> Dettagli
                 </button>
 
