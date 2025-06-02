@@ -112,12 +112,13 @@ class COffice
         $reporeservaton=$em->getRepository(EPrenotazione::class);
         $photoEntity = [];
         foreach ($offices as $office) {
+            if ($office->isHidden()){
+            continue;
+        }
             $reservationcount=$reporeservaton->CountByOfficeDateFascia($office,$date_parsed,$fascia);
             $placeavaible= $office->getNumeroPostazioni();
             if($reservationcount<$placeavaible){
-                if ($office->isHidden()){
-                    continue;
-                }
+
 
             $photoEntity = $em->getRepository(\Model\EFoto::class)->findOneBy(['ufficio' => $office->getId()]);
 
