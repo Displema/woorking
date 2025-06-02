@@ -78,6 +78,45 @@ class COffice
         return $em->getRepository(EUfficio::class)->find($id);
     }
 
+
+
+    public function showconfirmedReservation($date,$idOffice,$fascia){
+        $FasciaEnum=FasciaOrariaEnum::from($fascia);
+        $em = $this->entity_manager;
+        $em->beginTransaction();
+        try {
+            $office = $em->getRepository(EUfficio::class)->find($idOffice, \Doctrine\DBAL\LockMode::PESSIMISTIC_WRITE);
+            $reservationCount = $em->getRepository(EPrenotazione::class)->CountByOfficeDateFascia($idOffice, $date, $fascia);
+            echo $reservationCount;
+            $placesAvaible = $office->getNumeroPostazioni();
+            echo $placesAvaible;
+            $uuid="1f091da3-ea4f-42d8-9277-04c7f19bb3fd";
+            $utente=$em->getRepository(EProfilo::class)->find($uuid);
+
+            if ($reservationCount >= $placesAvaible) {
+                $view  = new VPrenotazioni();
+                $view ->showplacenotavaible();
+                exit;
+            }
+            $reservation = new EPrenotazione();
+            $reservation->setData(new DateTime($date));
+            $reservation->setUfficio($office);
+            $reservation->setFascia($FasciaEnum);
+            $reservation->setUtente($utente);
+
+            $em->persist($reservation);
+            $em->flush();
+            $em->commit();
+
+            $view = new Vmostrauffici();
+            $view->showconfirmedpage1();
+        } catch (Exception $e) {
+            $em->rollback();
+            echo $e->getMessage();
+        }
+
+    }
+
     public  function ShowReview($id){
         $em = $this->entity_manager;
         $review = [];
@@ -91,10 +130,6 @@ class COffice
         $view->showAllRecension($review,$office);
 
     }
-
-
-
-
 
     public function startsearch()
     {
@@ -155,42 +190,7 @@ class COffice
 
     }
 
-    public function showconfirmedReservation($date,$idOffice,$fascia){
-        $FasciaEnum=FasciaOrariaEnum::from($fascia);
-        $em = $this->entity_manager;
-        $em->beginTransaction();
-        try {
-            $office = $em->getRepository(EUfficio::class)->find($idOffice, \Doctrine\DBAL\LockMode::PESSIMISTIC_WRITE);
-            $reservationCount = $em->getRepository(EPrenotazione::class)->CountByOfficeDateFascia($idOffice, $date, $fascia);
-            echo $reservationCount;
-            $placesAvaible = $office->getNumeroPostazioni();
-            echo $placesAvaible;
-            $uuid="1f091da3-ea4f-42d8-9277-04c7f19bb3fd";
-            $utente=$em->getRepository(EProfilo::class)->find($uuid);
 
-            if ($reservationCount >= $placesAvaible) {
-                $view  = new VPrenotazioni();
-                $view ->showplacenotavaible();
-                exit;
-            }
-            $reservation = new EPrenotazione();
-            $reservation->setData(new DateTime($date));
-            $reservation->setUfficio($office);
-            $reservation->setFascia($FasciaEnum);
-            $reservation->setUtente($utente);
-
-            $em->persist($reservation);
-            $em->flush();
-            $em->commit();
-
-            $view = new Vmostrauffici();
-            $view->showconfirmedpage1();
-        } catch (Exception $e) {
-            $em->rollback();
-            echo $e->getMessage();
-        }
-
-    }
 
     public function rejectPending(string $id, string $reason): void
     {
