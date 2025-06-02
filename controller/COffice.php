@@ -2,6 +2,7 @@
 namespace Controller;
 
 use DateTime;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Model\EFoto;
@@ -21,8 +22,8 @@ use Model\EUfficio;
 use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
 use TechnicalServiceLayer\Repository\EUfficioRepository;
 use TechnicalServiceLayer\Utility\USession;
-use View\VPrenotazioni;
-use View\VRecensioni;
+use View\VReservation;
+use View\VReview;
 use View\VRedirect;
 use View\VResource;
 use View\VStatus;
@@ -69,7 +70,8 @@ class COffice
         $em = $this->entity_manager;
         $em->beginTransaction();
         try {
-            $office = $em->getRepository(EUfficio::class)->find($idOffice, \Doctrine\DBAL\LockMode::PESSIMISTIC_WRITE);
+            // With PessimisticWrite the first one that gets access to the office locks it until it's finished
+            $office = $em->getRepository(EUfficio::class)->find($idOffice, LockMode::PESSIMISTIC_WRITE);
             $reservationCount = $em->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($idOffice, $date, $fascia);
             echo $reservationCount;
             $placesAvaible = $office->getNumeroPostazioni();
@@ -78,8 +80,8 @@ class COffice
             $utente=$em->getRepository(EProfilo::class)->find($uuid);
 
             if ($reservationCount >= $placesAvaible) {
-                $view  = new VPrenotazioni();
-                $view ->showplacenotavaible();
+                $view  = new VReservation();
+                $view ->showAlreadyBookedPage();
                 exit;
             }
             $reservation = new EPrenotazione();
@@ -110,8 +112,8 @@ class COffice
 
 
 
-        $view = new VRecensioni();
-        $view->showAllRecension($review, $office);
+        $view = new VReview();
+        $view->showAllReviews($review, $office);
     }
 
     public function search(string $query, string $date, string $slot): void

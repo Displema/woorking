@@ -4,7 +4,7 @@ namespace View;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
-class BaseView
+abstract class BaseView
 {
     protected Environment $twig;
 

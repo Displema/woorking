@@ -7,8 +7,8 @@ use Model\EPrenotazione;
 
 use Model\ERecensione;
 use Model\EUfficio;
-use View\VPrenotazioni;
-use View\VRecensioni;
+use View\VReservation;
+use View\VReview;
 
 
 class CReservation
@@ -63,8 +63,8 @@ class CReservation
 
         }
 
-        $view = new VPrenotazioni();
-        $view->showPrenotation($reservationWithOffice, $oldreservationWithOffice);
+        $view = new VReservation();
+        $view->showReservation($reservationWithOffice, $oldreservationWithOffice);
 
     }
 
@@ -93,13 +93,13 @@ class CReservation
             'reservation'=>$reservation
         ];
 
-        $view = new VPrenotazioni();
+        $view = new VReservation();
         $view ->showReservationDetails($reservationwithoffice);
     }
 
     public function sendreview($idreservation){
-        $view = new VRecensioni();
-        $view ->formreview($idreservation);
+        $view = new VReview();
+        $view ->showReviewForm($idreservation);
     }
 
     public function confirmreview($idreservation,){
@@ -117,8 +117,8 @@ class CReservation
         $em->persist($review);
         $em->flush();
 
-        $view = new VRecensioni();
-        $view->confirmreview();
+        $view = new VReview();
+        $view->showReviewConfirmation();
 
 
 

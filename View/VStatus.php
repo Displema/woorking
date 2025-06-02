@@ -2,8 +2,12 @@
 
 namespace View;
 
-class VStatus extends BaseView
+class VStatus
 {
+    public function __construct()
+    {
+    }
+
     public function showStatus(int $status_code): void
     {
         if ($status_code === 403) {

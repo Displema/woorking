@@ -14,7 +14,7 @@ class CReport {
 
     public function showFormReport($id){
         $view = new VReport();
-        $view->FormReport($id);
+        $view->showReportForm($id);
     }
     public static function showConfirmOfReport($id) {
         $commento = $_POST['motivo'] ?? null;
@@ -32,6 +32,6 @@ class CReport {
      $em->getRepository(ESegnalazione::class)->SaveReport($Report);
 
      $view = new VReport();
-     $view->ShowConfirmSendReport();
+     $view->showReportConfirmation();
     }
 }
