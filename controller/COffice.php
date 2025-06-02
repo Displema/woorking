@@ -9,6 +9,7 @@ use Model\Enum\StatoUfficioEnum;
 use Model\EPrenotazione;
 use Model\ERecensione;
 use Model\ERimborso;
+use Model\ESegnalazione;
 use Model\EUfficio;
 use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
 use TechnicalServiceLayer\Repository\EUfficioRepository;
@@ -16,6 +17,7 @@ use TechnicalServiceLayer\Utility\USession;
 use View\Vmostrauffici;
 use View\VRecensioni;
 use View\VRedirect;
+use View\VResource;
 use View\VStatus;
 
 class COffice
@@ -161,7 +163,7 @@ class COffice
         $view->redirect('/rejectedoffice');
     }
 
-    public function confirmPending(string $id)
+    public function confirmPending(string $id): void
     {
         try {
             $user = USession::requireAdmin();
@@ -201,36 +203,66 @@ class COffice
 
         /** @var EUfficioRepository $officeRepo */
         $officeRepo = $this->entity_manager->getRepository(EUfficio::class);
-        $office = $officeRepo->find($id);
+        $office = $officeRepo->findOneBy(['id'=>$id]);
+
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
             return;
         }
 
+        if ($office->isHidden()) {
+            $view = new VStatus();
+            $view->showStatus(403);
+            return;
+        }
+
+        $office->setIsHidden(true);
+
         $reservations = $officeRepo->getActiveReservations($office);
-        if (!$reservations->isEmpty() && $shouldRefund) {
+        $refunds = 0;
+        if ($shouldRefund && !$reservations->isEmpty()) {
             foreach ($reservations as $reservation) {
+                $report = new ESegnalazione();
+                $report->setUfficio($office)
+                    ->setCommento("Rimborso per cancellazione ufficio");
+
+                $refunds++;
                 $refund = new ERimborso();
-                $refund->setImporto($reservation->getPagamento()->getImporto());
+                $refund
+                    ->setImporto($reservation->getPagamento()->getImporto())
+                    ->setSegnalazione($report);
+
                 try {
+                    $this->entity_manager->beginTransaction();
                     $this->entity_manager->persist($refund);
+                    $this->entity_manager->persist($report);
                     $this->entity_manager->flush();
                 } catch (ORMException $e) {
                     $view = new VStatus();
                     $view->showStatus(500);
                 }
+
+                $this->entity_manager->commit();
             }
         }
 
         try {
             $this->entity_manager->beginTransaction();
-            $this->entity_manager->remove($office);
+            $this->entity_manager->persist($office);
             $this->entity_manager->flush();
             $this->entity_manager->commit();
         } catch (ORMException $e) {
             $view = new VStatus();
             $view->showStatus(500);
         }
+
+        $view = new VResource();
+        $view->printJson(
+            json_encode(array(
+                'reservations' => $reservations,
+                'refunds' => $refunds,
+            ), JSON_THROW_ON_ERROR)
+        );
     }
 }
