@@ -1,6 +1,9 @@
 <?php
 namespace TechnicalServiceLayer\Utility;
 
+use Model\EProfilo;
+use TechnicalServiceLayer\Exceptions\UserNotAuthenticated;
+
 /**
  * Credit to https://github.com/flebo45/Agora/blob/main/app/services/TechnicalServiceLayer/utility/USession.php
  */
@@ -60,8 +63,35 @@ class USession
      */
     public static function getSessionElement($id)
     {
-
         return $_SESSION[$id];
+    }
+
+    /**
+     * @throws UserNotAuthenticated if the session doesn't contain a valid user
+     */
+    public static function requireUser(): EProfilo
+    {
+        if (!isset($_SESSION['user'])) {
+            throw new UserNotAuthenticated();
+        }
+
+        return self::getSessionElement($_SESSION['user']);
+    }
+
+    /**
+     * @throws UserNotAuthenticated
+     */
+    public static function requireAdmin(): EProfilo
+    {
+        if (self::isSetSessionElement('user')) {
+            throw new UserNotAuthenticated();
+        }
+
+        $user = self::getSessionElement('user');
+        if (!$user->isAdmin()) {
+            throw new UserNotAuthenticated();
+        }
+        return $user;
     }
 
     /**
