@@ -20,7 +20,7 @@ class ERecensione
      #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
     
-     #[ORM\OneToOne(targetEntity:EPrenotazione::class)]
+     #[ORM\ManyToOne(targetEntity:EPrenotazione::class)]
      //#[ORM\JoinColumn(name: "idPrenotazione", referencedColumnName: "id", unique: true, nullable: false)]
     private EPrenotazione $prenotazione;
 

@@ -11,8 +11,13 @@
       <sourceFolder url="file://$MODULE_DIR$/./Controller" isTestSource="false" packagePrefix="Controller\" />
       <sourceFolder url="file://$MODULE_DIR$/./Routes" isTestSource="false" packagePrefix="Routes\" />
       <sourceFolder url="file://$MODULE_DIR$/./View" isTestSource="false" packagePrefix="View\" />
+<<<<<<< HEAD
       <sourceFolder url="file://$MODULE_DIR$/./TechnicalServiceLayer/Exceptions" isTestSource="false" packagePrefix="TechnicalServiceLayer\Exceptions\" />
       <sourceFolder url="file://$MODULE_DIR$/./TechnicalServiceLayer/Utility" isTestSource="false" packagePrefix="TechnicalServiceLayer\Utility\" />
+=======
+      <sourceFolder url="file://$MODULE_DIR$/./TechnicalServiceLayer/Foundation" isTestSource="false" packagePrefix="TechnicalServiceLayer\Foundation\" />
+      <sourceFolder url="file://$MODULE_DIR$/./TwigTesting" isTestSource="false" packagePrefix="Twig\" />
+>>>>>>> percaso
       <excludeFolder url="file://$MODULE_DIR$/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/annotations" />

@@ -10,11 +10,22 @@ use TechnicalServiceLayer\Foundation\FEntityManager;
 class EPrenotazioneRepository extends EntityRepository
 {
 
-    public function savePrenotation( EPrenotazione $prenotazione ){
-        $em = FEntityManager::getInstance()->getEntityManager();
-        $em->persist($prenotazione); // inserisce in "pending"
-        $em->flush();
-    }
+
+
+    public function CountByOfficeDateFascia($office,$date,$fascia){
+        $em = getEntityManager();
+        return $em->createQueryBuilder('r')
+            ->select('count(r.id)')
+            ->from('Model\EPrenotazione','r')
+            ->where('r.data = :date')
+            ->andWhere('r.ufficio = :office')
+            ->andwhere('r.fascia = :fascia')
+            ->setParameter('date',$date)
+            ->setParameter('office',$office)
+            ->setParameter('fascia',$fascia)
+            ->getQuery()->getSingleScalarResult();
+
+}
 
 
 

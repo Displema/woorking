@@ -19,10 +19,10 @@ class CReport {
         $view->FormReport($id);
     }
     public static function showConfirmOfReport($id) {
-        $commento = $_POST['motivo'] ?? null;
+        $commento = $_POST['motivo'] ;
         echo $commento;
         if($commento == 'Altro'){
-            $commento = $_POST['altroTesto'] ?? null;
+            $commento = $_POST['altroTesto'] ;
         }
 
      $em = FEntityManager::getInstance()->getEntityManager();

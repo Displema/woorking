@@ -3,7 +3,7 @@ namespace View;
 
 require_once __DIR__.'/../vendor/autoload.php';
 require_once __DIR__.'/../bootstrap.php';
-use \controller\COffice;
+use \Controller\COffice;
 
 
 class Vmostrauffici
@@ -22,15 +22,15 @@ public function startsearch(){
     echo $twig->render('/home/homeaccess.html.twig');
 }
 // Read params GET
-public function showuffici($Result,$data,$fascia){
+public function showuffici($Result,$date,$fascia){
      $twig = new \Twig\Environment($this->loader);
-    echo $twig->render('/uffici/uffici.html.twig', ['uffici' => $Result,'data' => $data,'fascia' => $fascia]);
+    echo $twig->render('/uffici/uffici.html.twig', ['offices' => $Result,'date' => $date,'fascia' => $fascia]);
 }
 
-public function showOfficedetails( $Result,$data,$fascia){
+public function showOfficedetails( $Result,$date,$fascia){
     $twig = new \Twig\Environment($this->loader);
     $ufficio = $Result[0];
-    echo $twig->render('/DettaglioOffice/DettaglioOffice.html.twig', ['ufficio' => $ufficio,'data' => $data,'fascia' => $fascia]);
+    echo $twig->render('/DettaglioOffice/DettaglioOffice.html.twig', ['ufficio' => $ufficio,'date' => $date,'fascia' => $fascia]);
 }
 public function showconfirmedpage1(){
     $twig = new \Twig\Environment($this->loader);
