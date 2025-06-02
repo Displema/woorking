@@ -18,9 +18,9 @@ class EPrenotazioneFixture extends AbstractFixture implements DependentFixtureIn
         $faker = Factory::create('it_IT');
 
         for ($i = 0; $i < 10; $i++) {
+            $intervallo = $this->getReference('EIntervallo_Disponibilita_' . $i, EIntervalloDisponibilita::class);
             for ($j = 0; $j < 5; $j++) {
-                $intervallo = $this->getReference('EIntervallo_Disponibilita_' . $i, EIntervalloDisponibilita::class);
-                $pagamento = $this->getReference('EPagamento_' . $i, EPagamento::class);
+                $pagamento = $this->getReference('EPagamento_' . $i . '_' . $j, EPagamento::class);
                 $fascia = $intervallo->getFascia();
                 $prenotazione = new EPrenotazione();
                 $prenotazione
@@ -28,11 +28,10 @@ class EPrenotazioneFixture extends AbstractFixture implements DependentFixtureIn
                     ->setData($faker->dateTimeBetween($intervallo->getDataInizio(), $intervallo->getDataFine()))
                     ->setUfficio($intervallo->getUfficio())
                     ->setUtente($this->getReference('EProfilo_' . $i, EProfilo::class))
-                    ->setPagamento($pagamento)
-                ;
-
+                    ->setPagamento($pagamento);
                 $pagamento->setPrenotazione($prenotazione);
                 $manager->persist($prenotazione);
+                $manager->persist($pagamento);
                 $this->addReference('EPrenotazione_' . $i . '_' . $j, $prenotazione);
             }
         }
@@ -45,6 +44,7 @@ class EPrenotazioneFixture extends AbstractFixture implements DependentFixtureIn
             EUfficioFixture::class,
             EIntervalliDisponibilitaFixture::class,
             EProfiloFixture::class,
+            EPagamentoFixture::class
         );
     }
 }

@@ -87,8 +87,6 @@ class USession
             throw new UserNotAuthenticatedException();
         }
 
-        echo self::isSetSessionElement('user');
-
         $user = self::getSessionElement('user');
         if (!$user->isAdmin()) {
             throw new UserNotAuthenticatedException();

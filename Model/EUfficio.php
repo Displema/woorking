@@ -28,7 +28,21 @@ class EUfficio
 
     #[ORM\OneToMany(targetEntity:EFoto::class, mappedBy:"ufficio", cascade:["persist", "remove"])]
     private Collection $foto;
-    
+
+    #[ORM\Column]
+    private bool $isHidden = false;
+
+    public function isHidden(): bool
+    {
+        return $this->isHidden;
+    }
+
+    public function setIsHidden(bool $isHidden): EUfficio
+    {
+        $this->isHidden = $isHidden;
+        return $this;
+    }
+
      #[ORM\ManyToOne(targetEntity:EIndirizzo::class)]
     private EIndirizzo $indirizzo;
 
@@ -69,7 +83,7 @@ class EUfficio
     private ?string $motivoRifiuto;
 
     #[ORM\OneToMany(targetEntity:ESegnalazione::class, mappedBy:"ufficio", cascade:["persist", "remove"])]
-     private Collection $segnalazioni;
+    private Collection $segnalazioni;
 
     #[ORM\OneToMany(targetEntity:EServiziAggiuntivi::class, mappedBy:"ufficio", cascade:["persist", "remove"])]
     private Collection $serviziAggiuntivi;
@@ -123,7 +137,8 @@ class EUfficio
         return $this->superficie;
     }
 
-    public function getsegnalazione(): Collection{
+    public function getsegnalazione(): Collection
+    {
         return $this->segnalazioni;
     }
 
@@ -167,8 +182,6 @@ class EUfficio
         $this->locatore = $locatore;
         return $this;
     }
-
-
 
     public function setIndirizzo(EIndirizzo $indirizzo): EUfficio
     {
