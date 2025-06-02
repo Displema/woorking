@@ -3,7 +3,11 @@ namespace Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Model\Enum\FasciaOrariaEnum;
+
 use Model\Enum\UserEnum;
+
+use Model\Enum\StatoUfficioEnum;
+
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -23,7 +27,7 @@ class EPrenotazione
      #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
     
-     #[ORM\ManyToOne]
+     #[ORM\ManyToOne(targetEntity: EUfficio::class,cascade: ["persist"])]
      //#[ORM\JoinColumn(name:"idUtente", referencedColumnName:"id")]
     private EUfficio $ufficio;
     
@@ -94,7 +98,7 @@ class EPrenotazione
         return $this;
     }
 
-    public function setData(DateTime $data): EPRenotazione
+    public function setData(DateTime $data): EPrenotazione
     {
         $this->data = $data;
         return $this;

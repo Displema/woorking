@@ -28,16 +28,16 @@
 <div class="container py-5 ufficio-container">
     <div class="row g-4">
         <!-- Card 1 -->
-        {%for ufficio in uffici %}
+        {%for office in offices %}
         <div class="col-12">
             <div class="ufficio-card d-flex flex-column flex-md-row mx-auto">
-                <img src="{{ ufficio.fotoBase64 }}" alt="Foto Ufficio" class="ufficio-img">
+                <img src="{{ office.photo }}" alt="Foto Ufficio" class="ufficio-img">
                 <div class="ufficio-info">
-                    <a href="/View/VDettaglioOffice.php?id={{ufficio.ufficio.id}}" class="btn-prenota"><i class="fa-solid fa-calendar-check"></i> Prenota</a>
-                    <h2>{{ ufficio.ufficio.titolo }}</h2>
-                    <p><strong>Indirizzo: </strong>{{ufficio.ufficio.indirizzo}}</p>
-                    <p><strong>Posti disponibili: </strong>{{ ufficio.ufficio.numeroPostazioni }} </p>
-                    <div class="prezzo"> Prezzo : {{ ufficio.ufficio.prezzo }} euro al giorno</div>
+                    <a href="/search/showoffice/detailsoffice/{{ office.office.id }}/{{ date }}/{{ fascia }}" class="btn-prenota"><i class="fa-solid fa-calendar-check"></i> Prenota</a>
+                    <h2>{{ office.office.titolo }}</h2>
+                    <p><strong>Indirizzo: </strong>{{office.office.indirizzo}}</p>
+                    <p><strong>Posti disponibili: </strong>{{ office.office.numeropostazioni }} </p>
+                    <div class="prezzo"> Prezzo : {{ office.office.prezzo }} euro al giorno</div>
                 </div>
             </div>
         </div>

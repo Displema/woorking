@@ -1,5 +1,5 @@
 <?php
-/*
+
 namespace Model\Enum;
 
 enum UserEnum : String
@@ -8,4 +8,3 @@ enum UserEnum : String
 
     case Locatore = "LOCATORE";
 }
-*/

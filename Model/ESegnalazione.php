@@ -18,7 +18,7 @@ class ESegnalazione
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
-    #[ORM\ManyToOne(targetEntity:EUfficio::class,cascade: ["persist", "remove"], inversedBy: "segnalazioni")]
+    #[ORM\ManyToOne(targetEntity:EUfficio::class,cascade: ["persist",], inversedBy: "segnalazioni")]
     //#[ORM\JoinColumn(name:"idUfficio", referencedColumnName:"id", nullable: false)]
     private EUfficio $ufficio;
     
@@ -56,7 +56,7 @@ class ESegnalazione
 
     public function setUfficio(EUfficio $Ufficio): ESegnalazione
     {
-        $this->Ufficio = $Ufficio;
+        $this->ufficio = $Ufficio;
         return $this;
     }
 

@@ -20,8 +20,10 @@
         <div class="col-lg-6">
             <div class="galleria-foto d-flex flex-wrap gap-3">
                 {% for immagine in ufficio.foto %}
-                <img src={{ immagine}} class="img-fluid rounded" alt="Foto 1">
-               {% endfor %}
+
+                    <img src="{{ immagine }}" alt="image">
+
+                {% endfor %}
             </div>
         </div>
 
@@ -35,16 +37,16 @@
                 <p><strong>Descrizione:</strong> {{ ufficio.ufficio.descrizione }}</p>
 
                 <div class="prezzo h4 text-danger text-end">Prezzo: {{ ufficio.ufficio.prezzo}} euro al giorno</div>
-                <a href="/View/VConferme.php?id=1" class="btn btn-danger mt-3"><i class="fa-solid fa-credit-card"></i> Vai al pagamento</a>
+                <a href="/search/showoffice/detailsoffice/confirm/reservated/{{ date }}/{{ ufficio.ufficio.id }}/{{ fascia }}" class="btn btn-danger mt-3"><i class="fa-solid fa-credit-card"></i> Vai al pagamento</a>
             </div>
             <div class="row mt-3">
                 <div class="col-6">
-                    <a href="/View/VRecensioni.php?id={{ufficio.ufficio.id}}" class="btn btn-danger w-100">
+                    <a href="/search/showoffice/detailsoffice/review/{{ufficio.ufficio.id}}" class="btn btn-danger w-100">
                         <i class="fa-solid fa-star"></i> Recensioni
                     </a>
                 </div>
                 <div class="col-6">
-                    <a href="/Nuovohtml/segnalazioni/segnalazione.html" class="btn btn-danger w-100">
+                    <a href="/search/showoffice/detailsoffice/Report/{{ ufficio.ufficio.id }}" class="btn btn-danger w-100">
                         <i class="fa-solid fa-flag"></i> Segnala
                     </a>
                 </div>

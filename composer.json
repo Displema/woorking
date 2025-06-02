@@ -21,14 +21,18 @@
     "psr-4": {
       "Model\\": "./Model",
       "TechnicalServiceLayer\\Foundation\\": "./TechnicalServiceLayer/Foundation",
-      "Controller\\": "./controller",
+      "Twig\\": "./TwigTesting",
+      "View\\": "./View",
+      "TechnicalServiceLayer\\Repository\\": "./TechnicalServiceLayer/Repository",
+      "TechnicalServiceLayer\\Utility\\": "./TechnicalServiceLayer/Utility",
       "Core\\": "./Core",
       "Model\\Enum\\": "./Model/Enum",
       "Testing\\Fixtures\\": "./Testing/Fixtures",
+      "Controller\\": "./Controller",
       "Testing\\": "./Testing",
-      "Twig\\": "./TwigTesting",
-      "TechnicalServiceLayer\\Repository\\": "./TechnicalServiceLayer/Repository",
-      "View\\": "./View"
+      "Routes\\": "./Routes",
+      "TechnicalServiceLayer\\Exceptions\\": "./TechnicalServiceLayer/Exceptions"
+
     }
   }
 }

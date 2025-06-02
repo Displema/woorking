@@ -32,26 +32,26 @@
             <p>Seleziona la data, il luogo e la fascia oraria preferita e trova l’ambiente perfetto per lavorare in serenità.</p>
         </div>
 
-        <form action="/View/Vmostrauffici.php" method="GET" class="row g-3 align-items-end">
+        <form action="/search/showoffice" method="GET" class="row g-3 align-items-end">
             <div class="col-md-4">
                 <label class="form-label">Luogo</label>
                 <div class="input-group">
-                    <input type="text" name="luogo" class="form-control" placeholder="Luogo">
+                    <input type="text" name="place" class="form-control" placeholder="Luogo">
                     <span class="input-group-text"><i class="fas fa-location-arrow"></i></span>
                 </div>
             </div>
 
             <div class="col-md-3">
                 <label class="form-label">Data</label>
-                <input type="date" name="data" class="form-control">
+                <input type="date" name="date" class="form-control">
             </div>
 
             <div class="col-md-3">
                 <label class="form-label">Fascia Oraria</label>
                 <div class="input-group">
                     <select name="fascia" class="form-select">
-                        <option value="mattina">Mattina</option>
-                        <option value="pomeriggio">Pomeriggio</option>
+                        <option value="Mattina">Mattina</option>
+                        <option value="Pomeriggio">Pomeriggio</option>
                     </select>
                     <span class="input-group-text"><i class="fas fa-clock"></i></span>
                 </div>

@@ -22,14 +22,28 @@ class EUfficio
      #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
     
-      #[ORM\ManyToOne(targetEntity:ELocatore::class)]
+      #[ORM\ManyToOne(targetEntity:ELocatore::class,cascade:["persist"])]
       //#[ORM\JoinColumn(name:"idLocatore", referencedColumnName:"id")]
     private ELocatore $locatore;
 
     #[ORM\OneToMany(targetEntity:EFoto::class, mappedBy:"ufficio", cascade:["persist", "remove"])]
     private Collection $foto;
-    
-     #[ORM\ManyToOne(targetEntity:EIndirizzo::class)]
+
+    #[ORM\Column]
+    private bool $isHidden = false;
+
+    public function isHidden(): bool
+    {
+        return $this->isHidden;
+    }
+
+    public function setIsHidden(bool $isHidden): EUfficio
+    {
+        $this->isHidden = $isHidden;
+        return $this;
+    }
+
+     #[ORM\ManyToOne(targetEntity:EIndirizzo::class,cascade:["persist"])]
     private EIndirizzo $indirizzo;
 
      #[ORM\Column]
@@ -69,7 +83,7 @@ class EUfficio
     private ?string $motivoRifiuto;
 
     #[ORM\OneToMany(targetEntity:ESegnalazione::class, mappedBy:"ufficio", cascade:["persist", "remove"])]
-     private Collection $segnalazioni;
+    private Collection $segnalazioni;
 
     #[ORM\OneToMany(targetEntity:EServiziAggiuntivi::class, mappedBy:"ufficio", cascade:["persist", "remove"])]
     private Collection $serviziAggiuntivi;
@@ -124,7 +138,8 @@ class EUfficio
         return $this->superficie;
     }
 
-    public function getsegnalazione(): Collection{
+    public function getsegnalazione(): Collection
+    {
         return $this->segnalazioni;
     }
 
@@ -168,8 +183,6 @@ class EUfficio
         $this->locatore = $locatore;
         return $this;
     }
-
-
 
     public function setIndirizzo(EIndirizzo $indirizzo): EUfficio
     {

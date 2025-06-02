@@ -22,7 +22,7 @@ class EPagamento
     private UuidInterface $id;
 
     #[ORM\OneToOne(targetEntity: EPrenotazione::class, inversedBy: "pagamento")]
-    private EPrenotazione $prenotazione;
+    private ?EPrenotazione $prenotazione = null;
 
     #[ORM\Column(type:"integer")]
     private int $importo;
