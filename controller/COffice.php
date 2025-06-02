@@ -94,12 +94,20 @@ class COffice
 
 
 
+
+
+    public function startsearch()
+    {
+        $view= new Vmostrauffici();
+        $view->startsearch();
+    }
+
     public function search(string $query, string $date, string $slot)
 
     {
         $em = $this->entity_manager;
         $repo=$em->getRepository(EUfficio::class);
-       // $place=$_GET['place'];
+        // $place=$_GET['place'];
         //$date1=$_GET['date'];
         //$fascia=$_GET['fascia'];
 
@@ -113,24 +121,24 @@ class COffice
         $photoEntity = [];
         foreach ($offices as $office) {
             if ($office->isHidden()){
-            continue;
-        }
+                continue;
+            }
             $reservationcount=$reporeservaton->CountByOfficeDateFascia($office,$date_parsed,$fascia);
             $placeavaible= $office->getNumeroPostazioni();
             if($reservationcount<$placeavaible){
 
 
-            $photoEntity = $em->getRepository(\Model\EFoto::class)->findOneBy(['ufficio' => $office->getId()]);
+                $photoEntity = $em->getRepository(\Model\EFoto::class)->findOneBy(['ufficio' => $office->getId()]);
 
-            if ($photoEntity) {
-               $idPhoto = $photoEntity->getId();
+                if ($photoEntity) {
+                    $idPhoto = $photoEntity->getId();
 
-               $photoUrl = $photoEntity ? "/static/img/" . $idPhoto : null;
+                    $photoUrl = $photoEntity ? "/static/img/" . $idPhoto : null;
 
-            }else {
-                $photoUrl = "https://cdn.pixabay.com/photo/2024/07/20/17/12/warning-8908707_1280.png";
-            }
-        } else{
+                }else {
+                    $photoUrl = "https://cdn.pixabay.com/photo/2024/07/20/17/12/warning-8908707_1280.png";
+                }
+            } else{
                 continue;
 
             }
@@ -141,19 +149,11 @@ class COffice
             ];
         }
 
-      $view= new Vmostrauffici();
-      $view->showuffici($officewithphoto,$date,$fascia);
-
-
-    }
-
-    public function startsearch()
-    {
         $view= new Vmostrauffici();
-        $view->startsearch();
+        $view->showuffici($officewithphoto,$date,$fascia);
+
+
     }
-
-
 
     public function showconfirmedReservation($date,$idOffice,$fascia){
         $FasciaEnum=FasciaOrariaEnum::from($fascia);
