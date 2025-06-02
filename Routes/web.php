@@ -19,17 +19,9 @@ $router->post('/register', 'CAuth@registerUser');
 $router->post('/login', 'CAuth@loginUser');
 
 $router->get('/static/img/{id}', 'CPhoto@view');
-// Office routes
-$router->get('/startsearch', 'COffice@startsearch');
-$router->get('/showoffice', 'COffice@search');
-$router->get('/DetailsOffice/{id}/{data}/{fascia}', 'COffice@Show');
-$router->get('/conferma/Prenotato/{data}/{idUfficio}/{fascia}', 'COffice@showconfirmedPrenotation');
-$router->get('/recensioni/{id}', 'COffice@showRecensioni');
-$router->get('/Report/{id}', 'CReport@showFormReport');
-$router->post('/ConfirmReport/{id}', 'CReport@showConfirmOfReport');
-//$router->get('/ShowPrenotation', 'CPrenotation@showPrenotation');
-$router->get('/ShowPrenotationDetails/{id}', 'CPrenotation@showPrenotationDetails');
-$router->get('/SendReview/{id}', 'CPrenotation@SendReview');
+
+
+
 
 $router->post(
     "/office/{id}/delete",
@@ -43,5 +35,18 @@ $router->post('/office/pending/${id}/reject', 'COffice@sendReject');
 
 // Debug endpoints
 $router->get('/api/user', 'CAuth@getUser');
+
+// Office routes
+$router->get('/search', 'COffice@startsearch');
+$router->get('/search/showoffice', 'COffice@search');
+$router->get('/search/showoffice/detailsoffice/{id}/{date}/{fascia}', 'COffice@Show');
+$router->get('/search/showoffice/detailsoffice/confirm/reservated/{date}/{idOffice}/{fascia}', 'COffice@showconfirmedReservation');
+$router->get('/search/showoffice/detailsoffice/review/{id}', 'COffice@showReview');
+$router->get('/search/showoffice/detailsoffice/Report/{id}','CReport@showFormReport');
+$router->post('/search/showoffice/detailsoffice/Report/ConfirmReport/{id}','CReport@showConfirmOfReport');
+$router->get('/showreservation', 'CReservation@showReservation');
+$router->get('/showreservation/showreservationdetails/{id}', 'CReservation@showReservationDetails');
+$router->get('/showreservation/sendreview/{idreservation}', 'CReservation@sendreview');
+$router->post('/showreservation/sendreview/confirmreview/{idreservation}' , 'CReservation@confirmReview');
 
 return $router;

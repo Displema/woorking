@@ -5,9 +5,7 @@ use Doctrine\ORM\EntityManager;
 use Model\ESegnalazione;
 use Model\EUfficio;
 use PHP_CodeSniffer\Reports\Report;
-use TechnicalServiceLayer\Foundation\FUfficio;
 
-use TechnicalServiceLayer\Foundation\FEntityManager;
 use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
 use View\VReport;
 
@@ -21,12 +19,13 @@ class CReport {
     public static function showConfirmOfReport($id) {
         $commento = $_POST['motivo'] ?? null;
         echo $commento;
-        if($commento == 'Altro'){
+        if($commento == 'Altro') {
             $commento = $_POST['altroTesto'] ?? null;
         }
-
-     $em = FEntityManager::getInstance()->getEntityManager();
+        echo $id;
+     $em =getEntityManager();
      $ufficio=$em->getRepository(EUfficio::class)->find($id);
+     echo $ufficio;
      $Report= new ESegnalazione();
      $Report->setCommento($commento);
      $Report->setUfficio($ufficio);

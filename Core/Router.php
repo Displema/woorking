@@ -66,7 +66,7 @@ class Router
 
         if (class_exists($class) && method_exists($class, $method)) {
             $controller = new $class;
-            call_user_func_array([$controller, $method], $params);
+            call_user_func_array([$controller, $method], array_values($params));
         } else {
             http_response_code(500);
             echo "Handler not found: $handler";
