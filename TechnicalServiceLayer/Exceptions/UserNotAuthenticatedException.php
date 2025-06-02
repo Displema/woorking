@@ -2,7 +2,7 @@
 
 namespace TechnicalServiceLayer\Exceptions;
 
-class UserNotAuthenticated extends \Exception
+class UserNotAuthenticatedException extends \Exception
 {
 
 }

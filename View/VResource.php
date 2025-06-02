@@ -24,4 +24,10 @@ class VResource
 
         echo $content;
     }
+
+    public function printJson(string $data): void
+    {
+        header('Content-Type: application/json');
+        echo $data;
+    }
 }

@@ -4,14 +4,15 @@ namespace TechnicalServiceLayer\Repository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Collections\Collection;
+use Model\EPrenotazione;
 use Model\EUfficio;
 use TechnicalServiceLayer\Foundation\FEntityManager;
 
 class EUfficioRepository extends EntityRepository
 {
-    public static function findByIndirizzoDataFascia($indirizzo, $fascia, $date)
+    public function findByIndirizzoDataFascia($indirizzo, $fascia, $date)
     {
-        $em = FEntityManager::getEntityManager();
+        $em = getEntityManager();
 
         try {
             $qb = $em->createQueryBuilder();
@@ -34,9 +35,9 @@ class EUfficioRepository extends EntityRepository
             return [];
         }
     }
-    public static function  findbythree($indirizzo, $date,$fascia): mixed
+    public function findbythree($indirizzo, $date, $fascia): mixed
     {
-        $em = FEntityManager::getInstance()->getEntityManager();
+        $em = $this->getEntityManager();
         try {
             $query = "SELECT e FROM Model\EUfficio e 
                      JOIN e.intervalliDisponibilita  idisp
@@ -50,11 +51,28 @@ class EUfficioRepository extends EntityRepository
             $createquery->setParameter("data", $date);
             $createquery->setParameter("fascia", $fascia);
             return $createquery->getResult();
-
         } catch (\Exception $e) {
             echo "Error: " . $e->getMessage();
             return [];
         }
+    }
 
+    /**
+     * @param EUfficio $office
+     * @return Collection<int, EPrenotazione>
+     * */
+    public function getActiveReservations(EUfficio $office): Collection
+    {
+        $entity_manager = $this->getEntityManager();
+
+        $reservationsRepo = $entity_manager->getRepository(EPrenotazione::class);
+        $reservations = $reservationsRepo->findBy(['ufficio'=> $office]);
+        return new ArrayCollection($reservationsRepo->createQueryBuilder('e')
+            ->where('e.data > :data')
+            ->andWhere('e.ufficio = :ufficio')
+            ->setParameter('ufficio', $office)
+            ->setParameter('data', new \DateTime())
+            ->getQuery()
+            ->getResult());
     }
 }

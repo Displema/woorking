@@ -2,7 +2,7 @@
 namespace TechnicalServiceLayer\Utility;
 
 use Model\EProfilo;
-use TechnicalServiceLayer\Exceptions\UserNotAuthenticated;
+use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
 
 /**
  * Credit to https://github.com/flebo45/Agora/blob/main/app/services/TechnicalServiceLayer/utility/USession.php
@@ -67,29 +67,31 @@ class USession
     }
 
     /**
-     * @throws UserNotAuthenticated if the session doesn't contain a valid user
+     * @throws UserNotAuthenticatedException if the session doesn't contain a valid user
      */
     public static function requireUser(): EProfilo
     {
-        if (!isset($_SESSION['user'])) {
-            throw new UserNotAuthenticated();
+        if (!self::isSetSessionElement('user')) {
+            throw new UserNotAuthenticatedException();
         }
 
-        return self::getSessionElement($_SESSION['user']);
+        return self::getSessionElement('user');
     }
 
     /**
-     * @throws UserNotAuthenticated
+     * @throws UserNotAuthenticatedException
      */
     public static function requireAdmin(): EProfilo
     {
-        if (self::isSetSessionElement('user')) {
-            throw new UserNotAuthenticated();
+        if (!self::isSetSessionElement('user')) {
+            throw new UserNotAuthenticatedException();
         }
+
+        echo self::isSetSessionElement('user');
 
         $user = self::getSessionElement('user');
         if (!$user->isAdmin()) {
-            throw new UserNotAuthenticated();
+            throw new UserNotAuthenticatedException();
         }
         return $user;
     }
@@ -105,9 +107,10 @@ class USession
 
     /**
      * check if an element is set or not
+     * @param mixed $id
      * @return boolean
      */
-    public static function isSetSessionElement($id)
+    public static function isSetSessionElement(mixed $id): bool
     {
         if (isset($_SESSION[$id])) {
             return true;

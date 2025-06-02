@@ -8,8 +8,10 @@ use Model\Enum\FasciaOrariaEnum;
 use Model\Enum\StatoUfficioEnum;
 use Model\EPrenotazione;
 use Model\ERecensione;
+use Model\ERimborso;
 use Model\EUfficio;
-use TechnicalServiceLayer\Exceptions\UserNotAuthenticated;
+use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
+use TechnicalServiceLayer\Repository\EUfficioRepository;
 use TechnicalServiceLayer\Utility\USession;
 use View\Vmostrauffici;
 use View\VRecensioni;
@@ -126,7 +128,7 @@ class COffice
     {
         try {
             $user = USession::requireAdmin();
-        } catch (UserNotAuthenticated $e) {
+        } catch (UserNotAuthenticatedException $e) {
             $view = new VStatus();
             $view->showStatus(403);
             return;
@@ -163,7 +165,7 @@ class COffice
     {
         try {
             $user = USession::requireAdmin();
-        } catch (UserNotAuthenticated $e) {
+        } catch (UserNotAuthenticatedException $e) {
             $view = new VStatus();
             $view->showStatus(403);
             return;
@@ -187,23 +189,48 @@ class COffice
         $view->redirect('/approvedoffice');
     }
 
-    public function deleteOffice(string $id): void
+    public function deleteOffice(string $id, string $shouldRefund = '0'): void
     {
         try {
             $user = USession::requireAdmin();
-        } catch (UserNotAuthenticated $e) {
+        } catch (UserNotAuthenticatedException $e) {
             $view = new VStatus();
             $view->showStatus(403);
             return;
         }
 
+        /** @var EUfficioRepository $officeRepo */
         $officeRepo = $this->entity_manager->getRepository(EUfficio::class);
         $office = $officeRepo->find($id);
         if (!$office) {
-            // TODO: show bad request
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
         }
 
-        $reservations = $office->getReservations();
+        $reservations = $officeRepo->getActiveReservations($office);
+        if (!$reservations->isEmpty() && $shouldRefund) {
+            foreach ($reservations as $reservation) {
+                $refund = new ERimborso();
+                $refund->setImporto($reservation->getPagamento()->getImporto());
+                try {
+                    $this->entity_manager->persist($refund);
+                    $this->entity_manager->flush();
+                } catch (ORMException $e) {
+                    $view = new VStatus();
+                    $view->showStatus(500);
+                }
+            }
+        }
 
+        try {
+            $this->entity_manager->beginTransaction();
+            $this->entity_manager->remove($office);
+            $this->entity_manager->flush();
+            $this->entity_manager->commit();
+        } catch (ORMException $e) {
+            $view = new VStatus();
+            $view->showStatus(500);
+        }
     }
 }

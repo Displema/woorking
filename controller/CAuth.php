@@ -14,9 +14,11 @@ use Doctrine\ORM\Exception\ORMException;
 use Model\ELocatore;
 use Model\Enum\UserEnum;
 use Model\EProfilo;
+use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
 use TechnicalServiceLayer\Utility\USession;
 use View\VRedirect;
 use View\VAuth;
+use View\VResource;
 
 require_once __DIR__ . "/../bootstrap.php";
 
@@ -90,8 +92,7 @@ class CAuth
             );
 
 
-
-            $model = $userType === UserEnum::Utente ? EProfilo::class : ELocatore::class;
+            $model = $userTypeParsed === UserEnum::Utente ? EProfilo::class : ELocatore::class;
             $profile = new $model();
             $profile
                 ->setIdUtente($userId)
@@ -124,7 +125,7 @@ class CAuth
     public function loginUser(string $email, string $password, string $rememberMe = "0"): void
     {
         $currentUser = USession::isSetSessionElement("user");
-        if ($currentUser !== null) {
+        if ($currentUser) {
             $view = new VRedirect();
             $view->redirect("/home");
         }
@@ -155,5 +156,19 @@ class CAuth
             die('Too many requests');
         } catch (AttemptCancelledException|AuthError $e) {
         }
+    }
+
+    public function getUser(): void
+    {
+        try {
+            $user = USession::requireUser();
+        } catch (UserNotAuthenticatedException $e) {
+            $view = new VRedirect();
+            $view->redirect("/error");
+            return;
+        }
+
+        $view = new VResource();
+        $view->printJson($user);
     }
 }

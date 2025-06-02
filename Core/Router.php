@@ -34,7 +34,7 @@ class Router
                 continue;
             }
 
-            $pattern = "@^" . preg_replace('/\{(\w+)\}/', '(?P<\1>[^/]+)', $route['raw']) . "$@D";
+            $pattern = "@^" . preg_replace('/\{(\w+)}/', '(?P<\1>[^/]+)', $route['raw']) . "$@D";
 
             if (preg_match($pattern, $requestUri, $matches)) {
                 $routeParams = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
