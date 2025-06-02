@@ -22,7 +22,7 @@ class EUfficio
      #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
     
-      #[ORM\ManyToOne(targetEntity:ELocatore::class)]
+      #[ORM\ManyToOne(targetEntity:ELocatore::class,cascade:["persist"])]
       //#[ORM\JoinColumn(name:"idLocatore", referencedColumnName:"id")]
     private ELocatore $locatore;
 
@@ -43,7 +43,7 @@ class EUfficio
         return $this;
     }
 
-     #[ORM\ManyToOne(targetEntity:EIndirizzo::class)]
+     #[ORM\ManyToOne(targetEntity:EIndirizzo::class,cascade:["persist"])]
     private EIndirizzo $indirizzo;
 
      #[ORM\Column]

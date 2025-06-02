@@ -4,14 +4,14 @@ namespace TechnicalServiceLayer\Repository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Collections\Collection;
-use TechnicalServiceLayer\Foundation\FEntityManager;
+
 
 class ERecensioneRepository extends EntityRepository
 {
     public function getRecensioneByUfficio($idufficio)
     {
-        FEntityManager::getInstance();
-        $em = FEntityManager::getEntityManager();
+
+        $em = getEntityManager();
         try {
             $query = "SELECT e FROM Model\ERecensione e
             JOIN e.prenotazione p 

@@ -24,29 +24,29 @@
 
         <!-- Prenotazioni -->
         <div id="lista-prenotazioni">
-            {%for prenotations in prenotation %}
+            {%for reservation in reservations %}
             <!-- Prenotazione Attiva -->
             <div class="card card-custom mb-4 d-flex flex-row p-3 align-items-center prenotazione attiva">
-                <img src="{{ prenotations.photo }}" class="card-img me-3" alt="Ufficio">
+                <img src="{{ reservation.photo }}" class="card-img me-3" alt="Ufficio">
                 <div class="flex-grow-1">
-                    <h5 class="mb-1 text-danger">{{ prenotations.ufficio.titolo }}</h5>
-                    <p class="mb-2">{{ prenotazone.ufficio.descrizione }}</p>
-                    <button class="btn btn-outline-secondary" onclick="window.location.href='/SendReview/{{ prenotations.prenotazione.id }}'">Lascia una recensione</button>
+                    <h5 class="mb-1 text-danger">{{ reservation.office.titolo }}</h5>
+                    <p class="mb-2">{{ reservation.office.descrizione }}</p>
+                    <button class="btn btn-outline-secondary" onclick="window.location.href='/showreservation/sendreview/{{ reservation.reservation.id }}'">Lascia una recensione</button>
 
                 </div>
-                <button class="btn-visualizza" onclick="window.location.href='/ShowPrenotationDetails/{{ prenotations.prenotazione.id }}'">Visualizza</button>
+                <button class="btn-visualizza" onclick="window.location.href='/showreservation/showreservationdetails/{{ reservation.reservation.id }}'">Visualizza</button>
             </div>
             {% endfor %}
-            {%for prenotation1 in oldPrenotation %}
+            {%for reservation1 in oldreservations %}
             <!-- Prenotazione Passata -->
             <div class="card card-custom mb-4 d-flex flex-row p-3 align-items-center prenotazione passata d-none">
-                <img src="{{ prenotation1.photo }}" class="card-img me-3" alt="Ufficio">
+                <img src="{{ reservation1.photo }}" class="card-img me-3" alt="Ufficio">
                 <div class="flex-grow-1">
-                    <h5 class="mb-1 text-danger">{{ prenotation1.ufficio.titolo }}</h5>
-                    <p class="mb-2">{{ prenotation1.ufficio.descrizione }}</p>
-                    <button class="btn btn-outline-secondary" onclick="window.location.href='/SendReview/{{ prenotation1.prenotazione.id }}'">Lascia una recensione</button>
+                    <h5 class="mb-1 text-danger">{{ reservation1.office.titolo }}</h5>
+                    <p class="mb-2">{{ reservation1.office.descrizione }}</p>
+                    <button class="btn btn-outline-secondary" onclick="window.location.href='/showreservation/sendreview/{{ reservation1.reservation.id }}'">Lascia una recensione</button>
                 </div>
-                <button class="btn-visualizza" onclick="window.location.href='/ShowPrenotationDetails/{{ prenotation1.prenotazione.id }}'">Visualizza</button>
+                <button class="btn-visualizza" onclick="window.location.href='/showreservation/showreservationdetails/{{ reservation1.reservation.id }}'">Visualizza</button>
             </div>
 
             {% endfor %}
