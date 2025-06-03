@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Woorking{% endblock %}</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@tabler/core@1.3.2/dist/css/tabler.min.css" />
+</head>
+<body>
+<main>
+    {% include "/Base/sidebar.html.twig" %}
+    {% block content %}
+    {% endblock %}
+    <script
+            src="https://cdn.jsdelivr.net/npm/@tabler/core@1.3.2/dist/js/tabler.min.js">
+    </script>
+</main>
+
+<footer>
+    Footer
+</footer>
+</body>
+</html>
