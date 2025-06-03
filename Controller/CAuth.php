@@ -148,7 +148,7 @@ class CAuth
             $this->auth_manager->login($email, $password, $duration);
             $userid = $this->auth_manager->getUserId();
             $repo = $this->entity_manager->getRepository(EProfilo::class);
-            $profile = $repo->findOneBy(['idUtente' => $userid]);
+            $profile = $repo->findOneBy(['user_id' => $userid]);
 
             USession::setSessionElement("user", $profile);
 
