@@ -30,4 +30,10 @@ class VResource
         header('Content-Type: application/json');
         echo $data;
     }
+
+    public function printText(string $data): void
+    {
+        header('Content-Type: application/html');
+        echo $data;
+    }
 }

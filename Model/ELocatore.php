@@ -11,7 +11,8 @@ use TechnicalServiceLayer\Repository\EUtenteRepository;
 class ELocatore extends EProfilo
 {
 
-    #[ORM\Column(name: "partita_iva", type: "string", length: 20, nullable: false)]
+    // The length of italian partita iva is of 11 characters, we're leaving some wiggle room for edge cases.
+    #[ORM\Column(name: "partita_iva", type: "string", length: 15, nullable: false)]
     private string $partitaIva;
 
     public function getPartitaIva(): string
