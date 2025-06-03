@@ -15,14 +15,14 @@ class VReservation extends BaseView
      */
     public function showReservation($activeReservations, $pastReservations)
     {
-        $this->twig->render(
+        $this->twig->display(
             '/Prenotazioni/Prenotazione.html.twig',
             ['reservations' => $activeReservations,
             'oldreservations'=>$pastReservations]
         );
     }
 
-    public function showReservationDetails(EPrenotazione $reservation): void
+    public function showReservationDetails( $reservation): void
     {
         $this->twig->display('Prenotazioni/VisualizzaPrenotazioni.html.twig', ['reservations' => $reservation]);
     }

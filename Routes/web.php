@@ -42,7 +42,7 @@ $router->get('/search/showoffice/detailsoffice/confirm/reservated/{date}/{idOffi
 $router->get('/search/showoffice/detailsoffice/review/{id}', 'COffice@showReview');
 $router->get('/search/showoffice/detailsoffice/Report/{id}','CReport@showFormReport');
 $router->post('/search/showoffice/detailsoffice/Report/ConfirmReport/{id}','CReport@showConfirmOfReport');
-$router->get('/showreservation', 'CReservation@showReservation');
+$router->get('/showreservation', 'CReservation@showreservation');
 $router->get('/showreservation/showreservationdetails/{id}', 'CReservation@showReservationDetails');
 $router->get('/showreservation/sendreview/{idreservation}', 'CReservation@sendreview');
 $router->post('/showreservation/sendreview/confirmreview/{idreservation}' , 'CReservation@confirmReview');

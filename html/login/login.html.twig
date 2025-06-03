@@ -40,18 +40,44 @@
                 <form id="register-form" style="display: none;" action="/register" method="post">
                     <div class="mb-3">
                         <label for="reg-nome" class="form-label">Nome</label>
-                        <input type="text" class="form-control" id="reg-nome" required>
+                        <input name="nome" type="text" class="form-control" id="reg-nome" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reg-cognome" class="form-label">Cognome</label>
+                        <input name="cognome" type="text" class="form-control" id="reg-cognome" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reg-data-nascita" class="form-label">Data di Nascita</label>
+                        <input name="data_nascita" type="date" class="form-control" id="reg-data-nascita" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reg-telefono" class="form-label">Telefono</label>
+                        <input name="telefono" type="tel" class="form-control" id="reg-telefono" required>
                     </div>
                     <div class="mb-3">
                         <label for="reg-email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="reg-email" required>
+                        <input name="email" type="email" class="form-control" id="reg-email" required>
                     </div>
                     <div class="mb-3">
                         <label for="reg-password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="reg-password" required>
+                        <input name="password" type="password" class="form-control" id="reg-password" required>
                     </div>
+
+                    <!-- Switch locatore -->
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="isLocatoreSwitch">
+                        <label class="form-check-label" for="isLocatoreSwitch">Sei un locatore?</label>
+                    </div>
+
+                    <!-- Campo Partita IVA -->
+                    <div class="mb-3" id="partitaIvaField" style="display: none;">
+                        <label for="reg-partita-iva" class="form-label">Partita IVA</label>
+                        <input name="partita_iva" type="text" class="form-control" id="reg-partita-iva">
+                    </div>
+
                     <button type="submit" class="btn btn-danger w-100">Registrati</button>
                 </form>
+
 
                 <!-- Toggle tra Login/Registrazione -->
                 <div class="text-center mt-4">
@@ -101,6 +127,17 @@
 
         // Attiva primo listener
         document.getElementById("toggle-link").addEventListener("click", handleToggle);
+    });
+</script>
+<script>
+    // Mostra/nascondi campo Partita IVA
+    document.addEventListener("DOMContentLoaded", () => {
+        const locatoreSwitch = document.getElementById("isLocatoreSwitch");
+        const partitaIvaField = document.getElementById("partitaIvaField");
+
+        locatoreSwitch.addEventListener("change", () => {
+            partitaIvaField.style.display = locatoreSwitch.checked ? "block" : "none";
+        });
     });
 </script>
 

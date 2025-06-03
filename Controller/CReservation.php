@@ -25,11 +25,11 @@ class CReservation
         $today = new DateTime();
         $em = getEntityManager();
         $repository = $em->getRepository(EPrenotazione::class);
-        $reservation = $repository->findAll();
+        $reservations = $repository->findAll();
         $reservationWithOffice = [];
         $oldreservationWithOffice = [];
 
-        foreach ($reservation as $reservation) {
+        foreach ($reservations as $reservation) {
             $idOffice = $reservation->getUfficio();
             $photo = $em->getRepository(EFoto::class)->findOneBy(['ufficio' => $idOffice]);
             $office = $em->getRepository(EUfficio::class)->find($idOffice);

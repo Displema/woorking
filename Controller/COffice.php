@@ -164,7 +164,7 @@ class COffice
         }
 
         $view= new VOffice();
-        $view->showuffici($officewithphoto, $date, $fascia);
+        $view->showOfficeSearch($officewithphoto, $date, $fascia);
     }
 
 
