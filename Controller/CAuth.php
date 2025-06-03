@@ -58,7 +58,6 @@ class CAuth
         $authView->showRegisterForm();
     }
     public function registerUser(
-
         string $name,
         string $surname,
         string $dob,
@@ -122,7 +121,11 @@ class CAuth
         } catch (TooManyRequestsException $e) {
             die('Too many requests');
         } catch (ORMException $e) {
+            die('ORM error');
         }
+
+        $view = new VRedirect();
+        $view->redirect("/home");
     }
 
     public function loginUser(string $email, string $password, string $rememberMe = "0"): void
@@ -148,7 +151,8 @@ class CAuth
 
             USession::setSessionElement("user", $profile);
 
-            echo "User is logged in. Your profile is $profile";
+            $view = new VRedirect();
+            $view->redirect("/home");
         } catch (InvalidEmailException $e) {
             die('Wrong email address');
         } catch (InvalidPasswordException $e) {

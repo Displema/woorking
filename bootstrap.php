@@ -53,7 +53,6 @@ function getAuth(): Auth
     $port = $_ENV['DB_PORT'];
     $host = $_ENV['DB_HOST'];
 
-
     $db = PdoDatabase::fromDsn(new PdoDsn(
         "mysql:dbname=$dbName;host=$host;charset=utf8mb4",
         $user,
