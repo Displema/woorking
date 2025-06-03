@@ -7,12 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="/html/login/login.css">
-    <style>
-        body {
-            background-color: #222;
-            color: #fff;
-        }
-    </style>
+
 </head>
 <body>
 
@@ -29,25 +24,30 @@
                 </h3>
                 <dl class="row">
                     <dt class="col-sm-4">Nome</dt>
-                    <dd class="col-sm-8">{{ utente.nome }}</dd>
+                    <dd class="col-sm-8">{{ user.nome }}</dd>
 
                     <dt class="col-sm-4">Cognome</dt>
-                    <dd class="col-sm-8">{{ utente.cognome }}</dd>
+                    <dd class="col-sm-8">{{ user.cognome }}</dd>
 
                     <dt class="col-sm-4">Email</dt>
-                    <dd class="col-sm-8">{{ utente.email }}</dd>
+                    <dd class="col-sm-8">{{ user.email }}</dd>
 
                     <dt class="col-sm-4">Data di nascita</dt>
-                    <dd class="col-sm-8">{{ utente.dataNascita|date('d/m/Y') }}</dd>
+                    <dd class="col-sm-8">{{ user.dataNascita|date('d/m/Y') }}</dd>
 
                     <dt class="col-sm-4">Telefono</dt>
-                    <dd class="col-sm-8">{{ utente.telefono }}</dd>
+                    <dd class="col-sm-8">{{ user.telefono }}</dd>
 
-                    {% if utente.locatore %}
+                    {% if user.locatore %}
                         <dt class="col-sm-4">Partita IVA</dt>
-                        <dd class="col-sm-8">{{ utente.partitaIva }}</dd>
+                        <dd class="col-sm-8">{{ user.partitaIva }}</dd>
                     {% endif %}
                 </dl>
+                <div class="mt-4">
+                    <a href="/search/showoffice/detailsoffice/Report/{{ ufficio.ufficio.id }}" class="btn btn-danger w-100">
+                        <i class="fa-solid fa-flag"></i> Logout
+                    </a>
+                </div>
             </div>
         </div>
     </div>

@@ -26,8 +26,8 @@ class VOffice extends BaseView
     }
     public function showconfirmedpage1()
     {
-        $twig = new \Twig\Environment($this->loader);
-        echo $twig->render('/conferme/confermaprenotazione.html.twig');
+
+        echo $this->twig->display('/conferme/confermaprenotazione.html.twig');
     }
 
     public function showAllRecension($recensione, $ufficio)

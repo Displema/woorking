@@ -73,9 +73,9 @@ class COffice
             // With PessimisticWrite the first one that gets access to the office locks it until it's finished
             $office = $em->getRepository(EUfficio::class)->find($idOffice, LockMode::PESSIMISTIC_WRITE);
             $reservationCount = $em->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($idOffice, $date, $fascia);
-            echo $reservationCount;
+
             $placesAvaible = $office->getNumeroPostazioni();
-            echo $placesAvaible;
+
             $uuid="1f091da3-ea4f-42d8-9277-04c7f19bb3fd";
             $utente=$em->getRepository(EProfilo::class)->find($uuid);
 

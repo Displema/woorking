@@ -33,4 +33,10 @@ class CHome
         $view = new VRedirect();
         $view->redirect('/home');
     }
+
+    public function showprofile(){
+        $user=USession::requireUser();
+        $view = new VHome();
+        $view->profile($user);
+    }
 }

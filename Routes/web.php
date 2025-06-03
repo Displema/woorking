@@ -17,7 +17,7 @@ $router->post('/register', 'CAuth@registerUser');
 // Static content routes
 $router->get('/static/img/{id}', 'CPhoto@view');
 
-
+$router->get('/profile', 'CHome@showprofile');
 
 
 $router->post(
@@ -38,7 +38,7 @@ $router->get('/home', 'CHome@index');
 $router->get('/search', 'COffice@startsearch');
 $router->get('/search/showoffice', 'COffice@search');
 $router->get('/search/showoffice/detailsoffice/{id}/{date}/{fascia}', 'COffice@show');
-$router->get('/search/showoffice/detailsoffice/confirm/reservated/{date}/{idOffice}/{fascia}', 'COffice@onfirmReservation');
+$router->get('/search/showoffice/detailsoffice/confirm/reservated/{date}/{idOffice}/{fascia}', 'COffice@confirmReservation');
 $router->get('/search/showoffice/detailsoffice/review/{id}', 'COffice@showReview');
 $router->get('/search/showoffice/detailsoffice/Report/{id}','CReport@showFormReport');
 $router->post('/search/showoffice/detailsoffice/Report/ConfirmReport/{id}','CReport@showConfirmOfReport');

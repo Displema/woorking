@@ -17,19 +17,22 @@ class CReport {
         $view->showReportForm($id);
     }
     public static function showConfirmOfReport($id) {
+
         $commento = $_POST['motivo'] ?? null;
-        echo $commento;
+
         if($commento == 'Altro') {
             $commento = $_POST['altroTesto'] ?? null;
         }
-        echo $id;
+
      $em =getEntityManager();
      $ufficio=$em->getRepository(EUfficio::class)->find($id);
-     echo $ufficio;
+
      $Report= new ESegnalazione();
      $Report->setCommento($commento);
      $Report->setUfficio($ufficio);
-     $em->getRepository(ESegnalazione::class)->SaveReport($Report);
+     $em->persist($Report);
+     $em->flush();
+     //$em->getRepository(ESegnalazione::class)->SaveReport($Report);
 
      $view = new VReport();
      $view->showReportConfirmation();
