@@ -1,9 +1,11 @@
 <?php
 namespace TechnicalServiceLayer\Repository;
 
+use Doctrine\Common\Annotations\Annotation\Enum;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Collections\Collection;
+use Model\Enum\StatoUfficioEnum;
 use Model\EPrenotazione;
 use Model\EUfficio;
 use TechnicalServiceLayer\Foundation\FEntityManager;
@@ -75,4 +77,21 @@ class EUfficioRepository extends EntityRepository
             ->getQuery()
             ->getResult());
     }
+
+    /**
+     * Returns all the office that satisfies
+     * @param StatoUfficioEnum $state
+     * @return Collection<int, EUfficio>
+     */
+    public function getOfficesByState(StatoUfficioEnum $state): Collection
+    {
+        return new ArrayCollection($this->getEntityManager()->createQueryBuilder()
+            ->update(EUfficio::class, 'e')
+            ->select('e')
+            ->where('e.stato = :stato')
+            ->setParameter('stato', $state->value)
+            ->getQuery()
+            ->getResult());
+    }
+
 }
