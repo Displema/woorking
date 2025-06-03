@@ -40,19 +40,19 @@
                 <form id="register-form" style="display: none;" action="/register" method="post">
                     <div class="mb-3">
                         <label for="reg-nome" class="form-label">Nome</label>
-                        <input name="nome" type="text" class="form-control" id="reg-nome" required>
+                        <input name="name" type="text" class="form-control" id="reg-nome" required>
                     </div>
                     <div class="mb-3">
                         <label for="reg-cognome" class="form-label">Cognome</label>
-                        <input name="cognome" type="text" class="form-control" id="reg-cognome" required>
+                        <input name="surname" type="text" class="form-control" id="reg-cognome" required>
                     </div>
                     <div class="mb-3">
                         <label for="reg-data-nascita" class="form-label">Data di Nascita</label>
-                        <input name="data_nascita" type="date" class="form-control" id="reg-data-nascita" required>
+                        <input name="date" type="date" class="form-control" id="reg-data-nascita" required>
                     </div>
                     <div class="mb-3">
                         <label for="reg-telefono" class="form-label">Telefono</label>
-                        <input name="telefono" type="tel" class="form-control" id="reg-telefono" required>
+                        <input name="phone" type="tel" class="form-control" id="reg-telefono" required>
                     </div>
                     <div class="mb-3">
                         <label for="reg-email" class="form-label">Email</label>
@@ -65,14 +65,15 @@
 
                     <!-- Switch locatore -->
                     <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" id="isLocatoreSwitch">
+                        <input class="form-check-input"  type="checkbox" id="isLocatoreSwitch">
                         <label class="form-check-label" for="isLocatoreSwitch">Sei un locatore?</label>
                     </div>
-
+                    <!-- Hidden input per user type -->
+                    <input type="hidden" name="userType" id="userTypeInput" value="Utente">
                     <!-- Campo Partita IVA -->
                     <div class="mb-3" id="partitaIvaField" style="display: none;">
                         <label for="reg-partita-iva" class="form-label">Partita IVA</label>
-                        <input name="partita_iva" type="text" class="form-control" id="reg-partita-iva">
+                        <input name="piva" type="text" class="form-control" id="reg-partita-iva">
                     </div>
 
                     <button type="submit" class="btn btn-danger w-100">Registrati</button>
@@ -136,7 +137,9 @@
         const partitaIvaField = document.getElementById("partitaIvaField");
 
         locatoreSwitch.addEventListener("change", () => {
+            const isLocatore = locatoreSwitch.checked;
             partitaIvaField.style.display = locatoreSwitch.checked ? "block" : "none";
+            userTypeInput.value = isLocatore ? "Locatore" : "Utente";
         });
     });
 </script>
