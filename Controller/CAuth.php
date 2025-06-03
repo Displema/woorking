@@ -11,6 +11,7 @@ use Delight\Auth\TooManyRequestsException;
 use Delight\Auth\UserAlreadyExistsException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
+use Exception;
 use Model\ELocatore;
 use Model\Enum\UserEnum;
 use Model\EProfilo;
@@ -35,7 +36,7 @@ class CAuth
 
     public function showLoginForm(): void
     {
-        $currentUser = USession::getSessionElement("user");
+        $currentUser = USession::isSetSessionElement("user");
         if ($currentUser) {
             $redirectView = new VRedirect();
             $redirectView->redirect("/home");
@@ -60,7 +61,7 @@ class CAuth
 
         string $name,
         string $surname,
-        string $date,
+        string $dob,
         string $phone,
         string $email,
         string $password,
@@ -69,10 +70,8 @@ class CAuth
 
     ): void {
         try {
-            var_dump($date);
-            var_dump($userType);
-            $date = new DateTime($date);
-        } catch (\Exception $e) {
+            $date_parsed = new DateTime($dob);
+        } catch (Exception) {
             die("Wrong date format");
         }
 
@@ -101,7 +100,7 @@ class CAuth
             $profile
                 ->setIdUtente($userId)
                 ->setTelefono($phone)
-                ->setDataNascita($date)
+                ->setDataNascita($date_parsed)
                 ->setNome($name)
                 ->setCognome($surname);
 
@@ -159,6 +158,7 @@ class CAuth
         } catch (TooManyRequestsException $e) {
             die('Too many requests');
         } catch (AttemptCancelledException|AuthError $e) {
+            die('An error occurred');
         }
     }
 
