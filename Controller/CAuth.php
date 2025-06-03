@@ -97,11 +97,11 @@ class CAuth
             $model = $userTypeParsed === UserEnum::Utente ? EProfilo::class : ELocatore::class;
             $profile = new $model();
             $profile
-                ->setIdUtente($userId)
-                ->setTelefono($phone)
-                ->setDataNascita($date_parsed)
-                ->setNome($name)
-                ->setCognome($surname);
+                ->setUserId($userId)
+                ->setPhone($phone)
+                ->setDob($date_parsed)
+                ->setName($name)
+                ->setSurname($surname);
 
             if ($userTypeParsed === UserEnum::Locatore) {
                 if ($piva === null) {

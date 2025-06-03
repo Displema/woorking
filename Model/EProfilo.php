@@ -11,7 +11,7 @@ use TechnicalServiceLayer\Repository\EUtenteRepository;
 
 #[ORM\Entity(repositoryClass: EProfiloRepository::class)]
 #[ORM\InheritanceType("JOINED")]
-#[ORM\DiscriminatorColumn(name: "tipo", type: "string")]
+#[ORM\DiscriminatorColumn(name: "type", type: "string")]
 #[ORM\DiscriminatorMap(["utente" => EProfilo::class, "locatore" => ELocatore::class])]
 #[ORM\Table(name: "Profili")]
 class EProfilo
@@ -22,19 +22,19 @@ class EProfilo
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
-    #[ORM\Column(name: 'id_utente', type: 'string', length: 255)]
-    private string $idUtente;
+    #[ORM\Column(name: 'user_id', type: 'string', length: 255)]
+    private string $user_id;
 
     #[ORM\Column(type: 'string', length: 40)]
-    private string $nome;
+    private string $name;
     #[ORM\Column(type: 'string', length: 40)]
-    private string $cognome;
+    private string $surname;
     #[ORM\Column(type: 'string', length: 20)]
-    private string $telefono;
+    private string $phone;
     #[ORM\Column(type: "date", nullable: false)]
-    private DateTime $dataNascita;
+    private DateTime $dob;
     #[ORM\Column(type: "boolean")]
-    private bool $isAdmin = false;
+    private bool $admin = false;
 
     public function __construct()
     {
@@ -45,76 +45,76 @@ class EProfilo
         return $this->id;
     }
 
-    public function getNome(): string
+    public function getName(): string
     {
-        return $this->nome;
+        return $this->name;
     }
 
-    public function getCognome(): string
+    public function getSurname(): string
     {
-        return $this->cognome;
+        return $this->surname;
     }
 
-    public function getTelefono(): string
+    public function getPhone(): string
     {
-        return $this->telefono;
+        return $this->phone;
     }
 
-    public function getDataNascita(): DateTime
+    public function getDob(): DateTime
     {
-        return $this->dataNascita;
+        return $this->dob;
     }
 
-    public function isAdmin(): bool
+    public function admin(): bool
     {
-        return $this->isAdmin;
+        return $this->admin;
     }
 
-    public function getIdUtente(): string
+    public function getUserId(): string
     {
-        return $this->idUtente;
+        return $this->user_id;
     }
 
-    public function setIdUtente(string $idUtente): EProfilo
+    public function setUserId(string $user_id): EProfilo
     {
-        $this->idUtente = $idUtente;
+        $this->user_id = $user_id;
         return $this;
     }
 
 
-    public function setNome(string $nome): EProfilo
+    public function setName(string $name): EProfilo
     {
-        $this->nome = $nome;
+        $this->name = $name;
         return $this;
     }
 
-    public function setCognome(string $cognome): EProfilo
+    public function setSurname(string $surname): EProfilo
     {
-        $this->cognome = $cognome;
+        $this->surname = $surname;
         return $this;
     }
 
-    public function setTelefono(string $telefono): EProfilo
+    public function setPhone(string $phone): EProfilo
     {
-        $this->telefono = $telefono;
+        $this->phone = $phone;
         return $this;
     }
 
-    public function setDataNascita(DateTime $dataNascita): EProfilo
+    public function setDob(DateTime $dob): EProfilo
     {
-        $this->dataNascita = $dataNascita;
+        $this->dob = $dob;
         return $this;
     }
 
 
-    public function setIsAdmin(bool $isAdmin): EProfilo
+    public function setAdmin(bool $admin): EProfilo
     {
-        $this->isAdmin = $isAdmin;
+        $this->admin = $admin;
         return $this;
     }
 
     public function __toString(): string
     {
-        return "EProfilo(ID: $this->id, Nome: $this->nome, Cognome: $this->cognome, Telefono: $this->telefono, Data di Nascita: " . $this->dataNascita->format('Y-m-d') . ", Admin: " . ($this->isAdmin ? 'Sì' : 'No'.")");
+        return "EProfilo(ID: $this->id, Nome: $this->name, Cognome: $this->surname, Telefono: $this->phone, Data di Nascita: " . $this->dob->format('Y-m-d') . ", Admin: " . ($this->admin ? 'Sì' : 'No'.")");
     }
 }

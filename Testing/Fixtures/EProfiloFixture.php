@@ -18,12 +18,12 @@ class EProfiloFixture extends AbstractFixture implements DependentFixtureInterfa
         for ($i = 0; $i < 20; $i++) {
             $user = new EProfilo();
             $user
-                ->setNome($faker->firstName())
-                ->setCognome($faker->lastName())
-                ->setDataNascita($faker->dateTimeBetween("-60 years", "-18 years"))
-                ->setIdUtente(FixtureState::$userIds[$i])
-                ->setIsAdmin(false)
-                ->setTelefono($faker->phoneNumber());
+                ->setName($faker->firstName())
+                ->setSurname($faker->lastName())
+                ->setDob($faker->dateTimeBetween("-60 years", "-18 years"))
+                ->setUserId(FixtureState::$userIds[$i])
+                ->setAdmin(false)
+                ->setPhone($faker->phoneNumber());
             $manager->persist($user);
             $this->addReference('EProfilo_' . $i, $user);
         }

@@ -17,14 +17,14 @@ class ELocatoreFixture extends AbstractFixture implements DependentFixtureInterf
         for ($i = 0; $i < 10; $i++) {
             $user = new ELocatore();
             $user
-                ->setNome($faker->firstName())
-                ->setCognome($faker->lastName())
-                ->setDataNascita($faker->dateTimeBetween("-60 years", "-18 years"))
+                ->setName($faker->firstName())
+                ->setSurname($faker->lastName())
+                ->setDob($faker->dateTimeBetween("-60 years", "-18 years"))
                 // +20 is required to not get normal users ids
-                ->setIdUtente(FixtureState::$userIds[$i + 20])
-                ->setIsAdmin(false)
+                ->setUserId(FixtureState::$userIds[$i + 20])
+                ->setAdmin(false)
                 ->setPartitaIva($faker->randomNumber(9, true))
-                ->setTelefono($faker->phoneNumber());
+                ->setPhone($faker->phoneNumber());
 
             $this->addReference('ELocatore_' . $i, $user);
             $manager->persist($user);
