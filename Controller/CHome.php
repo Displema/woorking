@@ -18,13 +18,14 @@ class CHome
     public function index(): void
     {
         $view = new VHome();
+        $user = USession::requireUser();
         if (USession::isSetSessionElement('user')) {
             // TODO: add custom navbar for logged users
             $login="isLoggedIn";
         }else{
             $login="NotLoggedIn";
         }
-        $view->index($login);
+        $view->index($login,$user);
     }
 
     public function indexRedirect(): void

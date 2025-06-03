@@ -131,6 +131,7 @@ class CAuth
     public function loginUser(string $email, string $password, string $rememberMe = "0"): void
     {
         $currentUser = USession::isSetSessionElement("user");
+
         if ($currentUser) {
             $view = new VRedirect();
             $view->redirect("/home");
