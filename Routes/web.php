@@ -11,8 +11,8 @@ $router->get('/', 'CHome@indexRedirect');
 // Auth routes
 $router->get('/login', 'CAuth@showLoginForm');
 $router->get('/register', 'CAuth@showRegisterForm');
-$router->post('/register', 'CAuth@registerUser');
 $router->post('/login', 'CAuth@loginUser');
+$router->post('/register', 'CAuth@registerUser');
 
 // Static content routes
 $router->get('/static/img/{id}', 'CPhoto@view');
