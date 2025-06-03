@@ -17,6 +17,9 @@ $router->post('/register', 'CAuth@registerUser');
 // Static content routes
 $router->get('/static/img/{id}', 'CPhoto@view');
 
+// Admin routes
+$router->get('/admin/home', 'CAdmin@home');
+
 $router->get('/profile', 'CHome@showprofile');
 
 
