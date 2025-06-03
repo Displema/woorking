@@ -57,16 +57,20 @@ class CAuth
         $authView->showRegisterForm();
     }
     public function registerUser(
-        string $email,
-        string $password,
+
         string $name,
         string $surname,
         string $date,
-        string $userType,
         string $phone,
+        string $email,
+        string $password,
+        string $userType,
         string $piva = null
+
     ): void {
         try {
+            var_dump($date);
+            var_dump($userType);
             $date = new DateTime($date);
         } catch (\Exception $e) {
             die("Wrong date format");

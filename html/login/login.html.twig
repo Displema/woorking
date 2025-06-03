@@ -69,7 +69,7 @@
                         <label class="form-check-label" for="isLocatoreSwitch">Sei un locatore?</label>
                     </div>
                     <!-- Hidden input per user type -->
-                    <input type="hidden" name="userType" id="userTypeInput" value="Utente">
+                    <input type="hidden" name="userType" id="userTypeInput" value="UTENTE">
                     <!-- Campo Partita IVA -->
                     <div class="mb-3" id="partitaIvaField" style="display: none;">
                         <label for="reg-partita-iva" class="form-label">Partita IVA</label>
@@ -139,7 +139,7 @@
         locatoreSwitch.addEventListener("change", () => {
             const isLocatore = locatoreSwitch.checked;
             partitaIvaField.style.display = locatoreSwitch.checked ? "block" : "none";
-            userTypeInput.value = isLocatore ? "Locatore" : "Utente";
+            userTypeInput.value = isLocatore ? "LOCATORE" : "UTENTE";
         });
     });
 </script>
