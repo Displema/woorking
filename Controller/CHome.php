@@ -20,8 +20,11 @@ class CHome
         $view = new VHome();
         if (USession::isSetSessionElement('user')) {
             // TODO: add custom navbar for logged users
+            $login="isLoggedIn";
+        }else{
+            $login="NotLoggedIn";
         }
-        $view->index();
+        $view->index($login);
     }
 
     public function indexRedirect(): void

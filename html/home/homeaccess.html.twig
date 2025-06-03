@@ -19,7 +19,15 @@
 
 
 <!-- NAVBAR -->
+{% if isloggedin == 'isLoggedIn' %}
+
 {% include 'navbar/navbar.html.twig' %}
+
+{% else %}
+
+{% include 'navbar/navbar1.html.twig' %}
+
+{%  endif %}
 
 
 
