@@ -115,8 +115,14 @@ class CReservation
     }
 
     public function sendreview($idreservation){
+        $em = getEntityManager();
+        if (USession::isSetSessionElement('user')) {
+            $user = USession::requireUser();
+
+            $user = $em->getRepository(EProfilo::class)->find($user->getId());
+        }
         $view = new VReview();
-        $view ->showReviewForm($idreservation);
+        $view ->showReviewForm($idreservation,$user);
     }
 
     public function confirmreview($idreservation,){
@@ -124,6 +130,11 @@ class CReservation
         $comment = $_POST['review']; // comment of review
 
         $em = getEntityManager();
+        if (USession::isSetSessionElement('user')) {
+            $user = USession::requireUser();
+
+            $user = $em->getRepository(EProfilo::class)->find($user->getId());
+        }
         $reservation = $em->getRepository(EPrenotazione::class)->find($idreservation);
 
         $review= new ERecensione();
@@ -135,7 +146,7 @@ class CReservation
         $em->flush();
 
         $view = new VReview();
-        $view->showReviewConfirmation();
+        $view->showReviewConfirmation($user);
 
 
 
