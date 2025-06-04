@@ -44,6 +44,7 @@
                 <p><strong>Posti disponibili:</strong> {{ ufficio.ufficio.numeroPostazioni }}</p>
                 <p><strong>Contatti:</strong> info@affittaufficio.it - +39 0123 456789</p>
                 <p><strong>Descrizione:</strong> {{ ufficio.ufficio.descrizione }}</p>
+                <p><strong>Superficie:</strong> {{ ufficio.ufficio.superficie }} m^2</p>
                 <p><strong>Servizi Aggiuntivi:</strong></p>
                 <ul>
                     {% for servizio in ufficio.ufficio.serviziAggiuntivi %}
