@@ -7,7 +7,9 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Model\Enum\StatoUfficioEnum;
+use Model\EPrenotazione;
 use Model\EUfficio;
+use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
 use TechnicalServiceLayer\Repository\EUfficioRepository;
 use TechnicalServiceLayer\Repository\UserRepository;
 use View\VAdmin;
@@ -40,11 +42,6 @@ class CAdmin
         $view = new VAdmin();
         try {
             $office = $this->entity_manager->find(EUfficio::class, $id);
-        } catch (ValueNotConvertible) {
-            $view = new VStatus();
-            $view->showStatus(404);
-            return;
-        } catch (OptimisticLockException $e) {
         } catch (ORMException $e) {
             $view = new VStatus();
             $view->showStatus(500);
@@ -60,6 +57,9 @@ class CAdmin
         $view = new VAdmin();
         $userRepo = UserRepository::getInstance();
         $email = $userRepo->getEmailByUserId($office->getLocatore()->getUserId())[0]['email'];
-        $view->showOfficeDetails($office, $email);
+        /** @var EUfficioRepository $officeRepo */
+        $officeRepo = $this->entity_manager->getRepository(EUfficio::class);
+        $reservations = $officeRepo->getActiveReservations($office);
+        $view->showOfficeDetails($office, $email, count($reservations));
     }
 }
