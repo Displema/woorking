@@ -17,15 +17,15 @@ class EPrenotazioneRepository extends EntityRepository
 
     /**
      * @param EUfficio $ufficio
-     * @return EPrenotazione|null
+     * @return array
      */
-    public function getPrenotazioneByUfficio(EUfficio $ufficio): ?EPrenotazione
+    public function getPrenotazioneByUfficio(EUfficio $ufficio): array
     {
         return $this->createQueryBuilder('p')
             ->where('p.ufficio = :ufficio')
             ->setParameter('ufficio', $ufficio)
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getResult();
 }
 
     public function getActiveReservationsByOfficeDateSlot($office, $date, $fascia): int

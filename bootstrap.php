@@ -54,6 +54,7 @@ function getEntityManager(): EntityManager
 
 function getAuth(): Auth
 {
+/*
     $connectionParams = [
         'dbname' => "login",
         'user' => $_ENV['DB_USER'],
@@ -68,6 +69,16 @@ function getAuth(): Auth
         'root',
         'passwordroot'
     ));
+    return new Auth($db, throttling: false);
+*/
+    $dsn = "mysql:dbname=login;host=localhost;charset=utf8mb4";
+
+    $db = PdoDatabase::fromDsn(new PdoDsn(
+        $dsn,
+        $_ENV['DB_USER'],       // cioè "root"
+        $_ENV['DB_PASSWORD']    // vuota, cioè ""
+    ));
+
     return new Auth($db, throttling: false);
 }
 

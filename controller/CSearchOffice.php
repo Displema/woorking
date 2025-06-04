@@ -9,7 +9,8 @@ use Model\Enum\StatoUfficioEnum;
 use Model\EPrenotazione;
 use Model\EServiziAggiuntivi;
 use Model\EUfficio;
-use TechnicalServiceLayer\Foundation\FEntityManager;
+
+use TechnicalServiceLayer\Utility\USession;
 use View\VLocatore;
 use View\VUffici;
 
@@ -55,6 +56,7 @@ class CSearchOffice {
 
         $UfficiCompleti = [];
         $em = getEntityManager();
+         // ad esempio
         $uffici = $em->getRepository(EUfficio::class)->findAll();
         $fotoRepo = $em->getRepository(Efoto::class);
         $serviziRepo = $em->getRepository(EServiziAggiuntivi::class);
@@ -81,7 +83,7 @@ class CSearchOffice {
 
     public static function showPrenotazioni(){
         $oggi = new \DateTime();
-        $em = FEntityManager::getInstance()->getEntityManager();
+        $em =getEntityManager();
         $UfficiCompletiPassati=[];
         $UfficiCompletiPresenti=[];
 
@@ -99,9 +101,12 @@ class CSearchOffice {
             $utente = null;
             $servizio = null;
             if ($prenotazioni !== null) {
-                $utente = $prenotazioni->getUtente();
+                foreach ($prenotazioni as $prenotazione) {
+                    $utente = $prenotazione->getUtente();
+                    $data = $prenotazione->getData();
+                }
             }
-            $data = $prenotazioni->getData();
+
             $serviziObj = $ufficio->getServiziAggiuntivi();
             $servizi = [];
 
@@ -142,7 +147,7 @@ class CSearchOffice {
 
 
     public function addOfficeInDB(){
-        $em = FEntityManager::getInstance()->getEntityManager();
+        $em = getEntityManager();
         $ufficio = new EUfficio();
         $indirizzo = new Eindirizzo();
         $intervallo = new EIntervalloDisponibilita();

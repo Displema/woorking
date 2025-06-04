@@ -31,7 +31,6 @@ class EIntervalloDisponibilita
 
 
     #[ORM\Column(type:"string", enumType:Enum\FasciaOrariaEnum::class)]
-    #[ORM\Column(type:"string", enumType: FasciaOrariaEnum::class)]
     private FasciaOrariaEnum $fascia;
 
     #[ORM\Column(name: "data_fine", type: "datetime")]

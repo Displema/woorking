@@ -9,7 +9,9 @@
     "ramsey/uuid-doctrine": "^2.1",
     "doctrine/data-fixtures": "^2.0",
     "fakerphp/faker": "^1.24",
-    "twig/twig": "^3.21"
+    "twig/twig": "^3.21",
+    "delight-im/auth": "^8.3",
+    "delight-im/db": "^1.5"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest"
