@@ -18,9 +18,9 @@ class VReview extends BaseView
      * @param EUfficio $office
      * @return void
      */
-    public function showAllReviews($reviews, $office)
+    public function showAllReviews($reviews, $office,$user,$login)
     {
-        $this->twig->display('/recensioni/recensioni.html.twig', ['reviews' => $reviews,'office' => $office]);
+        $this->twig->display('/recensioni/recensioni.html.twig', ['reviews' => $reviews,'office' => $office,'user' => $user ,'isloggedin' => $login]);
     }
     public function showReviewForm($reservationId)
     {

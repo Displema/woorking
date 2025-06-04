@@ -41,11 +41,19 @@ class COffice
     {
         $officeDetails=[];
         $photoUrls=[];
+        $login ='';
+        $user ='';
         $office = $this->entity_manager->getRepository(EUfficio::class)->find($id);
+
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
             return;
+        }
+        if (USession::isSetSessionElement('user')) {
+            $utente = USession::requireUser();
+            $login="isLoggedIn";
+            $user = $this->entity_manager->getRepository(EProfilo::class)->find($utente->getId());
         }
 
         $photosRepo = $this->entity_manager->getRepository(EFoto::class);
@@ -61,7 +69,7 @@ class COffice
         'foto' => $photoUrls
         ];
         $view = new VOffice();
-        $view->showOfficeDetails($officeDetails, $date, $fascia);
+        $view->showOfficeDetails($officeDetails, $date, $fascia,$user,$login);
     }
 
     public function confirmReservation($date, $idOffice, $fascia)
@@ -76,8 +84,16 @@ class COffice
 
             $placesAvaible = $office->getNumeroPostazioni();
 
-            $uuid="1f091da3-ea4f-42d8-9277-04c7f19bb3fd";
-            $utente=$em->getRepository(EProfilo::class)->find($uuid);
+            if (USession::isSetSessionElement('user')) {
+                $utente = USession::requireUser();
+                $login="isLoggedIn";
+                $user = $em->getRepository(EProfilo::class)->find($utente->getId());
+            } else {
+                $view = new VRedirect();
+                $view->redirect('/login');
+                exit;
+            }
+            //$utente=$em->getRepository(EProfilo::class)->find($uuid);
 
             if ($reservationCount >= $placesAvaible) {
                 $view  = new VReservation();
@@ -88,14 +104,14 @@ class COffice
             $reservation->setData(new DateTime($date));
             $reservation->setUfficio($office);
             $reservation->setFascia($FasciaEnum);
-            $reservation->setUtente($utente);
+            $reservation->setUtente($user);
 
             $em->persist($reservation);
             $em->flush();
             $em->commit();
 
             $view = new VOffice();
-            $view->showconfirmedpage1();
+            $view->showconfirmedpage1($user,$login);
         } catch (Exception $e) {
             $em->rollback();
             echo $e->getMessage();
@@ -109,17 +125,22 @@ class COffice
         $reporec=$em->getRepository(ERecensione::class);
         $review = $reporec->getRecensioneByUfficio($id);
         $office = $em->getRepository(EUfficio::class)->find($id);
-
+        if (USession::isSetSessionElement('user')) {
+            $utente = USession::requireUser();
+            $login="isLoggedIn";
+            $user = $em->getRepository(EProfilo::class)->find($utente->getId());
+        }
 
 
         $view = new VReview();
-        $view->showAllReviews($review, $office);
+        $view->showAllReviews($review, $office,$user,$login);
     }
 
     public function search(string $query, string $date, string $slot): void
     {
         $repo=$this->entity_manager->getRepository(EUfficio::class);
-
+        $login='';
+        $user='';
         $place = $query;
         try {
             $date_parsed = new DateTime($date);
@@ -136,6 +157,12 @@ class COffice
 
         $reservationRepo=$this->entity_manager->getRepository(EPrenotazione::class);
 
+        if (USession::isSetSessionElement('user')) {
+            $login="isLoggedIn";
+            $utente = USession::requireUser();
+
+            $user = $this->entity_manager->getRepository(EProfilo::class)->find($utente->getId());
+        }
         $photoEntity = [];
         foreach ($offices as $office) {
             if ($office->isHidden()) {
@@ -164,7 +191,7 @@ class COffice
         }
 
         $view= new VOffice();
-        $view->showOfficeSearch($officewithphoto, $date, $fascia);
+        $view->showOfficeSearch($officewithphoto, $date, $fascia,$user,$login);
     }
 
 

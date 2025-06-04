@@ -5,8 +5,11 @@ use DateTime;
 use Model\EFoto;
 use Model\EPrenotazione;
 
+use Model\EProfilo;
 use Model\ERecensione;
 use Model\EUfficio;
+use TechnicalServiceLayer\Utility\USession;
+use View\VRedirect;
 use View\VReservation;
 use View\VReview;
 
@@ -25,7 +28,16 @@ class CReservation
         $today = new DateTime();
         $em = getEntityManager();
         $repository = $em->getRepository(EPrenotazione::class);
-        $reservations = $repository->findAll();
+        if (USession::isSetSessionElement('user')) {
+            $user = USession::requireUser();
+
+            $user = $em->getRepository(EProfilo::class)->find($user->getId());
+        } else {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            exit;
+        }
+        $reservations = $repository->findBy(['utente' => $user->getId()]);
         $reservationWithOffice = [];
         $oldreservationWithOffice = [];
 
@@ -64,7 +76,7 @@ class CReservation
         }
 
         $view = new VReservation();
-        $view->showReservation($reservationWithOffice, $oldreservationWithOffice);
+        $view->showReservation($reservationWithOffice, $oldreservationWithOffice,$user);
 
     }
 
@@ -73,6 +85,11 @@ class CReservation
         $reservationwithoffice = [];
 
         $em = getEntityManager();
+        if (USession::isSetSessionElement('user')) {
+            $user = USession::requireUser();
+
+            $user = $em->getRepository(EProfilo::class)->find($user->getId());
+        }
         $repository = $em->getRepository(EPrenotazione::class);
         $reservation = $repository->find($id);
         $photoUrl = [];
@@ -94,7 +111,7 @@ class CReservation
         ];
 
         $view = new VReservation();
-        $view ->showReservationDetails($reservationwithoffice);
+        $view ->showReservationDetails($reservationwithoffice,$user);
     }
 
     public function sendreview($idreservation){

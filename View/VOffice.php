@@ -8,31 +8,33 @@ use Twig\Loader\FilesystemLoader;
 class VOffice extends BaseView
 {
 
-    public function showOfficeSearch($Result, $date, $fascia): void
+    public function showOfficeSearch($Result, $date, $fascia,$user,$login): void
     {
-        $this->twig->display('/uffici/uffici.html.twig', ['offices' => $Result,'date' => $date,'fascia' => $fascia]);
+        $this->twig->display('/uffici/uffici.html.twig', ['offices' => $Result,'date' => $date,'fascia' => $fascia,'user' => $user,'isloggedin' => $login]);
     }
 
-    public function showOfficeDetails($Result, $date, $fascia): void
+    public function showOfficeDetails($Result, $date, $fascia,$user,$login): void
     {
         $ufficio = $Result[0];
         $this->twig->display(
             '/DettaglioOffice/DettaglioOffice.html.twig',
             ['ufficio' => $ufficio,
                 'date' => $date,
-                'fascia' => $fascia
+                'fascia' => $fascia,
+                'user' => $user,
+                'isloggedin' => $login
             ]
         );
     }
-    public function showconfirmedpage1()
+    public function showconfirmedpage1($user,$login)
     {
 
-        echo $this->twig->display('/conferme/confermaprenotazione.html.twig');
+         $this->twig->display('/conferme/confermaprenotazione.html.twig',['user' => $user,'isloggedin' => $login]);
     }
 
-    public function showAllRecension($recensione, $ufficio)
+    public function showAllReviews($recensione, $ufficio,)
     {
-        $twig = new \Twig\Environment($this->loader);
-        echo $twig->render('/recensioni/recensioni.html.twig', ['recensioni' => $recensione,'ufficio' => $ufficio]);
+
+        $this->twig->display('/recensioni/recensioni.html.twig', ['recensioni' => $recensione,'ufficio' => $ufficio,]);
     }
 }

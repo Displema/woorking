@@ -5,7 +5,10 @@
 }
 
 .navbar-brand img {
-    width: 50px;
+
+    width: 25%;
+    height: auto;
+    display: block;
 }
 
 .nav-link {

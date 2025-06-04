@@ -18,13 +18,31 @@
 <body>
 
 <!-- NAVBAR -->
-{% include 'navbar/navbar.html.twig' %}
+
+{% if isloggedin == 'isLoggedIn' %}
+
+    {% include 'navbar/navbar.html.twig' %}
+
+{% else %}
+
+    {% include 'navbar/navbar1.html.twig' %}
+
+{%  endif %}
 
 <!-- RISULTATI -->
 <div class="container-fluid text-center py-5 bg-black text-white">
     <h1>Risultati della ricerca</h1>
 </div>
-
+{% if offices is empty %}
+<div class="container my-5">
+    <div class="alert alert-warning text-center py-5">
+        <h2 class="mb-3"><i class="fa-solid fa-triangle-exclamation text-warning me-2"></i> Nessun ufficio trovato</h2>
+        <p>Prova a cambiare i parametri di ricerca .</p>
+        <a href="/home" class="btn btn-primary mt-3"><i class="fa-solid fa-house"></i> Torna alla Home</a>
+    </div>
+</div>
+{% else %}
+<div class="container py-5 ufficio-container">
 <div class="container py-5 ufficio-container">
     <div class="row g-4">
         <!-- Card 1 -->
@@ -43,6 +61,8 @@
         </div>
 {% endfor %}
     </div>
+</div>
+    {% endif %}
 </div>
 
 <!-- FOOTER -->
