@@ -36,6 +36,20 @@ class EProfilo
     #[ORM\Column(type: "boolean")]
     private bool $admin = false;
 
+    #[ORM\Column(name: "created_at", type: "date", nullable: false)]
+    private DateTime $createdAt;
+
+    public function getCreatedAt(): DateTime
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(DateTime $createdAt): EProfilo
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
     public function __construct()
     {
         //$this->id = Uuid::uuid4();

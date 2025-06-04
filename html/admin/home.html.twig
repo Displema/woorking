@@ -104,11 +104,11 @@
             <nav class="tabs" role="tablist" aria-label="Seleziona sezione uffici">
                 <div class="tab active" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-attivi"
                      id="tab-btn-attivi" data-target="attivi">
-                    Attivi <span class="badge bg-primary">3</span>
+                    Attivi <span class="badge bg-primary">{{ activeOffices|length }}</span>
                 </div>
                 <div class="tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-inattesa"
                      id="tab-btn-inattesa" data-target="inattesa">
-                    In attesa <span class="badge bg-warning">2</span>
+                    In attesa <span class="badge bg-warning">{{ pendingOffices|length }}</span>
                 </div>
             </nav>
 
@@ -116,8 +116,9 @@
             <section id="attivi" class="section-tab active" role="tabpanel" aria-labelledby="tab-btn-attivi">
                 {% for office in activeOffices %}
                     <!-- Card ufficio attivo {{ office.id }} -->
+                <a href="/admin/offices/{{ office.id }}">
                 <div class="card mb-3">
-                    <div class="card-body office-card">
+                    <div class="card-body office-card cursor-pointer">
                         <img src="/static/img/{{ office.foto[0].id }}" alt="Foto principale ufficio {{ office.titolo }}" />
                         <div>
                             <h5 class="mb-1">{{ office.titolo }}</h5>
@@ -126,6 +127,7 @@
                         </div>
                     </div>
                 </div>
+                </a>
                 {% endfor %}
             </section>
 
@@ -134,7 +136,7 @@
                 <!-- Card ufficio in attesa {{ office.id }} -->
                 <div class="card mb-3 cursor-pointer">
                     <div class="card-body office-card">
-                        <img src="/static/img/{{ office.foto[0].id }}" alt="Ufficio {{ office.titolo }}" />
+                        <img src="/static/img/{{ office.foto[0].id }}" alt="Foto principale ufficio {{ office.titolo }}" />
                         <div>
                             <h5 class="mb-1">{{ office.titolo }}</h5>
                             <p class="mb-1 text-muted">{{ office.indirizzo.via }} {{ office.indirizzo.numeroCivico }}, {{ office.indirizzo.citta }} ({{ office.indirizzo.provincia }})</p>

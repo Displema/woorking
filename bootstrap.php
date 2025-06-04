@@ -47,17 +47,21 @@ function getEntityManager(): EntityManager
 
 function getAuth(): Auth
 {
+    $db = getAuthDb();
+    return new Auth($db, throttling: false);
+}
+
+function getAuthDb(): PdoDatabase
+{
     $dbName = $_ENV['DB_AUTH_NAME'];
     $user = $_ENV['DB_USER'];
     $password = $_ENV['DB_PASSWORD'];
     $port = $_ENV['DB_PORT'];
     $host = $_ENV['DB_HOST'];
 
-    $db = PdoDatabase::fromDsn(new PdoDsn(
+    return PdoDatabase::fromDsn(new PdoDsn(
         "mysql:dbname=$dbName;host=$host;charset=utf8mb4",
         $user,
         $password
     ));
-
-    return new Auth($db, throttling: false);
 }

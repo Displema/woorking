@@ -72,7 +72,7 @@ class COffice
         try {
             // With PessimisticWrite the first one that gets access to the office locks it until it's finished
             $office = $em->getRepository(EUfficio::class)->find($idOffice, LockMode::PESSIMISTIC_WRITE);
-            $reservationCount = $em->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($idOffice, $date, $fascia);
+            $reservationCount = $em->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($office, $date, $FasciaEnum);
 
             $placesAvaible = $office->getNumeroPostazioni();
 

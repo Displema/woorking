@@ -25,4 +25,14 @@ class VAdmin extends BaseView
             ['activeOffices' => $activeOffices, 'pendingOffices'=>$pendingOffices],
         );
     }
+
+    public function showOfficeDetails(EUfficio $office, string $landlordEmail): void
+    {
+        $this->twig->display(
+            '/admin/offices/office_details.html.twig',
+            ['office' => $office,
+            'email' => $landlordEmail
+            ],
+        );
+    }
 }

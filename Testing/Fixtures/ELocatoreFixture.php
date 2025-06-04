@@ -24,6 +24,7 @@ class ELocatoreFixture extends AbstractFixture implements DependentFixtureInterf
                 ->setUserId(FixtureState::$userIds[$i + 20])
                 ->setAdmin(false)
                 ->setPartitaIva($faker->randomNumber(9, true))
+                ->setCreatedAt($faker->dateTimeBetween("-1 years", "-5 months"))
                 ->setPhone($faker->phoneNumber());
 
             $this->addReference('ELocatore_' . $i, $user);

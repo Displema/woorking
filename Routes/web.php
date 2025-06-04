@@ -19,6 +19,7 @@ $router->get('/static/img/{id}', 'CPhoto@view');
 
 // Admin routes
 $router->get('/admin/home', 'CAdmin@home');
+$router->get('/admin/offices/{id}', 'CAdmin@showOfficeDetails');
 
 $router->get('/profile', 'CHome@showprofile');
 
