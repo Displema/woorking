@@ -13,7 +13,7 @@ $router->get('/login', 'CAuth@showLoginForm');
 $router->get('/register', 'CAuth@showRegisterForm');
 $router->post('/login', 'CAuth@loginUser');
 $router->post('/register', 'CAuth@registerUser');
-
+$router->get('/logout', 'CAuth@logoutUser');
 // Static content routes
 $router->get('/static/img/{id}', 'CPhoto@view');
 

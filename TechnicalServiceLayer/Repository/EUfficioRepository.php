@@ -37,19 +37,22 @@ class EUfficioRepository extends EntityRepository
             return [];
         }
     }
-    public function findbythree($indirizzo, $date, $fascia): mixed
+    public function findbythree($queryString, $date, $fascia): mixed
     {
         $em = $this->getEntityManager();
         try {
             $query = "SELECT e FROM Model\EUfficio e 
                      JOIN e.intervalliDisponibilita  idisp
                      JOIN e.indirizzo  indirizzo
-                     WHERE indirizzo.via = :indirizzo
+                     WHERE ( indirizzo.via = :query
+                     or indirizzo.citta = :query
+                     or indirizzo.provincia = :query
+                     or e.titolo = :query)
                      AND idisp.dataInizio <= :data
                      AND idisp.dataFine >= :data   
                       AND idisp.fascia = :fascia";
             $createquery = $em->createQuery($query);
-            $createquery->setParameter("indirizzo", $indirizzo);
+            $createquery->setParameter("query", $queryString);
             $createquery->setParameter("data", $date);
             $createquery->setParameter("fascia", $fascia);
             return $createquery->getResult();

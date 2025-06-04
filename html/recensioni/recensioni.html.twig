@@ -9,7 +9,16 @@
     <link rel="stylesheet" href="/html/recensioni/recensioni.css">
 </head>
 <body class="text-white">
-{% include 'navbar/navbar.html.twig' %}
+{% if isloggedin == 'isLoggedIn' %}
+
+    {% include 'navbar/navbar.html.twig' %}
+
+{% else %}
+
+    {% include 'navbar/navbar1.html.twig' %}
+
+{%  endif %}
+
 
 <div class="container mt-5">
     <h2 class="text-center text-light mb-4">Recensioni degli utenti</h2>

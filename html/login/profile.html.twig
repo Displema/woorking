@@ -24,19 +24,16 @@
                 </h3>
                 <dl class="row">
                     <dt class="col-sm-4">Nome</dt>
-                    <dd class="col-sm-8">{{ user.nome }}</dd>
+                    <dd class="col-sm-8">{{ user.name }}</dd>
 
                     <dt class="col-sm-4">Cognome</dt>
-                    <dd class="col-sm-8">{{ user.cognome }}</dd>
-
-                    <dt class="col-sm-4">Email</dt>
-                    <dd class="col-sm-8">{{ user.email }}</dd>
+                    <dd class="col-sm-8">{{ user.surname }}</dd>
 
                     <dt class="col-sm-4">Data di nascita</dt>
-                    <dd class="col-sm-8">{{ user.dataNascita|date('d/m/Y') }}</dd>
+                    <dd class="col-sm-8">{{ user.dob|date('d/m/Y') }}</dd>
 
                     <dt class="col-sm-4">Telefono</dt>
-                    <dd class="col-sm-8">{{ user.telefono }}</dd>
+                    <dd class="col-sm-8">{{ user.phone }}</dd>
 
                     {% if user.locatore %}
                         <dt class="col-sm-4">Partita IVA</dt>
@@ -44,7 +41,7 @@
                     {% endif %}
                 </dl>
                 <div class="mt-4">
-                    <a href="/search/showoffice/detailsoffice/Report/{{ ufficio.ufficio.id }}" class="btn btn-danger w-100">
+                    <a href="/logout" class="btn btn-danger w-100">
                         <i class="fa-solid fa-flag"></i> Logout
                     </a>
                 </div>

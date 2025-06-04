@@ -5,7 +5,15 @@
 }
 
 .navbar-brand img {
-    width: 50px;
+
+    width: 20%;
+    height: auto;
+    display: block;
+}
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; //spacebetweenimageandtext
 }
 
 .nav-link {

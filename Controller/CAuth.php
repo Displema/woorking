@@ -180,4 +180,12 @@ class CAuth
         $view = new VResource();
         $view->printJson($user);
     }
+
+    public function logoutUser(): void{
+
+            USession::destroy();
+            $view = new VRedirect();
+            $view->redirect("/home");
+
+    }
 }
