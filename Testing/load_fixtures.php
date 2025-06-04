@@ -28,6 +28,6 @@ $purger = new ORMPurger();
 $executor = new ORMExecutor($entityManager, $purger);
 
 // ESEGUIRE SE SI VUOLE PULIRE IL DB
-//$executor->purge();
+$executor->purge();
 //
 $executor->execute($loader->getFixtures());

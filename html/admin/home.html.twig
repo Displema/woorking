@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gestione Uffici</title>
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet" />
+    <style>
+        .office-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .office-card img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        /* Nasconde le sezioni non attive */
+        .section-tab {
+            display: none;
+        }
+
+        .section-tab.active {
+            display: block;
+        }
+
+        /* Stile tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+
+        .tab {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            user-select: none;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab.active {
+            background-color: var(--tblr-primary);
+            color: white;
+            border-color: var(--tblr-primary);
+        }
+
+        .tab .badge {
+            font-size: 0.75rem;
+            line-height: 1;
+        }
+    </style>
+</head>
+
+<body>
+<div class="page">
+    <!-- Sidebar -->
+    <aside class="navbar navbar-vertical navbar-expand-lg navbar-light bg-white border-end">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu"
+                    aria-controls="sidebar-menu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <h1 class="navbar-brand mb-4">Dashboard</h1>
+
+            <div class="collapse navbar-collapse" id="sidebar-menu">
+                <ul class="navbar-nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                    🏠
+                                </span>
+                            <span class="nav-link-title">Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                    🏢
+                                </span>
+                            <span class="nav-link-title">Gestione Uffici</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Page wrapper -->
+    <div class="page-wrapper">
+        <!-- Page body -->
+        <div class="page-body container py-4">
+            <!-- Tabs per le sezioni -->
+            <nav class="tabs" role="tablist" aria-label="Seleziona sezione uffici">
+                <div class="tab active" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-attivi"
+                     id="tab-btn-attivi" data-target="attivi">
+                    Attivi <span class="badge bg-primary">{{ activeOffices|length }}</span>
+                </div>
+                <div class="tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-inattesa"
+                     id="tab-btn-inattesa" data-target="inattesa">
+                    In attesa <span class="badge bg-warning">{{ pendingOffices|length }}</span>
+                </div>
+            </nav>
+
+            <!-- Sezioni contenuto -->
+            <section id="attivi" class="section-tab active" role="tabpanel" aria-labelledby="tab-btn-attivi">
+                {% for office in activeOffices %}
+                    <!-- Card ufficio attivo {{ office.id }} -->
+                <a href="/admin/offices/{{ office.id }}">
+                <div class="card mb-3">
+                    <div class="card-body office-card cursor-pointer">
+                        <img src="/static/img/{{ office.foto[0].id }}" alt="Foto principale ufficio {{ office.titolo }}" />
+                        <div>
+                            <h5 class="mb-1">{{ office.titolo }}</h5>
+                            <p class="mb-1 text-muted">{{ office.indirizzo.via }} {{ office.indirizzo.numeroCivico }}, {{ office.indirizzo.citta }} ({{ office.indirizzo.provincia }})</p>
+                            <small class="text-muted">Attivazione: {{ office.dataApprovazione|date('d/m/Y H:i') }}</small>
+                        </div>
+                    </div>
+                </div>
+                </a>
+                {% endfor %}
+            </section>
+
+            <section id="inattesa" class="section-tab" role="tabpanel" aria-labelledby="tab-btn-inattesa" hidden>
+                {% for office in pendingOffices %}
+                <!-- Card ufficio in attesa {{ office.id }} -->
+                <div class="card mb-3 cursor-pointer">
+                    <div class="card-body office-card">
+                        <img src="/static/img/{{ office.foto[0].id }}" alt="Foto principale ufficio {{ office.titolo }}" />
+                        <div>
+                            <h5 class="mb-1">{{ office.titolo }}</h5>
+                            <p class="mb-1 text-muted">{{ office.indirizzo.via }} {{ office.indirizzo.numeroCivico }}, {{ office.indirizzo.citta }} ({{ office.indirizzo.provincia }})</p>
+                            <small class="text-muted">Inviato: {{ office.dataCaricamento|date('d/m/Y H:i') }}</small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </section>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Gestione cambio tab semplice
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const target = tab.getAttribute('data-target');
+            // Aggiorna tabs
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.toggle('active', t === tab);
+                t.setAttribute('aria-selected', t === tab);
+                t.setAttribute('tabindex', t === tab ? '0' : '-1');
+            });
+            // Aggiorna sezioni
+            document.querySelectorAll('.section-tab').forEach(sec => {
+                if (sec.id === target) {
+                    sec.classList.add('active');
+                    sec.removeAttribute('hidden');
+                } else {
+                    sec.classList.remove('active');
+                    sec.setAttribute('hidden', '');
+                }
+            });
+        });
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
+</body>
+
+</html>

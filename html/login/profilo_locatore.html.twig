@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="it" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Profilo Utente - Cooworking</title>
+
+    <!-- Tabler Core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/css/tabler.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- CSS personalizzato opzionale -->
+    <link rel="stylesheet" href="/html/login/profilo.css" />
+</head>
+<body>
+
+<!-- Navbar -->
+{% include '/navbar/NavBarLocatore.html.twig' %}
+
+<div class="page-wrapper main-content">
+    <div class="container-xl mt-5">
+        <h1 class="mb-3">Profilo Utente</h1>
+        <p class="text-muted mb-4">Visualizza o aggiorna le informazioni del tuo profilo personale.</p>
+
+        <form id="form-profilo" class="card card-body shadow-sm" method="POST" action="/salvaProfilo">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="nome" class="form-label">Nome</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="nome" name="nome" value="{{ profilo.name }}" required>
+                        <span class="input-group-text"><i class="fa-solid fa-pencil-alt"></i></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="cognome" class="form-label">Cognome</label>
+                    <div class="input-group">
+                    <input type="text" class="form-control" id="cognome" name="cognome" value="{{ profilo.surname }}" required>
+                        <span class="input-group-text"><i class="fa-solid fa-pencil-alt"></i></span>
+                    </div>
+                    </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="data-nascita" class="form-label">Data di nascita</label>
+                    <div class="input-group">
+                    <input type="date" class="form-control" id="data-nascita" name="data_nascita" value="{{ profilo.dob|date('Y-m-d') }}" required>
+                        <span class="input-group-text"><i class="fa-solid fa-pencil-alt"></i></span>
+                    </div>
+                    </div>
+
+
+                <div class="col-md-6 mb-3">
+                    <label for="partita-iva" class="form-label">Partita IVA</label>
+                    <div class="input-group">
+                    <input type="text" class="form-control" id="partita-iva" name="partita_iva" value="{{ profilo.partitaIva }}" required>
+                        <span class="input-group-text"><i class="fa-solid fa-pencil-alt"></i></span>
+                    </div>
+                    </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="telefono" class="form-label">Numero di telefono</label>
+                <div class="input-group">
+                {% set phone = profilo.phone|replace({' ': ''}) %}
+                {% set phone_formatted = phone[:3] ~ ' ' ~ phone[3:3] ~ ' ' ~ phone[6:10] %}
+                <input type="tel" class="form-control" id="telefono" name="telefono" value="{{ phone_formatted }}" required>
+                    <span class="input-group-text"><i class="fa-solid fa-pencil-alt"></i></span>
+                </div>
+
+                </div>
+
+            <button type="submit" class="btn btn-primary mt-2">
+                <i class="fa-solid fa-save me-2"></i>Salva Profilo
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/js/tabler.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

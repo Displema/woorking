@@ -6,12 +6,18 @@ use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Model\EFoto;
+use Model\EIntervalloDisponibilita;
 use Model\Enum\FasciaOrariaEnum;
 use Model\Enum\StatoUfficioEnum;
 use Model\EPrenotazione;
 use Model\EProfilo;
 use Exception;
+use Model\EServiziAggiuntivi;
+use TechnicalServiceLayer\Repository\EFotoRepository;
+use TechnicalServiceLayer\Repository\EIntervalloDisponibilitaRepository;
 use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
+use TechnicalServiceLayer\Repository\EServiziAggiuntiviRepository;
+use TechnicalServiceLayer\Repository\UserRepository;
 use View\VOffice;
 
 use Model\ERecensione;
@@ -27,6 +33,7 @@ use View\VReview;
 use View\VRedirect;
 use View\VResource;
 use View\VStatus;
+use View\VUffici;
 
 class COffice
 {
@@ -41,11 +48,19 @@ class COffice
     {
         $officeDetails=[];
         $photoUrls=[];
+        $login ='';
+        $user ='';
         $office = $this->entity_manager->getRepository(EUfficio::class)->find($id);
+
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
             return;
+        }
+        if (USession::isSetSessionElement('user')) {
+            $utente = USession::requireUser();
+            $login="isLoggedIn";
+            $user = $this->entity_manager->getRepository(EProfilo::class)->find($utente->getId());
         }
 
         $photosRepo = $this->entity_manager->getRepository(EFoto::class);
@@ -61,7 +76,7 @@ class COffice
         'foto' => $photoUrls
         ];
         $view = new VOffice();
-        $view->showOfficeDetails($officeDetails, $date, $fascia);
+        $view->showOfficeDetails($officeDetails, $date, $fascia,$user,$login);
     }
 
     public function confirmReservation($date, $idOffice, $fascia)
@@ -72,12 +87,20 @@ class COffice
         try {
             // With PessimisticWrite the first one that gets access to the office locks it until it's finished
             $office = $em->getRepository(EUfficio::class)->find($idOffice, LockMode::PESSIMISTIC_WRITE);
-            $reservationCount = $em->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($idOffice, $date, $fascia);
-            echo $reservationCount;
+            $reservationCount = $em->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($office, $date, $FasciaEnum);
+
             $placesAvaible = $office->getNumeroPostazioni();
-            echo $placesAvaible;
-            $uuid="1f091da3-ea4f-42d8-9277-04c7f19bb3fd";
-            $utente=$em->getRepository(EProfilo::class)->find($uuid);
+
+            if (USession::isSetSessionElement('user')) {
+                $utente = USession::requireUser();
+                $login="isLoggedIn";
+                $user = $em->getRepository(EProfilo::class)->find($utente->getId());
+            } else {
+                $view = new VRedirect();
+                $view->redirect('/login');
+                exit;
+            }
+            //$utente=$em->getRepository(EProfilo::class)->find($uuid);
 
             if ($reservationCount >= $placesAvaible) {
                 $view  = new VReservation();
@@ -88,14 +111,14 @@ class COffice
             $reservation->setData(new DateTime($date));
             $reservation->setUfficio($office);
             $reservation->setFascia($FasciaEnum);
-            $reservation->setUtente($utente);
+            $reservation->setUtente($user);
 
             $em->persist($reservation);
             $em->flush();
             $em->commit();
 
             $view = new VOffice();
-            $view->showconfirmedpage1();
+            $view->showconfirmedpage1($user,$login);
         } catch (Exception $e) {
             $em->rollback();
             echo $e->getMessage();
@@ -109,17 +132,22 @@ class COffice
         $reporec=$em->getRepository(ERecensione::class);
         $review = $reporec->getRecensioneByUfficio($id);
         $office = $em->getRepository(EUfficio::class)->find($id);
-
+        if (USession::isSetSessionElement('user')) {
+            $utente = USession::requireUser();
+            $login="isLoggedIn";
+            $user = $em->getRepository(EProfilo::class)->find($utente->getId());
+        }
 
 
         $view = new VReview();
-        $view->showAllReviews($review, $office);
+        $view->showAllReviews($review, $office,$user,$login);
     }
 
     public function search(string $query, string $date, string $slot): void
     {
         $repo=$this->entity_manager->getRepository(EUfficio::class);
-
+        $login='';
+        $user='';
         $place = $query;
         try {
             $date_parsed = new DateTime($date);
@@ -136,6 +164,12 @@ class COffice
 
         $reservationRepo=$this->entity_manager->getRepository(EPrenotazione::class);
 
+        if (USession::isSetSessionElement('user')) {
+            $login="isLoggedIn";
+            $utente = USession::requireUser();
+
+            $user = $this->entity_manager->getRepository(EProfilo::class)->find($utente->getId());
+        }
         $photoEntity = [];
         foreach ($offices as $office) {
             if ($office->isHidden()) {
@@ -164,7 +198,7 @@ class COffice
         }
 
         $view= new VOffice();
-        $view->showuffici($officewithphoto, $date, $fascia);
+        $view->showOfficeSearch($officewithphoto, $date, $fascia,$user,$login);
     }
 
 
@@ -307,5 +341,131 @@ class COffice
                 'refunds' => $refunds,
             ), JSON_THROW_ON_ERROR)
         );
+    }
+
+    //search all bookings of the landlord's offices
+    public static function showPrenotazioni(){
+        $user = USession::requireUser();
+        $id = $user->getId();
+        $oggi = new \DateTime();
+        $em =getEntityManager();
+
+        $UfficiCompletiPassati=[];
+        $UfficiCompletiPresenti=[];
+
+        //repositories
+        $userRepo = UserRepository::getInstance();
+
+        /** @var EUfficioRepository $officeRepo */
+        $uffici = $em->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
+
+        /** @var EFotoRepository $fotoRepo */
+        $fotoRepo = $em->getRepository(Efoto::class);
+
+        /** @var EPrenotazioneRepository $prenotazioniRepo */
+        $prenotazioniRepo = $em->getRepository(EPrenotazione::class);
+
+        /** @var EIntervalloDisponibilitaRepository $intervalliRepo */
+        $intervalliRepo = $em->getRepository(EIntervalloDisponibilita::class);
+
+        try {
+            foreach ($uffici as $ufficio) {
+                //take reservations
+                $prenotazioni = $prenotazioniRepo->getPrenotazioneByUfficio($ufficio);
+                if (empty($prenotazioni)) {
+                    continue;
+                }
+
+                //take office breaks
+                $intervallo = $intervalliRepo->getIntervallobyOffice($ufficio);
+                //take photos
+                $foto = $fotoRepo->getFirstPhotoByOffice($ufficio);
+                $fotoUrl = $foto ? "/foto/" . $foto->getId() : null;
+
+                // if there is a reservation I take the user and the data
+                foreach ($prenotazioni as $prenotazione) {
+                    $data = $prenotazione->getData();
+                    //take email
+                    $email = $userRepo->getEmailByUserId($prenotazione->getUtente()->getUserId())[0]['email'];
+                }
+
+                //I take all the services
+                $serviziObj = $ufficio->getServiziAggiuntivi();
+                $servizi = [];
+                foreach ($serviziObj as $s) {
+                    $servizi[] = $s->getNomeServizio();
+                }
+                $serviziStringa = implode(', ', $servizi);
+
+                //I divide in past reservations and present/future reservations
+                if ($data < $oggi) {
+                    $UfficiCompletiPassati[] = [
+                        'ufficio' => $ufficio,
+                        'email' => $email,
+                        'foto' => $fotoUrl,
+                        'prenotazioni' => $prenotazione,
+                        'intervallo' => $intervallo,
+                        'servizio' => $serviziStringa
+                    ];
+                } else {
+                    $UfficiCompletiPresenti[] = [
+                        'ufficio' => $ufficio,
+                        'email' => $email,
+                        'foto' => $fotoUrl,
+                        'prenotazioni' => $prenotazione,
+                        'intervallo' => $intervallo,
+                        'servizio' => $serviziStringa
+                    ];
+                }
+            }
+        }catch (Exception $e) {
+            // Qui puoi loggare l'errore o fare qualcosa per gestirlo
+            error_log("Errore nella gestione delle prenotazioni per ufficio id " . $ufficio->getId() . ": " . $e->getMessage());
+            // Continua con l'ufficio successivo
+
+        }
+
+        //call the view
+        $view = new VUffici();
+        $view->searchReservations($UfficiCompletiPassati, $UfficiCompletiPresenti);
+
+    }
+
+    //show all lessor's offices
+    public static function showOfficesLocatore() {
+        $user = USession::requireUser();
+        $id = $user->getId();
+        $UfficiCompleti = [];
+        $em = getEntityManager();
+
+        /** @var EUfficioRepository $uffici */
+        $uffici = $em->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
+
+        /** @var EFotoRepository $fotoRepo */
+        $fotoRepo = $em->getRepository(Efoto::class);
+
+        /** @var EServiziAggiuntiviRepository $serviziRepo */
+        $serviziRepo = $em->getRepository(EServiziAggiuntivi::class);
+
+        /** @var EIntervalloDisponibilitaRepository $intervalliRepo */
+        $intervalliRepo = $em->getRepository(EIntervalloDisponibilita::class);
+
+        foreach ($uffici as $ufficio) {
+            $foto = $fotoRepo->getFirstPhotoByOffice($ufficio);
+            $fotoUrl = $foto ? "/foto/" . $foto->getId() : null;
+            $servizi = $serviziRepo->getServiziAggiuntivibyOffice($ufficio);
+            $intervallo = $intervalliRepo->getIntervallobyOffice($ufficio);
+
+            $UfficiCompleti[] = [
+                'ufficio' => $ufficio,
+                'foto' => $fotoUrl,
+                'servizi' => $servizi,
+                'intervallo' => $intervallo
+            ];
+        }
+
+        $view = new VUffici();
+        $view->searchOffice($UfficiCompleti);
+
     }
 }

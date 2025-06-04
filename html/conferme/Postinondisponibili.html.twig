@@ -11,7 +11,16 @@
 </head>
 <body class="bg-light text-dark">
 
-{% include 'navbar/navbar.html.twig' %}
+{% if isloggedin == 'isLoggedIn' %}
+
+    {% include 'navbar/navbar.html.twig' %}
+
+{% else %}
+
+    {% include 'navbar/navbar1.html.twig' %}
+
+{%  endif %}
+
 
 <div id="content-wrapper" class="container py-5 text-center">
     <i class="fa-solid fa-circle-exclamation fa-4x text-danger mb-3"></i>

@@ -10,8 +10,8 @@ use Model\EPrenotazione;
 use Model\EServiziAggiuntivi;
 use Model\EUfficio;
 
+use TechnicalServiceLayer\Repository\UserRepository;
 use TechnicalServiceLayer\Utility\USession;
-use View\VLocatore;
 use View\VUffici;
 
 class CSearchOffice {
@@ -20,10 +20,14 @@ class CSearchOffice {
 
     public function __construct() {
     }
-    public static function search($luogo,$data,$fascia)
+
+    /**
+     * @throws \Exception
+     */
+    public static function search($luogo, $data, $fascia)
 
     {
-        $em = FEntityManager::getInstance()->getEntityManager();
+        $em = getEntityManager();
         $repo=$em->getRepository(EUfficio::class);
         //creation of dateobj Datetime with the date in input
 
@@ -52,93 +56,7 @@ class CSearchOffice {
     }
 
 
-    public static function showOfficesLocatore() {
 
-        $UfficiCompleti = [];
-        $em = getEntityManager();
-         // ad esempio
-        $uffici = $em->getRepository(EUfficio::class)->findAll();
-        $fotoRepo = $em->getRepository(Efoto::class);
-        $serviziRepo = $em->getRepository(EServiziAggiuntivi::class);
-        $intervalliRepo = $em->getRepository(EIntervalloDisponibilita::class);
-
-        foreach ($uffici as $ufficio) {
-            $foto = $fotoRepo->getFirstPhotoByOffice($ufficio);
-            $fotoUrl = $foto ? "/foto/" . $foto->getId() : null;
-            $servizi = $serviziRepo->getServiziAggiuntivibyOffice($ufficio);
-            $intervallo = $intervalliRepo->getIntervallobyOffice($ufficio);
-
-            $UfficiCompleti[] = [
-                'ufficio' => $ufficio,
-                'foto' => $fotoUrl,
-                'servizi' => $servizi,
-                'intervallo' => $intervallo
-            ];
-        }
-
-        $view = new VUffici();
-        $view->searchOffice($UfficiCompleti);
-
-    }
-
-    public static function showPrenotazioni(){
-        $oggi = new \DateTime();
-        $em =getEntityManager();
-        $UfficiCompletiPassati=[];
-        $UfficiCompletiPresenti=[];
-
-
-
-        $uffici = $em->getRepository(EUfficio::class)->findAll();
-        $fotoRepo = $em->getRepository(Efoto::class);
-        $prenotazioniRepo = $em->getRepository(EPrenotazione::class);
-        $intervalliRepo = $em->getRepository(EIntervalloDisponibilita::class);
-        foreach ($uffici as $ufficio) {
-            $intervallo = $intervalliRepo->getIntervallobyOffice($ufficio);
-            $prenotazioni = $prenotazioniRepo->getPrenotazioneByUfficio($ufficio);
-            $foto = $fotoRepo->getFirstPhotoByOffice($ufficio);
-            $fotoUrl = $foto ? "/foto/" . $foto->getId() : null;
-            $utente = null;
-            $servizio = null;
-            if ($prenotazioni !== null) {
-                foreach ($prenotazioni as $prenotazione) {
-                    $utente = $prenotazione->getUtente();
-                    $data = $prenotazione->getData();
-                }
-            }
-
-            $serviziObj = $ufficio->getServiziAggiuntivi();
-            $servizi = [];
-
-            foreach ($serviziObj as $s) {
-                $servizi[] = $s->getNomeServizio(); // O getDescrizione() o altro campo testuale
-            }
-
-            $serviziStringa = implode(', ', $servizi);
-            if($data < $oggi){
-                $UfficiCompletiPassati[] = [
-                'ufficio' => $ufficio,
-                'foto' => $fotoUrl,
-                'prenotazioni' => $prenotazioni,
-                'utente' => $utente,
-                'intervallo' => $intervallo,
-                'servizio' => $serviziStringa
-            ];
-            } else {
-                $UfficiCompletiPresenti[] = [
-                    'ufficio' => $ufficio,
-                    'foto' => $fotoUrl,
-                    'prenotazioni' => $prenotazioni,
-                    'utente' => $utente,
-                    'intervallo' => $intervallo,
-                    'servizio' => $serviziStringa
-                    ];
-            }
-        }
-        $view = new VUffici();
-        $view->searchReservations($UfficiCompletiPassati, $UfficiCompletiPresenti);
-
-        }
 
     public function addOffice(){
         $view = new VUffici();

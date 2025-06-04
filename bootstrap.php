@@ -6,16 +6,9 @@ use Delight\Db\PdoDsn;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\DriverManager;
-
-
-require_once __DIR__ . '/vendor/autoload.php';
-
-use Twig\Loader\FilesystemLoader;
-use Twig\Environment;
-
 use Doctrine\DBAL\Types\Type;
 use Ramsey\Uuid\Doctrine\UuidType;
-//require_once 'C:\Users\Lenovo\Desktop\woorking\vendor/autoload.php';
+
 if (!Type::hasType('uuid')) {
     Type::addType('uuid', UuidType::class);
 }
@@ -54,34 +47,21 @@ function getEntityManager(): EntityManager
 
 function getAuth(): Auth
 {
-/*
-    $connectionParams = [
-        'dbname' => "login",
-        'user' => $_ENV['DB_USER'],
-        'password' => $_ENV['DB_PASSWORD'],
-        'port' => $_ENV['DB_PORT'],
-        'host' => $_ENV['DB_HOST'],
-        'driver' => $_ENV['DB_DRIVER'],
-    ];
-
-    $db = PdoDatabase::fromDsn(new PdoDsn(
-        "mysql:dbname=my-db;host=localhost;charset=utf8mb4",
-        'root',
-        'passwordroot'
-    ));
-    return new Auth($db, throttling: false);
-*/
-    $dsn = "mysql:dbname=login;host=localhost;charset=utf8mb4";
-
-    $db = PdoDatabase::fromDsn(new PdoDsn(
-        $dsn,
-        $_ENV['DB_USER'],       // cioè "root"
-        $_ENV['DB_PASSWORD']    // vuota, cioè ""
-    ));
-
+    $db = getAuthDb();
     return new Auth($db, throttling: false);
 }
 
+function getAuthDb(): PdoDatabase
+{
+    $dbName = $_ENV['DB_AUTH_NAME'];
+    $user = $_ENV['DB_USER'];
+    $password = $_ENV['DB_PASSWORD'];
+    $port = $_ENV['DB_PORT'];
+    $host = $_ENV['DB_HOST'];
 
-$loader = new FilesystemLoader(__DIR__ . '/html');
-$twig = new Environment($loader, []);
+    return PdoDatabase::fromDsn(new PdoDsn(
+        "mysql:dbname=$dbName;host=$host;charset=utf8mb4",
+        $user,
+        $password
+    ));
+}

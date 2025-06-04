@@ -19,7 +19,8 @@ class USession
 
     private function __construct()
     {
-        session_start(); //start the session
+        session_start();
+       //start the session
     }
 
     public static function getInstance(): USession
@@ -63,8 +64,12 @@ class USession
      */
     public static function getSessionElement($id)
     {
-        return $_SESSION[$id];
+        if (isset($_SESSION[$id])) {
+            return $_SESSION[$id];
+        }
+        return null;
     }
+
 
     /**
      * @throws UserNotAuthenticatedException if the session doesn't contain a valid user

@@ -1,6 +1,8 @@
 <?php
 namespace Core;
 
+use View\VStatus;
+
 class Router
 {
     private array $routes = [];
@@ -72,7 +74,8 @@ class Router
         }
 
         http_response_code(404);
-        echo "404 Not Found";
+        $view = new VStatus();
+        $view->showStatus(404);
     }
 
     private function callController(string $handler, array $params): void

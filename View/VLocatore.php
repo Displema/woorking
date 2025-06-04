@@ -1,6 +1,8 @@
 <?php
 namespace View;
 
+use Model\EProfilo;
+
 class VLocatore
 {
 
@@ -21,5 +23,10 @@ class VLocatore
         echo $twig->render('home_locatore/homeLocatore.html.twig', [
             'messaggio' => 'Questa è la pagina principale'
         ]);
+    }
+
+    public function goProfile(EProfilo $profilo) {
+        $twig = new \Twig\Environment($this->loader);
+        echo $twig->render('login/profilo_locatore.html.twig', ['profilo' => $profilo]);
     }
 }

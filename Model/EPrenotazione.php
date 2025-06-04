@@ -39,7 +39,7 @@ class EPrenotazione
     private FasciaOrariaEnum $fascia;
     
      #[ORM\Column(type:"datetime")]
-    private $data;
+    private DateTime $data;
 
     #[ORM\OneToOne(targetEntity:EPagamento::class, mappedBy: "prenotazione", cascade: ["persist", "remove"])]
     private ?EPagamento $pagamento = null;

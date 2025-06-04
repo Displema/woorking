@@ -16,11 +16,12 @@ class EServiziAggiuntiviFixture extends AbstractFixture implements DependentFixt
         $faker = Factory::create('it_IT');
 
         for ($i = 0; $i < 10; $i++) {
-            $servizio = new EServiziAggiuntivi();
-            $servizio->setNomeServizio($faker->word());
-            $servizio->setUfficio($this->getReference('EUfficio_' . $i, EUfficio::class));
-
-            $manager->persist($servizio);
+            for ($j = 0; $j < 4; $j++) {
+                $servizio = new EServiziAggiuntivi();
+                $servizio->setNomeServizio($faker->emoji() . ucFirst($faker->word()));
+                $servizio->setUfficio($this->getReference('EUfficio_' . $i, EUfficio::class));
+                $manager->persist($servizio);
+            }
         }
         $manager->flush();
     }

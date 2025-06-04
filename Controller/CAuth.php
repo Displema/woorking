@@ -11,6 +11,7 @@ use Delight\Auth\TooManyRequestsException;
 use Delight\Auth\UserAlreadyExistsException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
+use Exception;
 use Model\ELocatore;
 use Model\Enum\UserEnum;
 use Model\EProfilo;
@@ -35,7 +36,7 @@ class CAuth
 
     public function showLoginForm(): void
     {
-        $currentUser = USession::getSessionElement("user");
+        $currentUser = USession::isSetSessionElement("user");
         if ($currentUser) {
             $redirectView = new VRedirect();
             $redirectView->redirect("/home");
@@ -57,18 +58,19 @@ class CAuth
         $authView->showRegisterForm();
     }
     public function registerUser(
-        string $email,
-        string $password,
         string $name,
         string $surname,
-        string $date,
-        string $userType,
+        string $dob,
         string $phone,
+        string $email,
+        string $password,
+        string $userType,
         string $piva = null
+
     ): void {
         try {
-            $date = new DateTime($date);
-        } catch (\Exception $e) {
+            $date_parsed = new DateTime($dob);
+        } catch (Exception) {
             die("Wrong date format");
         }
 
@@ -95,11 +97,11 @@ class CAuth
             $model = $userTypeParsed === UserEnum::Utente ? EProfilo::class : ELocatore::class;
             $profile = new $model();
             $profile
-                ->setIdUtente($userId)
-                ->setTelefono($phone)
-                ->setDataNascita($date)
-                ->setNome($name)
-                ->setCognome($surname);
+                ->setUserId($userId)
+                ->setPhone($phone)
+                ->setDob($date_parsed)
+                ->setName($name)
+                ->setSurname($surname);
 
             if ($userTypeParsed === UserEnum::Locatore) {
                 if ($piva === null) {
@@ -119,13 +121,20 @@ class CAuth
         } catch (TooManyRequestsException $e) {
             die('Too many requests');
         } catch (ORMException $e) {
+            die('ORM error');
         }
+
+        $view = new VRedirect();
+        $view->redirect("/home");
     }
 
     public function loginUser(string $email, string $password, string $rememberMe = "0"): void
     {
         $currentUser = USession::isSetSessionElement("user");
+
         if ($currentUser) {
+            $user = USession::getSessionElement("user");
+
             $view = new VRedirect();
             $view->redirect("/home");
         }
@@ -141,11 +150,20 @@ class CAuth
             $this->auth_manager->login($email, $password, $duration);
             $userid = $this->auth_manager->getUserId();
             $repo = $this->entity_manager->getRepository(EProfilo::class);
-            $profile = $repo->findOneBy(['idUtente' => $userid]);
+            $profile = $repo->findOneBy(['user_id' => $userid]);
 
             USession::setSessionElement("user", $profile);
+            $piva = $profile->getPartitaIva();
 
-            echo "User is logged in. Your profile is $profile";
+            $view = new VRedirect();
+            if ($piva === null) {
+                $view->redirect("/home");
+            } else {
+                $view->redirect("/homeLocatore");
+            }
+
+
+
         } catch (InvalidEmailException $e) {
             die('Wrong email address');
         } catch (InvalidPasswordException $e) {
@@ -155,6 +173,7 @@ class CAuth
         } catch (TooManyRequestsException $e) {
             die('Too many requests');
         } catch (AttemptCancelledException|AuthError $e) {
+            die('An error occurred');
         }
     }
 
@@ -170,5 +189,13 @@ class CAuth
 
         $view = new VResource();
         $view->printJson($user);
+    }
+
+    public function logoutUser(): void{
+
+            USession::destroy();
+            $view = new VRedirect();
+            $view->redirect("/home");
+
     }
 }

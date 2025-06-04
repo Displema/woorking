@@ -12,7 +12,16 @@
 <body>
 
 <!-- NAVBAR -->
-{% include 'navbar/navbar.html.twig' %}
+{% if isloggedin == 'isLoggedIn' %}
+
+    {% include 'navbar/navbar.html.twig' %}
+
+{% else %}
+
+    {% include 'navbar/navbar1.html.twig' %}
+
+{%  endif %}
+
 <!-- CONTENUTO PRINCIPALE -->
 <div class="container my-5 dettagli-container">
     <div class="row g-4">
@@ -35,6 +44,13 @@
                 <p><strong>Posti disponibili:</strong> {{ ufficio.ufficio.numeroPostazioni }}</p>
                 <p><strong>Contatti:</strong> info@affittaufficio.it - +39 0123 456789</p>
                 <p><strong>Descrizione:</strong> {{ ufficio.ufficio.descrizione }}</p>
+                <p><strong>Superficie:</strong> {{ ufficio.ufficio.superficie }} m^2</p>
+                <p><strong>Servizi Aggiuntivi:</strong></p>
+                <ul>
+                    {% for servizio in ufficio.ufficio.serviziAggiuntivi %}
+                    <li>{{ servizio.nomeServizio }}</li>
+                    {% endfor %}
+                </ul>
 
                 <div class="prezzo h4 text-danger text-end">Prezzo: {{ ufficio.ufficio.prezzo}} euro al giorno</div>
                 <a href="/search/showoffice/detailsoffice/confirm/reservated/{{ date }}/{{ ufficio.ufficio.id }}/{{ fascia }}" class="btn btn-danger mt-3"><i class="fa-solid fa-credit-card"></i> Vai al pagamento</a>

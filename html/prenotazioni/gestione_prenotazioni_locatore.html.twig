@@ -36,23 +36,25 @@
         <div id="attive" class="tab-content">
           {% for ufficio in ufficiPresente %}
           <div class="prenotazione">
+
+
             <img src="{{ ufficio.foto }}" alt="Ufficio 1" />
             <div class="prenotazione-info">
-              <h5>{{ ufficio.utente.nome }} {{ ufficio.utente.cognome }}</h5>
-              <p><strong>Data:</strong> {{ ufficio.prenotazioni.data|date("Y-m-d H:i:s")  }}</p>
-              <p><strong>Telefono:</strong> {{ ufficio.utente.telefono }}</p>
-              <p><strong>Email:</strong> </p>
+              <h5>{{ ufficio.ufficio.titolo }}</h5>
+              <p><strong>Cliente:</strong> {{ ufficio.prenotazioni.utente.name  }} {{ ufficio.prenotazioni.utente.surname }}</p>
+              <p><strong>Telefono:</strong> {{ ufficio.prenotazioni.utente.phone }}</p>
+              <p><strong>Email:</strong> {{ ufficio.email}} </p>
             </div>
             <a href="#" class="btn-dettagli" data-bs-toggle="modal" data-bs-target="#modal-dettagliP"
-               data-nome="{{ ufficio.utente.nome }}"
-               data-cognome="{{ ufficio.utente.cognome }}"
+               data-nome="{{ ufficio.prenotazioni.utente.name }}"
+               data-cognome="{{ ufficio.prenotazioni.utente.surname }}"
                data-data="{{ ufficio.prenotazioni.data|date('d M Y') }}"
-               data-telefono="{{ ufficio.utente.telefono }}"
-               data-email="{{ ufficio.utente.email }}"
+               data-telefono="{{ ufficio.prenotazioni.utente.phone }}"
+               data-email="{{ ufficio.email }}"
                data-nome-ufficio="{{ ufficio.ufficio.titolo }}"
                data-descrizione="{{ ufficio.ufficio.descrizione }}"
-               data-prezzo="{{ ufficio.ufficio.prezzo }}"
-               data-superficie="{{ ufficio.ufficio.superficie }}"
+               data-prezzo="{{ ufficio.ufficio.prezzo }} €"
+               data-superficie="{{ ufficio.ufficio.superficie }} m²"
                data-fascia="{{ ufficio.intervallo.fascia.value }}"
                data-indirizzo="{{ ufficio.ufficio.indirizzo }}"
                data-postazioni="{{ ufficio.ufficio.numeroPostazioni }}"
@@ -71,21 +73,21 @@
           <div class="prenotazione">
             <img src="{{ ufficio.foto}} " alt="Ufficio 3" />
             <div class="prenotazione-info">
-              <h5>{{ ufficio.utente.nome }} {{ ufficio.utente.cognome }}</h5>
-              <p><strong>Data:</strong> {{ ufficio.prenotazioni.data|date("Y-m-d H:i:s")  }}</p>
-              <p><strong>Telefono:</strong> {{ ufficio.utente.telefono }}</p>
-              <p><strong>Email:</strong> </p>
+              <h5>{{ ufficio.ufficio.titolo }}</h5>
+              <p><strong>Cliente:</strong> {{ ufficio.prenotazioni.utente.name  }} {{ ufficio.prenotazioni.utente.surname }}</p>
+              <p><strong>Telefono:</strong> {{ ufficio.utente.phone }}</p>
+              <p><strong>Email:</strong> {{ ufficio.email }}</p>
             </div>
             <a href="#" class="btn-dettagliP" data-bs-toggle="modal" data-bs-target="#modal-dettagliP"
-               data-nome="{{ ufficio.utente.nome }}"
-               data-cognome="{{ ufficio.utente.cognome }}"
+               data-nome="{{ ufficio.prenotazioni.utente.name }}"
+               data-cognome="{{ ufficio.prenotazioni.utente.surname }}"
                data-data="{{ ufficio.prenotazioni.data|date('d M Y') }}"
-               data-telefono="{{ ufficio.utente.telefono }}"
-               data-email="{{ ufficio.utente.email }}"
+               data-telefono="{{ ufficio.prenotazioni.utente.phone }}"
+               data-email="{{ ufficio.email }}"
                data-nome-ufficio="{{ ufficio.ufficio.titolo }}"
                data-descrizione="{{ ufficio.ufficio.descrizione }}"
-               data-prezzo="{{ ufficio.ufficio.prezzo }}"
-               data-superficie="{{ ufficio.ufficio.superficie }}"
+               data-prezzo="{{ ufficio.ufficio.prezzo }} €"
+               data-superficie="{{ ufficio.ufficio.superficie }} m²"
                data-fascia="{{ ufficio.intervallo.fascia.value }}"
                data-indirizzo="{{ ufficio.ufficio.indirizzo }}"
                data-postazioni="{{ ufficio.ufficio.numeroPostazioni }}"

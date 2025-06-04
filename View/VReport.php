@@ -3,13 +3,13 @@ namespace View;
 
 class VReport extends BaseView
 {
-    public function showReportForm($id): void
+    public function showReportForm($id,$user,$login): void
     {
-        $this->twig->display('/segnalazioni/segnalazioni.html.twig', ['idufficio' => $id]);
+        $this->twig->display('/segnalazioni/segnalazioni.html.twig', ['idufficio' => $id,'isloggedin'=>$login,'user'=>$user],);
     }
 
-    public function showReportConfirmation(): void
+    public function showReportConfirmation($user,$login): void
     {
-        $this->twig->display('/conferme/ConfermaSegnalazione.html.twig');
+        $this->twig->display('/conferme/ConfermaSegnalazione.html.twig', ['user' => $user, 'isloggedin' => $login]);
     }
 }
