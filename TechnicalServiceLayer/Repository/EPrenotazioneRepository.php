@@ -44,4 +44,17 @@ class EPrenotazioneRepository extends EntityRepository
                 ->setParameter('fascia', $fascia)
                 ->getQuery()->getSingleScalarResult();
         }
+
+    public function getEntrateMensili($locatoreId): array
+    {
+        return $this->createQueryBuilder('p')
+            ->select('SUBSTRING(p.data, 1, 7) AS mese, SUM(u.prezzo) AS entrate')
+            ->join('p.ufficio', 'u')
+            ->where('u.locatore = :locatoreId')
+            ->groupBy('mese')
+            ->setParameter('locatoreId', $locatoreId)
+            ->getQuery()
+            ->getArrayResult();
     }
+
+}

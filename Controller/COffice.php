@@ -6,6 +6,7 @@ use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Model\EFoto;
+use Model\EIndirizzo;
 use Model\EIntervalloDisponibilita;
 use Model\Enum\FasciaOrariaEnum;
 use Model\Enum\StatoUfficioEnum;
@@ -344,52 +345,33 @@ class COffice
     }
 
     //search all bookings of the landlord's offices
-    public static function showPrenotazioni(){
+    public static function showPrenotazioni() {
         $user = USession::requireUser();
         $id = $user->getId();
         $oggi = new \DateTime();
-        $em =getEntityManager();
+        $em = getEntityManager();
 
-        $UfficiCompletiPassati=[];
-        $UfficiCompletiPresenti=[];
+        $UfficiCompletiPassati = [];
+        $UfficiCompletiPresenti = [];
 
-        //repositories
+        // Repositories
         $userRepo = UserRepository::getInstance();
-
-        /** @var EUfficioRepository $officeRepo */
         $uffici = $em->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
-
-        /** @var EFotoRepository $fotoRepo */
         $fotoRepo = $em->getRepository(Efoto::class);
-
-        /** @var EPrenotazioneRepository $prenotazioniRepo */
         $prenotazioniRepo = $em->getRepository(EPrenotazione::class);
-
-        /** @var EIntervalloDisponibilitaRepository $intervalliRepo */
         $intervalliRepo = $em->getRepository(EIntervalloDisponibilita::class);
 
         try {
             foreach ($uffici as $ufficio) {
-                //take reservations
                 $prenotazioni = $prenotazioniRepo->getPrenotazioneByUfficio($ufficio);
                 if (empty($prenotazioni)) {
                     continue;
                 }
 
-                //take office breaks
                 $intervallo = $intervalliRepo->getIntervallobyOffice($ufficio);
-                //take photos
                 $foto = $fotoRepo->getFirstPhotoByOffice($ufficio);
                 $fotoUrl = $foto ? "/foto/" . $foto->getId() : null;
 
-                // if there is a reservation I take the user and the data
-                foreach ($prenotazioni as $prenotazione) {
-                    $data = $prenotazione->getData();
-                    //take email
-                    $email = $userRepo->getEmailByUserId($prenotazione->getUtente()->getUserId())[0]['email'];
-                }
-
-                //I take all the services
                 $serviziObj = $ufficio->getServiziAggiuntivi();
                 $servizi = [];
                 foreach ($serviziObj as $s) {
@@ -397,9 +379,12 @@ class COffice
                 }
                 $serviziStringa = implode(', ', $servizi);
 
-                //I divide in past reservations and present/future reservations
-                if ($data < $oggi) {
-                    $UfficiCompletiPassati[] = [
+                // Per ogni prenotazione creo un oggetto singolo da passare al template
+                foreach ($prenotazioni as $prenotazione) {
+                    $data = $prenotazione->getData();
+                    $email = $userRepo->getEmailByUserId($prenotazione->getUtente()->getUserId())[0]['email'];
+
+                    $elemento = [
                         'ufficio' => $ufficio,
                         'email' => $email,
                         'foto' => $fotoUrl,
@@ -407,29 +392,23 @@ class COffice
                         'intervallo' => $intervallo,
                         'servizio' => $serviziStringa
                     ];
-                } else {
-                    $UfficiCompletiPresenti[] = [
-                        'ufficio' => $ufficio,
-                        'email' => $email,
-                        'foto' => $fotoUrl,
-                        'prenotazioni' => $prenotazione,
-                        'intervallo' => $intervallo,
-                        'servizio' => $serviziStringa
-                    ];
+
+                    if ($data < $oggi) {
+                        $UfficiCompletiPassati[] = $elemento;
+                    } else {
+                        $UfficiCompletiPresenti[] = $elemento;
+                    }
                 }
             }
-        }catch (Exception $e) {
-            // Qui puoi loggare l'errore o fare qualcosa per gestirlo
-            error_log("Errore nella gestione delle prenotazioni per ufficio id " . $ufficio->getId() . ": " . $e->getMessage());
-            // Continua con l'ufficio successivo
-
+        } catch (Exception $e) {
+            error_log("Errore nella gestione delle prenotazioni per ufficio: " . $e->getMessage());
         }
 
-        //call the view
-        $view = new VUffici();
+        // Call the view
+        $view = new VOffice();
         $view->searchReservations($UfficiCompletiPassati, $UfficiCompletiPresenti);
-
     }
+
 
     //show all lessor's offices
     public static function showOfficesLocatore() {
@@ -464,8 +443,92 @@ class COffice
             ];
         }
 
-        $view = new VUffici();
-        $view->searchOffice($UfficiCompleti);
+        $view = new VOffice();
+        $view->searchOfficeLocatore($UfficiCompleti);
+
+    }
+
+    public function addOffice(){
+        $view = new VOffice();
+        $view->addOfficeV();
+    }
+
+    public function addOfficeInDB(){
+        $em = getEntityManager();
+        $ufficio = new EUfficio();
+        $indirizzo = new Eindirizzo();
+        $intervallo = new EIntervalloDisponibilita();
+
+        $indirizzo->setProvincia($_POST['provincia']);
+        $indirizzo->setCitta($_POST['comune']);
+        $indirizzo->setCap($_POST['cap']);
+        $indirizzo->setNumeroCivico($_POST['civico']);
+        $indirizzo->setVia($_POST['indirizzo']);
+
+        $ufficio->setTitolo($_POST['nome-ufficio']);
+        $ufficio->setPrezzo($_POST['prezzo']);
+        $ufficio->setDescrizione($_POST['descrizione']);
+        $ufficio->setNumeroPostazioni($_POST['postazioni']);
+        $ufficio->setSuperficie($_POST['superficie']);
+        $ufficio->setDataCaricamento(new \DateTime());
+        $ufficio->setStato(StatoUfficioEnum::InAttesa);
+        $ufficio->setIndirizzo($indirizzo);
+
+        $intervallo->setDataInizio(new \DateTime($_POST['data_inizio']));
+        $intervallo->setDataFine(new \DateTime($_POST['data_fine']));
+        $intervallo->setFascia(FasciaOrariaEnum::from($_POST['fascia']));
+        $intervallo->setUfficio($ufficio);
+
+        $em->persist($indirizzo);
+        $em->persist($ufficio);
+        $em->persist($intervallo);
+        $em->flush();
+
+        // Photos
+        if (!empty($_FILES['foto']) && isset($_FILES['foto']['tmp_name'])) {
+
+            foreach ($_FILES['foto']['tmp_name'] as $key => $tmpName) {
+                if (is_uploaded_file($tmpName)) {
+                    $content = file_get_contents($tmpName);
+                    $mimeType = $_FILES['foto']['type'][$key];
+                    $size = $_FILES['foto']['size'][$key];
+
+                    $foto = new EFoto();
+                    $foto->setContent($content);
+                    $foto->setMimeType($mimeType);
+                    $foto->setSize($size);
+                    $foto->setUfficio($ufficio);
+
+                    $em->persist($foto);
+                }
+            }
+            //Salva tutte le foto in una volta sola
+            $em->flush();
+        }
+
+        // Prendo i servizi dalle checkbox
+        var_dump($_POST['servizi']);
+        $listaServizi = $_POST['servizi'] ?? [];
+
+        // Se è stato compilato "altro", aggiungo quel servizio
+        if (!empty($_POST['altro-servizio'])) {
+            $nomeAltro = trim($_POST['altro-servizio']);
+            if ($nomeAltro !== '') {
+                $listaServizi[] = $nomeAltro;
+            }
+        }
+
+        // Salvo i servizi nel DB
+        foreach ($listaServizi as $nomeServizio) {
+            $servizio = new EServiziAggiuntivi();
+            $servizio->setNomeServizio($nomeServizio);
+            $servizio->setUfficio($ufficio);
+            $em->persist($servizio);
+
+        }
+        $em->flush();
+        header('Location: /uffici');
+        exit;
 
     }
 }

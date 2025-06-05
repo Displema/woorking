@@ -14,6 +14,7 @@ $router->get('/register', 'CAuth@showRegisterForm');
 $router->post('/login', 'CAuth@loginUser');
 $router->post('/register', 'CAuth@registerUser');
 $router->get('/logout', 'CAuth@logoutUser');
+$router->post('/salvaProfilo','CAuth@modifyUser');
 
 // Static content routes
 $router->get('/static/img/{id}', 'CPhoto@view');
@@ -37,13 +38,17 @@ $router->get('/homeLocatore','CHome@showHome');
 $router->get('/prenotazioni', 'COffice@showPrenotazioni');
 
 //route to the layout to add an office
-$router->get('/aggiunta', 'CSearchOffice@addOffice');
+$router->get('/aggiunta', 'COffice@addOffice');
 
 //route to add office
-$router->post('/aggiuntaUfficio', 'CSearchOffice@addOfficeInDB');
+$router->post('/aggiuntaUfficio', 'COffice@addOfficeInDB');
 
 //route to landlord's profile
 $router->get('/profilo', 'CLocatore@profilo');
+
+//stats
+$router->get('/api/grafici/entrate-mensili', 'CStats@entrateMensili');
+
 
 
 

@@ -20,13 +20,13 @@ class VLocatore
     //rendering home
     public function goHome() {
         $twig = new \Twig\Environment($this->loader);
-        echo $twig->render('home_locatore/homeLocatore.html.twig', [
+        echo $twig->render('/locatore/homeLocatore/homeLocatore.html.twig', [
             'messaggio' => 'Questa è la pagina principale'
         ]);
     }
 
     public function goProfile(EProfilo $profilo) {
         $twig = new \Twig\Environment($this->loader);
-        echo $twig->render('login/profilo_locatore.html.twig', ['profilo' => $profilo]);
+        echo $twig->render('/locatore/profilo/profilo_locatore.html.twig', ['profilo' => $profilo]);
     }
 }

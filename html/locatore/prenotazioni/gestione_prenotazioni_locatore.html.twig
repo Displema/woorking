@@ -10,12 +10,12 @@
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <!-- CSS personalizzato -->
-  <link rel="stylesheet" href="/html/prenotazioni/gestione_prenotazioni.css" />
+  <link rel="stylesheet" href="/html/locatore/prenotazioni/gestione_prenotazioni.css" />
 </head>
 
 <body>
 <!-- Creo la navbar -->
-{% include '/navbar/NavBarLocatore.html.twig' %}
+{% include '/locatore/navbar/NavBarLocatore.html.twig' %}
 
     <!-- Main Content -->
     <div class="page-wrapper main-content">
@@ -75,7 +75,7 @@
             <div class="prenotazione-info">
               <h5>{{ ufficio.ufficio.titolo }}</h5>
               <p><strong>Cliente:</strong> {{ ufficio.prenotazioni.utente.name  }} {{ ufficio.prenotazioni.utente.surname }}</p>
-              <p><strong>Telefono:</strong> {{ ufficio.utente.phone }}</p>
+              <p><strong>Telefono:</strong> {{ ufficio.prenotazioni.utente.phone }}</p>
               <p><strong>Email:</strong> {{ ufficio.email }}</p>
             </div>
             <a href="#" class="btn-dettagliP" data-bs-toggle="modal" data-bs-target="#modal-dettagliP"
@@ -102,7 +102,7 @@
 
 
   <!-- creo il modal che viene chiamato dallo script js -->
-{% include '/prenotazioni/modal_dettagli.html.twig' %}
+{% include '/locatore/prenotazioni/modal_dettagli.html.twig' %}
 
 
   <!-- Tabler Core JS -->
@@ -110,7 +110,7 @@
 
 
   <!-- Chiamo lo script per il modal e le tabs-->
-  <script src="\js\gestione_prenotazioni.js"></script>
+  <script src="/js/gestione_prenotazioni.js"></script>
 
  
 </body>

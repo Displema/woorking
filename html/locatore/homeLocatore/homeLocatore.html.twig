@@ -7,14 +7,15 @@
   <!-- Tabler CSS -->
   <link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/css/tabler.min.css" rel="stylesheet">
   <!-- CSS Personalizzato -->
-  <link href="/html/home_locatore/homeLocatore.css" rel="stylesheet">
+  <link href="/html/locatore/homeLocatore/homeLocatore.css" rel="stylesheet">
   <!-- FontAwesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   
     <!-- Creo la navbar -->
-    {% include '/navbar/NavBarLocatore.html.twig' %}
+    {% include '/locatore/navbar/NavBarLocatore.html.twig' %}
 
 
   <!-- Contenuto principale -->
@@ -37,10 +38,10 @@
       </div>
     </a>
     <ul class="dropdown-menu dropdown-menu-end shadow rounded-3 mt-2">
-      <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="fas fa-user me-2 text-primary"></i> Profilo</a></li>
+      <li><a class="dropdown-item d-flex align-items-center" href="/profilo"><i class="fas fa-user me-2 text-primary"></i> Profilo</a></li>
       <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="fas fa-cog me-2 text-secondary"></i> Impostazioni</a></li>
       <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item d-flex align-items-center text-danger" href="#"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+      <li><a class="dropdown-item d-flex align-items-center text-danger" href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
     </ul>
   </div>
 </header>
@@ -65,7 +66,8 @@
         Monitora l'andamento delle entrate generate dai tuoi uffici nel tempo per avere una visione chiara della tua crescita economica.
       </p>
       <div class="text-center">
-        <img src="images/images.jpg" class="img-fluid rounded" alt="Grafico Entrate">
+        <canvas id="graficoEntrate" width="400" height="300"></canvas>
+
       </div>
     </div>
   </div>
@@ -99,6 +101,44 @@
 
   <!-- Tabler JS -->
   <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/js/tabler.min.js"></script>
+
+    <canvas id="graficoEntrate"></canvas>
+    <script>
+      fetch('/api/grafici/entrate-mensili')
+              .then(res => res.json())
+              .then(data => {
+                const mesi = data.map(e => e.mese);
+                const entrate = data.map(e => e.entrate);
+
+                new Chart(document.getElementById('graficoEntrate'), {
+                  type: 'bar',  // qui cambio il tipo da 'line' a 'bar'
+                  data: {
+                    labels: mesi,
+                    datasets: [{
+                      label: 'Entrate (€)',
+                      data: entrate,
+                      backgroundColor: 'rgba(54, 162, 235, 0.7)', // colore barre
+                      borderColor: 'rgba(54, 162, 235, 1)',       // bordo barre
+                      borderWidth: 1,
+                      borderRadius: 5                            // arrotonda gli angoli delle barre
+                    }]
+                  },
+                  options: {
+                    responsive: true,
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                        ticks: {
+                          callback: value => '€ ' + value.toLocaleString()  // formato valuta sull'asse Y
+                        }
+                      }
+                    }
+                  }
+                });
+              });
+    </script>
+
+
   </div>
 </body>
 </html>
