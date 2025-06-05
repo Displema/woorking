@@ -77,7 +77,7 @@ class COffice
         'foto' => $photoUrls
         ];
         $view = new VOffice();
-        $view->showOfficeDetails($officeDetails, $date, $fascia,$user,$login);
+        $view->showOfficeDetails($officeDetails, $date, $fascia, $user, $login);
     }
 
     public function confirmReservation($date, $idOffice, $fascia)
@@ -119,7 +119,7 @@ class COffice
             $em->commit();
 
             $view = new VOffice();
-            $view->showconfirmedpage1($user,$login);
+            $view->showconfirmedpage1($user, $login);
         } catch (Exception $e) {
             $em->rollback();
             echo $e->getMessage();
@@ -141,7 +141,7 @@ class COffice
 
 
         $view = new VReview();
-        $view->showAllReviews($review, $office,$user,$login);
+        $view->showAllReviews($review, $office, $user, $login);
     }
 
     public function search(string $query, string $date, string $slot): void
@@ -199,7 +199,7 @@ class COffice
         }
 
         $view= new VOffice();
-        $view->showOfficeSearch($officewithphoto, $date, $fascia,$user,$login);
+        $view->showOfficeSearch($officewithphoto, $date, $fascia, $user, $login);
     }
 
 
@@ -271,14 +271,6 @@ class COffice
 
     public function deleteOffice(string $id, string $shouldRefund = '0'): void
     {
-        try {
-            USession::requireAdmin();
-        } catch (UserNotAuthenticatedException) {
-            $view = new VStatus();
-            $view->showStatus(403);
-            return;
-        }
-
         /** @var EUfficioRepository $officeRepo */
         $officeRepo = $this->entity_manager->getRepository(EUfficio::class);
         $office = $officeRepo->findOneBy(['id'=>$id]);
@@ -291,8 +283,31 @@ class COffice
 
         if ($office->isHidden()) {
             $view = new VStatus();
-            $view->showStatus(403);
+            $view->showStatus(404);
             return;
+        }
+
+        try {
+            USession::requireAdmin();
+        } catch (UserNotAuthenticatedException) {
+            try {
+                $user = $this->entity_manager->getRepository(EProfilo::class)
+                    ->findOneBy(['user_id'=>getAuth()->getUserId()]);
+
+                if (!$user) {
+                    $view = new VStatus();
+                    $view->showStatus(403);
+                }
+
+                if ($user->getId() !== $office->getLocatore()->getId()) {
+                    throw new UserNotAuthenticatedException();
+                }
+            } catch (UserNotAuthenticatedException) {
+                error_log($office->getLocatore()->getId());
+                $view = new VStatus();
+                $view->showStatus(403);
+                return;
+            }
         }
 
         $office->setIsHidden(true);
@@ -335,13 +350,8 @@ class COffice
             $view->showStatus(500);
         }
 
-        $view = new VResource();
-        $view->printJson(
-            json_encode(array(
-                'reservations' => $reservations,
-                'refunds' => $refunds,
-            ), JSON_THROW_ON_ERROR)
-        );
+        $view = new VRedirect();
+        $view->redirect('/office/'.$office->getId() . '/delete' . '/confirmation');
     }
 
     //search all bookings of the landlord's offices
