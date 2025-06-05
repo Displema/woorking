@@ -22,6 +22,7 @@ $router->get('/static/img/{id}', 'CPhoto@view');
 // Admin routes
 $router->get('/admin/home', 'CAdmin@home');
 $router->get('/admin/offices/{id}', 'CAdmin@showOfficeDetails');
+$router->get('/admin/reports', 'CAdmin@showReports');
 
 $router->get('/profile', 'CHome@showprofile');
 
@@ -50,8 +51,6 @@ $router->get('/profilo', 'CLocatore@profilo');
 $router->get('/api/grafici/entrate-mensili', 'CStats@entrateMensili');
 
 
-
-
 $router->post(
     "/office/{id}/delete",
     'COffice@deleteOffice'
@@ -64,6 +63,7 @@ $router->post('/office/pending/${id}/reject', 'COffice@sendReject');
 
 // Debug endpoints
 $router->get('/api/user', 'CAuth@getUser');
+$router->get('/admin/register', 'CAuth@registerAdmin');
 
 // Office routes
 $router->get('/home', 'CHome@index');

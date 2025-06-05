@@ -8,6 +8,7 @@ use Delight\Auth\AuthError;
 use Delight\Auth\InvalidEmailException;
 use Delight\Auth\InvalidPasswordException;
 use Delight\Auth\TooManyRequestsException;
+use Delight\Auth\UnknownIdException;
 use Delight\Auth\UserAlreadyExistsException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
@@ -16,6 +17,7 @@ use Model\ELocatore;
 use Model\Enum\UserEnum;
 use Model\EProfilo;
 use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
+use TechnicalServiceLayer\Roles\Roles;
 use TechnicalServiceLayer\Utility\USession;
 use View\VRedirect;
 use View\VAuth;
@@ -66,7 +68,6 @@ class CAuth
         string $password,
         string $userType,
         string $piva = null
-
     ): void {
         try {
             $date_parsed = new DateTime($dob);
@@ -108,6 +109,9 @@ class CAuth
                     die("PartitaIVA is null");
                 }
                 $profile->setPartitaIva($piva);
+                $this->auth_manager->admin()->addRoleForUserById($userId, Roles::LANDLORD);
+            } else {
+                $this->auth_manager->admin()->addRoleForUserById($userId, Roles::BASIC_USER);
             }
 
             $this->entity_manager->persist($profile);
@@ -122,6 +126,8 @@ class CAuth
             die('Too many requests');
         } catch (ORMException $e) {
             die('ORM error');
+        } catch (UnknownIdException $e) {
+            die('Unknown id');
         }
 
         $view = new VRedirect();
@@ -153,17 +159,16 @@ class CAuth
             $profile = $repo->findOneBy(['user_id' => $userid]);
 
             USession::setSessionElement("user", $profile);
-            $piva = $profile->getPartitaIva();
 
             $view = new VRedirect();
-            if ($piva === null) {
-                $view->redirect("/home");
-            } else {
+
+            if ($this->auth_manager->admin()->doesUserHaveRole($userid, Roles::LANDLORD)) {
                 $view->redirect("/homeLocatore");
+                return;
             }
 
-
-
+            $view->redirect("/home");
+            return;
         } catch (InvalidEmailException $e) {
             die('Wrong email address');
         } catch (InvalidPasswordException $e) {
@@ -191,22 +196,19 @@ class CAuth
         $view->printJson($user);
     }
 
-    public function logoutUser(): void{
-
+    public function logoutUser(): void
+    {
             USession::destroy();
             $view = new VRedirect();
             $view->redirect("/home");
-
     }
 
     public function modifyUser(): void
     {
         try {
             $sessionUser = USession::requireUser();
-
             // Forza il reattacco all'EntityManager (managed entity)
             $user = $this->entity_manager->getRepository(get_class($sessionUser))->find($sessionUser->getId());
-
         } catch (UserNotAuthenticatedException $e) {
             $view = new VRedirect();
             $view->redirect("/error");
@@ -233,6 +235,27 @@ class CAuth
 
         $view = new VRedirect();
         $view->redirect("/homeLocatore");
+    }
 
+    public function registerAdmin(): void
+    {
+        $userId = $this->auth_manager->register(
+            "admin@admin.it",
+            "admin",
+            "admin"
+        );
+        $user = new EProfilo();
+        $user
+            ->setDob(new Datetime())
+            ->setCreatedAt(new DateTime())
+            ->setSurname("Admin")
+            ->setName("Woorking")
+            ->setPhone("0123456789")
+            ->setUserId($userId);
+        $this->auth_manager->admin()->addRoleForUserById($userId, Roles::ADMIN);
+        $this->entity_manager->persist($user);
+        $this->entity_manager->flush();
+        $view = new VRedirect();
+        $view->redirect("/admin");
     }
 }
