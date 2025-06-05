@@ -53,6 +53,7 @@ class EProfilo
     public function __construct()
     {
         //$this->id = Uuid::uuid4();
+        $this->createdAt = new \DateTime();
     }
     public function getId(): string
     {

@@ -6,4 +6,6 @@ enum FasciaOrariaEnum : String
     case Mattina = "Mattina";
 
     case Pomeriggio = "Pomeriggio";
+
+
 }

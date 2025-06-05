@@ -29,16 +29,31 @@ class Router
 
     public function dispatch(string $requestUri, string $requestMethod): void
     {
+        //takes only the path part of the url
         $requestUri = parse_url($requestUri, PHP_URL_PATH);
 
+        //scans all routes
+
+
+
         foreach ($this->routes as $route) {
+            //control
             if ($route['method'] !== strtoupper($requestMethod)) {
                 continue;
             }
 
+
+            //builds the regex
             $pattern = "@^" . preg_replace('/\{(\w+)}/', '(?P<\1>[^/]+)', $route['raw']) . "$@D";
 
+            $pattern = "@^" . preg_replace('/\{(\w+)}/', '(?P<\1>[^/]+)', $route['raw']) . "$@D";
+
+
+            //control
             if (preg_match($pattern, $requestUri, $matches)) {
+  //parameter extraction
+                $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+
                 $routeParams = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
 
                 $queryParams = $_GET ?? [];
@@ -47,6 +62,7 @@ class Router
 
                 // Unifica tutti i parametri
                 $params = array_merge($routeParams, $queryParams, $bodyParams);
+
 
                 if (is_callable($route['handler'])) {
                     call_user_func_array($route['handler'], $params);

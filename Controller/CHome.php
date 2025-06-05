@@ -5,6 +5,7 @@ use Doctrine\ORM\EntityManager;
 use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
 use TechnicalServiceLayer\Utility\USession;
 use View\VHome;
+use View\VLocatore;
 use View\VRedirect;
 
 class CHome
@@ -13,11 +14,18 @@ class CHome
 
     public function __construct()
     {
-        //$this->entity_manager = getEntityManager();
+
+    }
+
+    public function showHome()
+    {
+        $view = new VLocatore();
+        $view->goHome();
     }
 
     public function index(): void
     {
+
         $view = new VHome();
         if (USession::isSetSessionElement('user')) {
             // TODO: add custom navbar for logged users

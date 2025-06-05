@@ -1,4 +1,5 @@
 <?php
+
 namespace Model\Enum;
 
 enum UserEnum : String

@@ -10,8 +10,8 @@
     "doctrine/data-fixtures": "^2.0",
     "fakerphp/faker": "^1.24",
     "twig/twig": "^3.21",
-    "doctrine/dbal": "^4.2",
-    "delight-im/auth": "^8.3"
+    "delight-im/auth": "^8.3",
+    "delight-im/db": "^1.5"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest"
@@ -22,16 +22,19 @@
   "autoload": {
     "psr-4": {
       "Model\\": "./Model",
+      "TechnicalServiceLayer\\Foundation\\": "./TechnicalServiceLayer/Foundation",
+      "Twig\\": "./TwigTesting",
+      "View\\": "./View",
       "TechnicalServiceLayer\\Repository\\": "./TechnicalServiceLayer/Repository",
       "TechnicalServiceLayer\\Utility\\": "./TechnicalServiceLayer/Utility",
       "Core\\": "./Core",
       "Model\\Enum\\": "./Model/Enum",
       "Testing\\Fixtures\\": "./Testing/Fixtures",
       "Controller\\": "./Controller",
-      "View\\": "./View",
       "Testing\\": "./Testing",
       "Routes\\": "./Routes",
       "TechnicalServiceLayer\\Exceptions\\": "./TechnicalServiceLayer/Exceptions"
+
     }
   }
 }

@@ -14,6 +14,8 @@ $router->get('/register', 'CAuth@showRegisterForm');
 $router->post('/login', 'CAuth@loginUser');
 $router->post('/register', 'CAuth@registerUser');
 $router->get('/logout', 'CAuth@logoutUser');
+$router->post('/salvaProfilo','CAuth@modifyUser');
+
 // Static content routes
 $router->get('/static/img/{id}', 'CPhoto@view');
 
@@ -22,6 +24,32 @@ $router->get('/admin/home', 'CAdmin@home');
 $router->get('/admin/offices/{id}', 'CAdmin@showOfficeDetails');
 
 $router->get('/profile', 'CHome@showprofile');
+
+//route to manage the offices
+$router->get('/uffici', 'COffice@showOfficesLocatore');
+
+//route to print photos
+$router->get('/foto/{id}', 'CPhoto@serveImage');
+
+//route to home
+$router->get('/homeLocatore','CHome@showHome');
+
+//route to manage reservations
+$router->get('/prenotazioni', 'COffice@showPrenotazioni');
+
+//route to the layout to add an office
+$router->get('/aggiunta', 'COffice@addOffice');
+
+//route to add office
+$router->post('/aggiuntaUfficio', 'COffice@addOfficeInDB');
+
+//route to landlord's profile
+$router->get('/profilo', 'CLocatore@profilo');
+
+//stats
+$router->get('/api/grafici/entrate-mensili', 'CStats@entrateMensili');
+
+
 
 
 $router->post(
@@ -50,5 +78,6 @@ $router->get('/showreservation', 'CReservation@showreservation');
 $router->get('/showreservation/showreservationdetails/{id}', 'CReservation@showReservationDetails');
 $router->get('/showreservation/sendreview/{idreservation}', 'CReservation@sendreview');
 $router->post('/showreservation/sendreview/confirmreview/{idreservation}' , 'CReservation@confirmReview');
+
 
 return $router;

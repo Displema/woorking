@@ -133,6 +133,8 @@ class CAuth
         $currentUser = USession::isSetSessionElement("user");
 
         if ($currentUser) {
+            $user = USession::getSessionElement("user");
+
             $view = new VRedirect();
             $view->redirect("/home");
         }
@@ -151,9 +153,17 @@ class CAuth
             $profile = $repo->findOneBy(['user_id' => $userid]);
 
             USession::setSessionElement("user", $profile);
+            $piva = $profile->getPartitaIva();
 
             $view = new VRedirect();
-            $view->redirect("/home");
+            if ($piva === null) {
+                $view->redirect("/home");
+            } else {
+                $view->redirect("/homeLocatore");
+            }
+
+
+
         } catch (InvalidEmailException $e) {
             die('Wrong email address');
         } catch (InvalidPasswordException $e) {
@@ -186,6 +196,43 @@ class CAuth
             USession::destroy();
             $view = new VRedirect();
             $view->redirect("/home");
+
+    }
+
+    public function modifyUser(): void
+    {
+        try {
+            $sessionUser = USession::requireUser();
+
+            // Forza il reattacco all'EntityManager (managed entity)
+            $user = $this->entity_manager->getRepository(get_class($sessionUser))->find($sessionUser->getId());
+
+        } catch (UserNotAuthenticatedException $e) {
+            $view = new VRedirect();
+            $view->redirect("/error");
+            return;
+        }
+        $user->setName($_POST['nome']);
+        $user->setSurname($_POST['cognome']);
+        try {
+            $dob = new \DateTime($_POST['data_nascita']);
+            $user->setDob($dob);
+        } catch (\Exception) {
+            // Gestione errore: data non valida
+            $view = new VRedirect();
+            $view->redirect("/error?msg=data_nascita_invalida");
+            return;
+        }
+        $user->setPhone($_POST['telefono']);
+        $user->setPartitaIva($_POST['partita_iva']);
+        $this->entity_manager->persist($user);
+        $this->entity_manager->flush();
+
+        USession::setSessionElement("user", $user);
+
+
+        $view = new VRedirect();
+        $view->redirect("/homeLocatore");
 
     }
 }

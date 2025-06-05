@@ -3,7 +3,11 @@ namespace Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Model\Enum\FasciaOrariaEnum;
+
+use Model\Enum\UserEnum;
+
 use Model\Enum\StatoUfficioEnum;
+
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;

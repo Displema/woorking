@@ -100,6 +100,6 @@ class EIndirizzo
 
     public function __toString(): string
     {
-        return "Indirizzo: {$this->via} {$this->numeroCivico}, {$this->citta}, {$this->provincia}, {$this->cap}";
+        return " {$this->via} {$this->numeroCivico}, {$this->citta}, {$this->provincia}, {$this->cap}";
     }
 }

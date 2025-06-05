@@ -1,0 +1,134 @@
+/* Layout sidebar + page-wrapper */
+body {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  margin: 0;
+}
+
+#navbar-container {
+  width: 15rem;
+  flex-shrink: 0;
+}
+
+.navbar-dark .nav-link:hover {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.page-wrapper {
+  flex-grow: 1;
+  padding: 0;
+  transition: margin-left 0.3s ease;
+}
+
+
+
+/* Content container */
+.container-xl {
+  
+  flex-grow: 1;
+}
+
+/* Tabs styling */
+.tabs {
+  display: flex;
+  border-bottom: 2px solid #dee2e6;
+  margin-bottom: 1rem;
+}
+.tab {
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s;
+}
+.tab.active {
+  color: #206bc4;
+  border-bottom-color: #206bc4;
+}
+
+/* Prenotazioni list */
+.prenotazione {
+  display: flex;
+  align-items: center;
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.1);
+}
+.prenotazione img {
+  width: 120px;
+  height: 90px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+.prenotazione-info {
+  flex-grow: 1;
+}
+.prenotazione-info h5 {
+  margin: 0 0 0.3rem;
+  font-size: 1.25rem;
+}
+.prenotazione-info p {
+  margin: 0.1rem 0;
+  color: #555;
+}
+.btn-dettagliP {
+  background-color: #e10c0c;
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  text-decoration: none;
+  font-weight: 600;
+}
+.btn-dettagli {
+  background-color: #125e9e;
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  text-decoration: none;
+  font-weight: 600;
+}
+.btn-dettagli:hover {
+  background-color: #125e9e;
+  text-decoration: none;
+  color: white;
+}
+
+.btn-dettagliP:hover {
+  background-color: #e10c0c;
+  text-decoration: none;
+  color: white;
+}
+
+@media (max-width: 992px) {
+  body {
+    flex-direction: column;
+  }
+
+  #navbar-container {
+    width: 100%;
+    position: relative;
+    z-index: 1000;
+  }
+
+  .page-wrapper {
+    
+    padding: 1rem;
+  }
+
+  
+
+  
+}

@@ -6,8 +6,9 @@ use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use TechnicalServiceLayer\Repository\ESegnalazioneRepository;
+use TechnicalServiceLayer\Repository\EServiziAggiuntiviRepository;
 
-#[ORM\Entity(repositoryClass: ESEgnalazioneRepository::class)]
+#[ORM\Entity(repositoryClass: EServiziAggiuntiviRepository::class)]
 #[ORM\Table(name: "Servizi_Aggiuntivi")]
 class EServiziAggiuntivi
 {

@@ -1,13 +1,13 @@
 <?php
 namespace TechnicalServiceLayer\Repository;
 
-use Doctrine\Common\Annotations\Annotation\Enum;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Collections\Collection;
 use Model\Enum\StatoUfficioEnum;
 use Model\EPrenotazione;
 use Model\EUfficio;
+use Ramsey\Uuid\Uuid;
 use TechnicalServiceLayer\Foundation\FEntityManager;
 
 class EUfficioRepository extends EntityRepository
@@ -95,6 +95,17 @@ class EUfficioRepository extends EntityRepository
             ->setParameter('stato', $state->value)
             ->getQuery()
             ->getResult());
+    }
+
+    public function getOfficeByLocatore( $id): Collection
+    {
+        return new \Doctrine\Common\Collections\ArrayCollection(
+            $this->createQueryBuilder('u')
+                ->where('u.locatore = :id')
+                ->setParameter('id', $id)
+                ->getQuery()
+                ->getResult()
+        );
     }
 
 }

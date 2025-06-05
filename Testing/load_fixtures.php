@@ -5,8 +5,8 @@ use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 
-require_once "vendor/autoload.php";
-require_once "bootstrap.php";
+require_once "../vendor/autoload.php";
+require_once "../bootstrap.php";
 
 $loader = new Loader();
 //$loader->addFixture(new EProfiloFixture());

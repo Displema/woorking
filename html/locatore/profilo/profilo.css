@@ -1,0 +1,95 @@
+body {
+    display: flex;
+    flex-direction: row;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Navbar container */
+#navbar-container {
+    width: 15rem;
+    flex-shrink: 0;
+}
+
+/*permette di dare effetto agli elementi della navbar quando passi il cursore*/
+.navbar-dark .nav-link:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Contenuto principale */
+.page-wrapper {
+    flex-grow: 1;
+    padding: 0;
+    transition: margin-left 0.3s ease;
+}
+
+/* Header */
+.page-header {
+    position: relative;
+    margin-bottom: 3rem;
+}
+
+/*modifiche riguardo il titolo*/
+.welcome-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #111;
+    word-break: break-word;
+    text-align: center;
+}
+
+.container .lead{
+    font-size: 1.2rem;
+    color: #111;
+    text-align: center;
+    margin-top: 1rem;
+    opacity: 0;
+    transform: translateY(40px);
+    animation: fadeInUp 1s ease-out forwards;
+    animation-delay: 0.2s;
+}
+
+
+.bg-light-subtle {
+    background-color: #f9f9f9;
+}
+
+.card-title {
+    font-size: 1.8rem;
+}
+
+.card-body p {
+    line-height: 1.6;
+}
+
+
+/* Responsive */
+@media (max-width: 992px) {
+    body {
+        flex-direction: column;
+    }
+
+    #navbar-container {
+        width: 100%;
+        position: relative;
+        z-index: 1000;
+    }
+
+    .page-wrapper {
+
+        padding: 1rem;
+    }
+
+    .welcome-title {
+        font-size: 2.5rem;
+        padding-top: 2rem;
+    }
+
+    .dropdown {
+        position: absolute;
+        top: 0rem;
+        right: 0.5rem;
+        font-size: 1rem;
+    }
+}
