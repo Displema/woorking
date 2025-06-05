@@ -12,6 +12,7 @@ use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use \Model\EProfilo;
 use Ramsey\Uuid\Type\Integer;
+use TechnicalServiceLayer\Roles\Roles;
 
 class UserFixture extends AbstractFixture
 {
@@ -26,7 +27,7 @@ class UserFixture extends AbstractFixture
     {
         $faker = Factory::create('it_IT');
 
-        for ($i = 0; $i < 30; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             $auth = getAuth();
             $email = $faker->email;
             $userId = $auth->register(
@@ -34,6 +35,20 @@ class UserFixture extends AbstractFixture
                 password: $faker->password(),
                 username: $email,
             );
+            $auth->admin()->addRoleForUserById($userId, Roles::ADMIN);
+
+            FixtureState::$userIds[$i] = $userId;
+        }
+
+        for ($i = 20; $i < 30; $i++) {
+            $auth = getAuth();
+            $email = $faker->email;
+            $userId = $auth->register(
+                email: $email,
+                password: $faker->password(),
+                username: $email,
+            );
+            $auth->admin()->addRoleForUserById($userId, Roles::LANDLORD);
 
             FixtureState::$userIds[$i] = $userId;
         }
