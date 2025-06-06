@@ -1,8 +1,10 @@
 <?php
 namespace Controller;
 
+use Delight\Auth\Auth;
 use Doctrine\ORM\EntityManager;
 use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
+use TechnicalServiceLayer\Roles\Roles;
 use TechnicalServiceLayer\Utility\USession;
 use View\VHome;
 use View\VLocatore;
@@ -11,31 +13,39 @@ use View\VRedirect;
 class CHome
 {
     //private EntityManager $entity_manager;
+    public Auth $auth_manager;
 
     public function __construct()
     {
+        $this->auth_manager = getAuth();
 
-    }
-
-    public function showHome()
-    {
-        $view = new VLocatore();
-        $view->goHome();
     }
 
     public function index(): void
     {
 
-        $view = new VHome();
+        $viewUser = new VHome();
+        $viewLandlord = new VLocatore();
+
         if (USession::isSetSessionElement('user')) {
-            // TODO: add custom navbar for logged users
+
             $login="isLoggedIn";
             $user = USession::getSessionElement('user');
+
+
+            $userid = $this->auth_manager->getUserId();
+
+            if ($this->auth_manager->admin()->doesUserHaveRole($userid, Roles::LANDLORD)) {
+              $viewLandlord->goHome();
+            return;
+            }
         } else {
             $login="NotLoggedIn";
             $user = null;
         }
-        $view->index($login, $user);
+
+
+        $viewUser->index($login, $user);
     }
 
     public function indexRedirect(): void
