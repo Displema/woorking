@@ -162,10 +162,7 @@ class CAuth
 
             $view = new VRedirect();
 
-            if ($this->auth_manager->admin()->doesUserHaveRole($userid, Roles::LANDLORD)) {
-                $view->redirect("/homeLocatore");
-                return;
-            }
+
 
             $view->redirect("/home");
             return;

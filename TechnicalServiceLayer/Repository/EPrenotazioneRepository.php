@@ -57,4 +57,14 @@ class EPrenotazioneRepository extends EntityRepository
             ->getArrayResult();
     }
 
+    public function countByOffice(EUfficio $ufficio): int
+    {
+        return $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->where('p.ufficio = :ufficio')
+            ->setParameter('ufficio', $ufficio)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
 }

@@ -32,9 +32,6 @@ $router->get('/uffici', 'COffice@showOfficesLocatore');
 //route to print photos
 $router->get('/foto/{id}', 'CPhoto@serveImage');
 
-//route to home
-$router->get('/homeLocatore','CHome@showHome');
-
 //route to manage reservations
 $router->get('/prenotazioni', 'COffice@showPrenotazioni');
 
@@ -49,6 +46,7 @@ $router->get('/profilo', 'CLocatore@profilo');
 
 //stats
 $router->get('/api/grafici/entrate-mensili', 'CStats@entrateMensili');
+$router->get('/api/grafici/utilizzo-uffici', 'CStats@utilizzoUffici');
 
 
 $router->post(

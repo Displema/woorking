@@ -102,7 +102,9 @@ class EUfficioRepository extends EntityRepository
         return new \Doctrine\Common\Collections\ArrayCollection(
             $this->createQueryBuilder('u')
                 ->where('u.locatore = :id')
+                ->andWhere('u.stato = :stato')
                 ->setParameter('id', $id)
+                ->setParameter('stato', 'Approvato')
                 ->getQuery()
                 ->getResult()
         );

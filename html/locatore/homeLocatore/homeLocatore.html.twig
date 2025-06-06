@@ -57,30 +57,39 @@
     </div>
 
 <!-- Sezione Grafici -->
-<div class="container my-5">
+ <div class="container my-5">
   <!-- Entrate Mensili -->
-  <div class="card mb-5 shadow border-0 rounded-4 bg-light-subtle">
-    <div class="card-body p-5">
-      <h2 class="text-center fw-bold mb-3 text-primary">📊 Entrate Mensili</h2>
-      <p class="text-center text-muted fs-5 mb-4">
+    <div class="card mb-5 shadow border-0 rounded-4 bg-light-subtle">
+      <div class="card-body p-5">
+        <h2 class="text-center fw-bold mb-3 text-primary fs-1">📊 Entrate Mensili</h2>
+        <p class="text-center text-muted fs-5 mb-4">
         Monitora l'andamento delle entrate generate dai tuoi uffici nel tempo per avere una visione chiara della tua crescita economica.
-      </p>
-      <div class="text-center">
-        <canvas id="graficoEntrate" width="400" height="300"></canvas>
+       </p>
+         <div class="text-center">
+           <div style="max-width: 600px; height: 400px; margin: auto;">
+               <canvas id="graficoEntrate" style="width: 100%; height: 100%;"></canvas>
+            </div>
+         </div>
 
       </div>
-    </div>
+
   </div>
 
   <!-- Utilizzo Uffici -->
   <div class="card mb-5 shadow border-0 rounded-4 bg-light-subtle">
     <div class="card-body p-5">
-      <h2 class="text-center fw-bold mb-3 text-success">🏢 Utilizzo degli Uffici</h2>
+      <h2 class="text-center fw-bold mb-3 text-success fs-1">🏢 Utilizzo degli Uffici</h2>
       <p class="text-center text-muted fs-5 mb-4">
         Visualizza quanto frequentemente vengono prenotati i tuoi uffici, per ottimizzare la gestione degli spazi disponibili.
       </p>
       <div class="text-center">
-        <img src="images/images.jpg" class="img-fluid rounded" alt="Grafico Utilizzo">
+        <div class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
+          <div style="max-width: 500px; width: 100%;">
+            <canvas id="graficoUtilizzo"></canvas>
+          </div>
+        </div>
+
+
       </div>
     </div>
   </div>
@@ -111,7 +120,7 @@
                 const entrate = data.map(e => e.entrate);
 
                 new Chart(document.getElementById('graficoEntrate'), {
-                  type: 'bar',  // qui cambio il tipo da 'line' a 'bar'
+                  type: 'bar',
                   data: {
                     labels: mesi,
                     datasets: [{
@@ -137,6 +146,57 @@
                 });
               });
     </script>
+    <canvas id="graficoUtilizzo"></canvas>
+    <script>
+      fetch('/api/grafici/utilizzo-uffici')
+              .then(res => res.json())
+              .then(data => {
+                const nomiUffici = data.map(e => e.nome);
+                const utilizzi = data.map(e => e.numeroPrenotazioni);
+
+                new Chart(document.getElementById('graficoUtilizzo'), {
+                  type: 'pie',
+                  data: {
+                    labels: nomiUffici,
+                    datasets: [{
+                      label: 'Prenotazioni',
+                      data: utilizzi,
+                      backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 159, 64, 0.7)'
+                      ],
+                      borderColor: 'white',
+                      borderWidth: 1
+                    }]
+                  },
+                  options: {
+                    responsive: true,
+                    plugins: {
+                      legend: {
+                        position: 'bottom'
+                      },
+                      tooltip: {
+                        callbacks: {
+                          label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed;
+                            return `${label}: ${value} prenotazioni`;
+                          }
+                        }
+                      }
+                    }
+                  }
+                });
+              })
+              .catch(err => console.error("Errore nel fetch del grafico:", err));
+
+
+    </script>
+
 
 
   </div>
