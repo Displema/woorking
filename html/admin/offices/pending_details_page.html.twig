@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dettaglio Ufficio In Attesa</title>
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet" />
+    <style>
+        .office-main-photo {
+            width: 100%;
+            max-height: 350px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .services-list {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            font-size: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-approve {
+            background-color: var(--tblr-success);
+            color: white;
+        }
+
+        .btn-reject {
+            background-color: var(--tblr-danger);
+            color: white;
+        }
+
+        /* Stile carosello Tabler */
+        .carousel {
+            max-width: 100%;
+            max-height: 220px;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .carousel img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        /* Container carosello */
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+
+<body>
+<div class="page">
+    <!-- Sidebar -->
+    <aside class="navbar navbar-vertical navbar-expand-lg navbar-light bg-white border-end">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu"
+                    aria-controls="sidebar-menu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <h1 class="navbar-brand mb-4">Dashboard</h1>
+
+            <div class="collapse navbar-collapse" id="sidebar-menu">
+                <ul class="navbar-nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span class="nav-link-icon d-md-none d-lg-inline-block">🏠</span>
+                            <span class="nav-link-title">Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <span class="nav-link-icon d-md-none d-lg-inline-block">🏢</span>
+                            <span class="nav-link-title">Gestione Uffici</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Page wrapper -->
+    <div class="page-wrapper">
+        <!-- Navbar top -->
+        <header class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+            <div class="container-xl d-flex justify-content-between align-items-center">
+                <a href="#" class="navbar-brand">Dettaglio Ufficio</a>
+                <div>
+                    <button class="btn btn-approve me-2" id="btnApprove">Approva</button>
+                    <button class="btn btn-reject" id="btnReject">Rifiuta</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page body -->
+        <div class="page-body container py-4">
+            <div class="">
+                <div class="col-12 col-lg-6">
+                    <h2>{{ office.titolo }}</h2>
+                    <p class="text-muted">Inviato il: {{ office.dataCaricamento|date("d/m/Y H:i") }}</p>
+                </div>
+
+                <!-- Dettagli -->
+                <div class="col-12 col-lg-6">
+                    <h3>Dettagli</h3>
+                    <p><strong>Indirizzo:</strong> {{ office.indirizzo.via }} {{ office.indirizzo.numeroCivico }}, {{ office.indirizzo.citta }} ({{ office.indirizzo.provincia }})</p>
+                    <p><strong>Prezzo:</strong> {{ office.prezzo}}€ / postazione</p>
+                    <p><strong>Superficie:</strong> {{ office.superficie}} m²</p>
+                    <p><strong>Postazioni disponibili: </strong>{{ office.numeroPostazioni }}</p>
+
+                    <!-- Carosello immagini secondarie -->
+                    <div class="carousel" id="tablerCarousel">
+                        <div class="carousel-inner">
+                            {% for photo in office.foto %}
+                            <img src="/static/img/{{ photo.id }}" alt="Foto {{ loop.index }} dell'ufficio"
+                                 class="carousel-item {% if loop.index == 0 %} active{% endif %}" />
+                            {% endfor %}
+                        </div>
+                        <button class="carousel-control carousel-control-prev" type="button"
+                                aria-label="Previous Slide" id="prevBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                 stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" />
+                                <polyline points="15 6 9 12 15 18" />
+                            </svg>
+                        </button>
+                        <button class="carousel-control carousel-control-next" type="button" aria-label="Next Slide"
+                                id="nextBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                 stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" />
+                                <polyline points="9 6 15 12 9 18" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Servizi aggiuntivi -->
+                    <h4 class="mt-4">Servizi aggiuntivi</h4>
+                    <div class="services-list">
+                        {% for service in office.serviziAggiuntivi %}
+                        <div class="service-item" title="{{ service.nomeServizio }}">{{ service.nomeServizio }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Approva -->
+<div class="modal modal-blur fade" id="modalApprove" tabindex="-1" aria-hidden="true"
+     aria-labelledby="modalApproveLabel" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalApproveLabel">Conferma approvazione</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+            </div>
+            <div class="modal-body">
+                Sei sicuro di voler approvare questo ufficio?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Annulla</button>
+                <button type="button" class="btn btn-success" id="confirmApprove">Conferma</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Rifiuta -->
+<div class="modal modal-blur fade" id="modalReject" tabindex="-1" aria-hidden="true"
+     aria-labelledby="modalRejectLabel" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <form class="modal-content" id="rejectForm">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalRejectLabel">Rifiuta ufficio</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+            </div>
+            <div class="modal-body">
+                <label for="rejectReason" class="form-label">Inserisci la motivazione del rifiuto</label>
+                <textarea class="form-control" id="rejectReason" rows="3" required></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Annulla</button>
+                <button type="submit" class="btn btn-danger">Invia rifiuto</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
+<script>
+    // Carosello Tabler
+    const carousel = document.getElementById('tablerCarousel');
+    const inner = carousel.querySelector('.carousel-inner');
+    const items = Array.from(inner.querySelectorAll('img'));
+    let currentIndex = 0;
+
+    function updateCarousel() {
+        const width = carousel.clientWidth;
+        inner.style.transform = `translateX(${-currentIndex * width}px)`;
+        items.forEach((img, i) => {
+            img.classList.toggle('active', i === currentIndex);
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+        currentIndex = (currentIndex - 1 + items.length) % items.length;
+        updateCarousel();
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        currentIndex = (currentIndex + 1) % items.length;
+        updateCarousel();
+    });
+
+    window.addEventListener('resize', updateCarousel);
+    updateCarousel();
+
+    // Modal Tabler (usa Tabler JS per gestire i modal)
+    const modalApproveEl = document.getElementById('modalApprove');
+    const modalRejectEl = document.getElementById('modalReject');
+
+    const modalApprove = new tabler.Modal(modalApproveEl);
+    const modalReject = new tabler.Modal(modalRejectEl);
+
+    document.getElementById('btnApprove').addEventListener('click', () => {
+        modalApprove.show();
+    });
+
+    document.getElementById('btnReject').addEventListener('click', () => {
+        modalReject.show();
+    });
+
+    document.getElementById('confirmApprove').addEventListener('click', () => {
+        modalApprove.hide();
+        alert('Ufficio approvato!');
+        // Qui inserisci la chiamata AJAX o redirect
+    });
+
+    document.getElementById('rejectForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const reason = document.getElementById('rejectReason').value.trim();
+        if (!reason) {
+            alert('Inserisci una motivazione valida.');
+            return;
+        }
+        modalReject.hide();
+        alert('Ufficio rifiutato con motivazione:\n' + reason);
+        // Qui inserisci invio dati via AJAX o form submit
+    });
+</script>
+</body>
+
+</html>

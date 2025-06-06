@@ -64,38 +64,7 @@
 <body>
 <div class="page">
     <!-- Sidebar -->
-    <aside class="navbar navbar-vertical navbar-expand-lg navbar-light bg-white border-end">
-        <div class="container-fluid">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu"
-                    aria-controls="sidebar-menu" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <h1 class="navbar-brand mb-4">Dashboard</h1>
-
-            <div class="collapse navbar-collapse" id="sidebar-menu">
-                <ul class="navbar-nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">
-                                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    🏠
-                                </span>
-                            <span class="nav-link-title">Home</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    🏢
-                                </span>
-                            <span class="nav-link-title">Gestione Uffici</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </aside>
-
+    {% include "base/sidebar.html.twig" %}
     <!-- Page wrapper -->
     <div class="page-wrapper">
         <!-- Page body -->

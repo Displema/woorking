@@ -21,6 +21,7 @@ use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
 use TechnicalServiceLayer\Repository\EServiziAggiuntiviRepository;
 use TechnicalServiceLayer\Repository\UserRepository;
 use TechnicalServiceLayer\Roles\Roles;
+use View\VAdmin;
 use View\VOffice;
 
 use Model\ERecensione;
@@ -34,9 +35,7 @@ use TechnicalServiceLayer\Utility\USession;
 use View\VReservation;
 use View\VReview;
 use View\VRedirect;
-use View\VResource;
 use View\VStatus;
-use View\VUffici;
 
 class COffice
 {
@@ -363,7 +362,8 @@ class COffice
     }
 
     //search all bookings of the landlord's offices
-    public static function showPrenotazioni() {
+    public static function showPrenotazioni()
+    {
         $user = USession::requireUser();
         $id = $user->getId();
         $oggi = new \DateTime();
@@ -428,8 +428,10 @@ class COffice
     }
 
 
+
     //show all lessor's offices
-    public static function showOfficesLocatore() {
+    public static function showOfficesLocatore()
+    {
         $user = USession::requireUser();
         $id = $user->getId();
         $UfficiCompleti = [];
@@ -463,15 +465,16 @@ class COffice
 
         $view = new VOffice();
         $view->searchOfficeLocatore($UfficiCompleti);
-
     }
 
-    public function addOffice(){
+    public function addOffice()
+    {
         $view = new VOffice();
         $view->addOfficeV();
     }
 
-    public function addOfficeInDB(){
+    public function addOfficeInDB()
+    {
         $em = getEntityManager();
         $ufficio = new EUfficio();
         $indirizzo = new Eindirizzo();
@@ -504,7 +507,6 @@ class COffice
 
         // Photos
         if (!empty($_FILES['foto']) && isset($_FILES['foto']['tmp_name'])) {
-
             foreach ($_FILES['foto']['tmp_name'] as $key => $tmpName) {
                 if (is_uploaded_file($tmpName)) {
                     $content = file_get_contents($tmpName);
@@ -542,11 +544,69 @@ class COffice
             $servizio->setNomeServizio($nomeServizio);
             $servizio->setUfficio($ufficio);
             $em->persist($servizio);
-
         }
         $em->flush();
         header('Location: /uffici');
         exit;
+    }
 
+    public function showAdminOfficeDetails(string $id): void
+    {
+        $view = new VAdmin();
+        try {
+            $office = $this->entity_manager->find(EUfficio::class, $id);
+        } catch (ORMException $e) {
+            $view = new VStatus();
+            $view->showStatus(500);
+            return;
+        }
+
+        if (!$office) {
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
+        }
+
+        $view = new VAdmin();
+        $userRepo = UserRepository::getInstance();
+        $email = $userRepo->getEmailByUserId($office->getLocatore()->getUserId())[0]['email'];
+        /** @var EUfficioRepository $officeRepo */
+        $officeRepo = $this->entity_manager->getRepository(EUfficio::class);
+        $reservations = $officeRepo->getActiveReservations($office);
+        $view->showOfficeDetails($office, $email, count($reservations));
+    }
+
+    public function showPendingDetails(string $id): void
+    {
+        $auth = getAuth();
+        if (!$auth->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+        }
+
+        $user = USession::requireUser();
+        $userId = $auth->getUserId();
+        if ($auth->admin()->doesUserHaveRole($userId, Roles::BASIC_USER)) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+
+        $office  = $this->entity_manager->find(EUfficio::class, $id);
+        error_log($office->getId());
+        if (!$office) {
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
+        }
+
+        if ($auth->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
+            $targetView = "showPendingAdmin";
+        } else {
+            $targetView = "showPendingLandlord";
+        }
+
+        $view = new VOffice();
+        $view->$targetView($office);
     }
 }
