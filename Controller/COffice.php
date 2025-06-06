@@ -9,6 +9,7 @@ use Model\EFoto;
 use Model\EIndirizzo;
 use Model\EIntervalloDisponibilita;
 use Model\Enum\FasciaOrariaEnum;
+use Model\Enum\ReportStateEnum;
 use Model\Enum\StatoUfficioEnum;
 use Model\EPrenotazione;
 use Model\EProfilo;
@@ -19,6 +20,7 @@ use TechnicalServiceLayer\Repository\EIntervalloDisponibilitaRepository;
 use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
 use TechnicalServiceLayer\Repository\EServiziAggiuntiviRepository;
 use TechnicalServiceLayer\Repository\UserRepository;
+use TechnicalServiceLayer\Roles\Roles;
 use View\VOffice;
 
 use Model\ERecensione;
@@ -291,6 +293,12 @@ class COffice
             USession::requireAdmin();
         } catch (UserNotAuthenticatedException) {
             try {
+                $auth = getAuth();
+                if (!$auth->admin()->doesUserHaveRole($auth->getUserId(), Roles::LANDLORD)) {
+                    $view = new VStatus();
+                    $view->showStatus(403);
+                    return;
+                }
                 $user = $this->entity_manager->getRepository(EProfilo::class)
                     ->findOneBy(['user_id'=>getAuth()->getUserId()]);
 
@@ -318,8 +326,8 @@ class COffice
             foreach ($reservations as $reservation) {
                 $report = new ESegnalazione();
                 $report->setUfficio($office)
-                    ->setCommento("Rimborso per cancellazione ufficio");
-
+                    ->setCommento("Rimborso per cancellazione ufficio")
+                    ->setState(ReportStateEnum::class::SOLVED);
                 $refunds++;
                 $refund = new ERimborso();
                 $refund
