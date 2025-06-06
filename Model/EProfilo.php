@@ -2,6 +2,7 @@
 namespace Model;
 
 use DateTime;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\Uuid;
@@ -24,6 +25,9 @@ class EProfilo
 
     #[ORM\Column(name: 'user_id', type: 'string', length: 255)]
     private string $user_id;
+
+    #[ORM\OneToMany(targetEntity:ESegnalazione::class, mappedBy:"user", cascade:["persist", "remove"])]
+    private Collection $reports;
 
     #[ORM\Column(type: 'string', length: 40)]
     private string $name;
