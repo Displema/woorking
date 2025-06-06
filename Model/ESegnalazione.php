@@ -2,6 +2,7 @@
 namespace Model;
 
 use Doctrine\ORM\Mapping as ORM;
+use Model\Enum\ReportStateEnum;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -18,15 +19,45 @@ class ESegnalazione
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
-    #[ORM\ManyToOne(targetEntity:EUfficio::class,cascade: ["persist",], inversedBy: "segnalazioni")]
+    #[ORM\ManyToOne(targetEntity:EUfficio::class, cascade: ["persist",], inversedBy: "segnalazioni")]
     //#[ORM\JoinColumn(name:"idUfficio", referencedColumnName:"id", nullable: false)]
     private EUfficio $ufficio;
-    
+
+    #[ORM\ManyToOne(targetEntity:EProfilo::class, cascade: ["persist",], inversedBy: "reports")]
+    private EProfilo $user;
+
     #[ORM\Column]
     private string $commento;
 
     #[ORM\OneToOne(targetEntity:ERimborso::class, mappedBy: "segnalazione", cascade: ["persist", "remove"])]
     private ?ERimborso $rimborso = null;
+
+    #[ORM\Column(type:"string", enumType:Enum\ReportStateEnum::class)]
+    private ReportStateEnum $state;
+
+    public function getState(): ReportStateEnum
+    {
+        return $this->state;
+    }
+
+    public function setState(ReportStateEnum $state): ESegnalazione
+    {
+        $this->state = $state;
+        return $this;
+    }
+
+    public function getUser(): EProfilo
+    {
+        return $this->user;
+    }
+
+    public function setUser(EProfilo $user): ESegnalazione
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+
 
     public function __construct()
     {
