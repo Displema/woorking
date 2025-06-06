@@ -21,9 +21,8 @@ class EUfficio
      #[ORM\GeneratedValue(strategy: "CUSTOM")]
      #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
-    
-      #[ORM\ManyToOne(targetEntity:ELocatore::class,cascade:["persist"])]
-      //#[ORM\JoinColumn(name:"idLocatore", referencedColumnName:"id")]
+
+      #[ORM\ManyToOne(targetEntity:ELocatore::class, cascade:["persist"])]
     private ELocatore $locatore;
 
     #[ORM\OneToMany(targetEntity:EFoto::class, mappedBy:"ufficio", cascade:["persist", "remove"])]
@@ -43,7 +42,7 @@ class EUfficio
         return $this;
     }
 
-     #[ORM\ManyToOne(targetEntity:EIndirizzo::class,cascade:["persist"])]
+     #[ORM\ManyToOne(targetEntity:EIndirizzo::class, cascade:["persist"])]
     private EIndirizzo $indirizzo;
 
      #[ORM\Column]
@@ -56,19 +55,19 @@ class EUfficio
     private int $prezzo;
     
     #[ORM\Column(type:"string")]
-    private $descrizione;
+    private string $descrizione;
     
      #[ORM\Column(name: 'numero_postazioni', type: "integer")]
-    private $numeroPostazioni;
+    private int $numeroPostazioni;
     
       #[ORM\Column(type:"float")]
-    private $superficie;
+    private float $superficie;
     
     #[ORM\Column(name: 'data_caricamento', type: "datetime")]
-    private $dataCaricamento;
+    private DateTime $dataCaricamento;
     
      #[ORM\Column(name: 'data_cancellazione', type: "datetime", nullable: true)]
-    private $dataCancellazione;
+    private ?Datetime $dataCancellazione;
     
      #[ORM\Column(type:"string", enumType:Enum\StatoUfficioEnum::class)]
     private StatoUfficioEnum $stato;
@@ -91,7 +90,6 @@ class EUfficio
     public function __construct()
     {
         //$this->id = Uuid::uuid4();
-
     }
 
     public function getId(): UuidInterface
