@@ -37,7 +37,7 @@ class CReport
         }
         $view->showReportForm($id, $user, $login);
     }
-    public static function showConfirmOfReport($id)
+    public function showConfirmOfReport($id)
     {
         $commento = $_POST['motivo'] ?? null;
 
