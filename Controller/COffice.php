@@ -147,6 +147,7 @@ class COffice
 
     public function search(string $query, string $date, string $slot): void
     {
+        /** @var EUfficioRepository $repo */
         $repo=$this->entity_manager->getRepository(EUfficio::class);
         $login='';
         $user='';
@@ -159,11 +160,17 @@ class COffice
             return;
         }
 
-        $fascia = $slot;
+        $fascia = FasciaOrariaEnum::tryFrom($slot);
+        if (!$fascia) {
+            $view = new VStatus();
+            $view->showStatus(400);
+            return;
+        }
         $offices= $repo->findbythree($place, $date_parsed, $fascia);
 
         $officewithphoto=[];
 
+        /** @var EPrenotazioneRepository $reservationRepo */
         $reservationRepo=$this->entity_manager->getRepository(EPrenotazione::class);
 
         if (USession::isSetSessionElement('user')) {
