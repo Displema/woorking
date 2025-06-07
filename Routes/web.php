@@ -14,7 +14,7 @@ $router->get('/register', 'CAuth@showRegisterForm');
 $router->post('/login', 'CAuth@loginUser');
 $router->post('/register', 'CAuth@registerUser');
 $router->get('/logout', 'CAuth@logoutUser');
-$router->post('/salvaProfilo','CAuth@modifyUser');
+$router->post('/salvaProfilo', 'CAuth@modifyUser');
 
 // Static content routes
 $router->get('/static/img/{id}', 'CPhoto@view');
@@ -56,9 +56,9 @@ $router->post(
 );
 
 // Pending offices routes
-$router->get('/office/pending/${id}', 'COffice@showPending');
-$router->post('/office/pending/${id}/approve', 'COffice@sendPending');
-$router->post('/office/pending/${id}/reject', 'COffice@sendReject');
+$router->get('/offices/pending/${id}', 'COffice@showPending');
+$router->post('/admin/offices/pending/{id}/approve', 'COffice@confirmPending');
+$router->post('/admin/offices/pending/{id}/reject', 'COffice@rejectPending');
 
 // Debug endpoints
 $router->get('/api/user', 'CAuth@getUser');
@@ -71,12 +71,12 @@ $router->get('/search/showoffice', 'COffice@search');
 $router->get('/search/showoffice/detailsoffice/{id}/{date}/{fascia}', 'COffice@show');
 $router->get('/search/showoffice/detailsoffice/confirm/reservated/{date}/{idOffice}/{fascia}', 'COffice@confirmReservation');
 $router->get('/search/showoffice/detailsoffice/review/{id}', 'COffice@showReview');
-$router->get('/search/showoffice/detailsoffice/Report/{id}','CReport@showFormReport');
-$router->post('/search/showoffice/detailsoffice/Report/ConfirmReport/{id}','CReport@showConfirmOfReport');
+$router->get('/search/showoffice/detailsoffice/Report/{id}', 'CReport@showFormReport');
+$router->post('/search/showoffice/detailsoffice/Report/ConfirmReport/{id}', 'CReport@showConfirmOfReport');
 $router->get('/showreservation', 'CReservation@showreservation');
 $router->get('/showreservation/showreservationdetails/{id}', 'CReservation@showReservationDetails');
 $router->get('/showreservation/sendreview/{idreservation}', 'CReservation@sendreview');
-$router->post('/showreservation/sendreview/confirmreview/{idreservation}' , 'CReservation@confirmReview');
+$router->post('/showreservation/sendreview/confirmreview/{idreservation}', 'CReservation@confirmReview');
 
 
 return $router;
