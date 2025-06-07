@@ -1,8 +1,6 @@
 <?php
 namespace Controller;
 
-
-
 use Doctrine\ORM\EntityManager;
 use Model\EPrenotazione;
 use Model\EUfficio;
@@ -35,7 +33,8 @@ class CStats
     }
 
 
-    public function utilizzoUffici(): void {
+    public function utilizzoUffici(): void
+    {
 
 
         $em = getEntityManager();
@@ -48,7 +47,7 @@ class CStats
 
         foreach ($uffici as $ufficio) {
         /** @var EPrenotazioneRepository $prenotazioni */
-        $prenotazioni = $em->getRepository(EPrenotazione::class)->countByOffice($ufficio);
+            $prenotazioni = $em->getRepository(EPrenotazione::class)->countByOffice($ufficio);
             $dati[] = [
                 'nome' => $ufficio->getTitolo(),
                 'numeroPrenotazioni' => $prenotazioni
@@ -57,5 +56,4 @@ class CStats
         $view = new VHome();
         $view ->printJson($dati);
     }
-
 }
