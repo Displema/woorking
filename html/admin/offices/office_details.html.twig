@@ -116,7 +116,7 @@
                                     </div>
                                     <div class="carousel-inner">
                                         {% for photo in office.foto %}
-                                        <div class="carousel-item active">
+                                        <div class="carousel-item {% if loop.index == 1 %} active {% endif %}">
                                             <img
                                                     class="d-block w-100"
                                                     alt="Ufficio {{ office.title }} foto {{ loop.index }}"

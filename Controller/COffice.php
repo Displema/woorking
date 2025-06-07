@@ -214,9 +214,16 @@ class COffice
 
     public function rejectPending(string $id, string $reason): void
     {
-        try {
-            $user = USession::requireAdmin();
-        } catch (UserNotAuthenticatedException $e) {
+        $auth = getAuth();
+        if (!$auth->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            return;
+        }
+
+        $userId = $auth->getUserId();
+
+        if (!$auth->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
             $view = new VStatus();
             $view->showStatus(403);
             return;
@@ -225,14 +232,19 @@ class COffice
         $repo = $this->entity_manager->getRepository(EUfficio::class);
         $office = $repo->find($id);
         if (!$office) {
-            //TODO: show bad request
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
         }
 
-        if (StatoUfficioEnum::tryFrom(!$office->getStato()) === StatoUfficioEnum::InAttesa) {
-            // TODO: show bad request
+        if (!($office->getStato() === StatoUfficioEnum::InAttesa)) {
+            $view = new VStatus();
+            $view->showStatus(400);
+            return;
         }
 
-        $office->setReason($reason);
+        $office->setMotivoRifiuto($reason);
+        $office->setDataRifiuto(new DateTime());
         $office->setStato(StatoUfficioEnum::NonApprovato);
 
         try {
@@ -245,15 +257,21 @@ class COffice
 
 
         $view = new VRedirect();
-        // TODO: remove placeholder string and add correct view
-        $view->redirect('/rejectedoffice');
+        $view->redirect('/admin/home');
     }
 
     public function confirmPending(string $id): void
     {
-        try {
-            $user = USession::requireAdmin();
-        } catch (UserNotAuthenticatedException) {
+        $auth = getAuth();
+        if (!$auth->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            return;
+        }
+
+        $userId = $auth->getUserId();
+
+        if (!$auth->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
             $view = new VStatus();
             $view->showStatus(403);
             return;
@@ -262,19 +280,24 @@ class COffice
         $repo = $this->entity_manager->getRepository(EUfficio::class);
         $office = $repo->find($id);
         if (!$office) {
-            //TODO: like on reject
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
         }
 
-        if (StatoUfficioEnum::tryFrom(!$office->getStato()) === StatoUfficioEnum::InAttesa) {
-            // TODO: show bad request
+        if (!($office->getStato() === StatoUfficioEnum::InAttesa)) {
+            $view = new VStatus();
+            $view->showStatus(400);
+            return;
         }
 
         $office->setStato(StatoUfficioEnum::Approvato);
+        $office->setDataRifiuto(new DateTime());
         $this->entity_manager->persist($office);
         $this->entity_manager->flush();
 
         $view = new VRedirect();
-        $view->redirect('/approvedoffice');
+        $view->redirect('/admin/home');
     }
 
     public function deleteOffice(string $id, string $shouldRefund = '0'): void
@@ -295,46 +318,60 @@ class COffice
             return;
         }
 
-        try {
-            USession::requireAdmin();
-        } catch (UserNotAuthenticatedException) {
-            try {
-                $auth = getAuth();
-                if (!$auth->admin()->doesUserHaveRole($auth->getUserId(), Roles::LANDLORD)) {
-                    $view = new VStatus();
-                    $view->showStatus(403);
-                    return;
-                }
-                $user = $this->entity_manager->getRepository(EProfilo::class)
-                    ->findOneBy(['user_id'=>getAuth()->getUserId()]);
-
-                if (!$user) {
-                    $view = new VStatus();
-                    $view->showStatus(403);
-                }
-
-                if ($user->getId() !== $office->getLocatore()->getId()) {
-                    throw new UserNotAuthenticatedException();
-                }
-            } catch (UserNotAuthenticatedException) {
-                error_log($office->getLocatore()->getId());
-                $view = new VStatus();
-                $view->showStatus(403);
-                return;
-            }
+        $auth = getAuth();
+        if (!$auth->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            return;
         }
 
+        $userId = $auth->getUserId();
+        $currentUser = USession::getSessionElement('user');
+        if (!$auth->admin()->doesUserHaveRole($userId, Roles::ADMIN) && !$currentUser->getId()!==$office->getId()) {
+            $view = new VStatus();
+            $view->showStatus(403);
+            return;
+        }
+
+//        try {
+//            USession::requireAdmin();
+//        } catch (UserNotAuthenticatedException) {
+//            try {
+//                $auth = getAuth();
+//                if (!$auth->admin()->doesUserHaveRole($auth->getUserId(), Roles::LANDLORD)) {
+//                    $view = new VStatus();
+//                    $view->showStatus(403);
+//                    return;
+//                }
+//                $user = $this->entity_manager->getRepository(EProfilo::class)
+//                    ->findOneBy(['user_id'=>getAuth()->getUserId()]);
+//
+//                if (!$user) {
+//                    $view = new VStatus();
+//                    $view->showStatus(403);
+//                }
+//
+//                if ($user->getId() !== $office->getLocatore()->getId()) {
+//                    throw new UserNotAuthenticatedException();
+//                }
+//            } catch (UserNotAuthenticatedException) {
+//                error_log($office->getLocatore()->getId());
+//                $view = new VStatus();
+//                $view->showStatus(403);
+//                return;
+//            }
+//        }
+
         $office->setIsHidden(true);
+        $office->setDataCancellazione(new DateTime());
 
         $reservations = $officeRepo->getActiveReservations($office);
-        $refunds = 0;
         if ($shouldRefund && !$reservations->isEmpty()) {
             foreach ($reservations as $reservation) {
                 $report = new ESegnalazione();
                 $report->setUfficio($office)
                     ->setCommento("Rimborso per cancellazione ufficio")
                     ->setState(ReportStateEnum::class::SOLVED);
-                $refunds++;
                 $refund = new ERimborso();
                 $refund
                     ->setImporto($reservation->getPagamento()->getImporto())
@@ -369,22 +406,21 @@ class COffice
     }
 
     //search all bookings of the landlord's offices
-    public static function showPrenotazioni()
+    public function showPrenotazioni()
     {
         $user = USession::requireUser();
         $id = $user->getId();
         $oggi = new \DateTime();
-        $em = getEntityManager();
 
         $UfficiCompletiPassati = [];
         $UfficiCompletiPresenti = [];
 
         // Repositories
         $userRepo = UserRepository::getInstance();
-        $uffici = $em->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
-        $fotoRepo = $em->getRepository(Efoto::class);
-        $prenotazioniRepo = $em->getRepository(EPrenotazione::class);
-        $intervalliRepo = $em->getRepository(EIntervalloDisponibilita::class);
+        $uffici = $this->entity_manager->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
+        $fotoRepo = $this->entity_manager->getRepository(Efoto::class);
+        $prenotazioniRepo = $this->entity_manager->getRepository(EPrenotazione::class);
+        $intervalliRepo = $this->entity_manager->getRepository(EIntervalloDisponibilita::class);
 
         try {
             foreach ($uffici as $ufficio) {
@@ -437,24 +473,23 @@ class COffice
 
 
     //show all lessor's offices
-    public static function showOfficesLocatore()
+    public function showOfficesLocatore()
     {
         $user = USession::requireUser();
         $id = $user->getId();
         $UfficiCompleti = [];
-        $em = getEntityManager();
 
         /** @var EUfficioRepository $uffici */
-        $uffici = $em->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
+        $uffici = $this->entity_manager->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
 
         /** @var EFotoRepository $fotoRepo */
-        $fotoRepo = $em->getRepository(Efoto::class);
+        $fotoRepo = $this->entity_manager->getRepository(Efoto::class);
 
         /** @var EServiziAggiuntiviRepository $serviziRepo */
-        $serviziRepo = $em->getRepository(EServiziAggiuntivi::class);
+        $serviziRepo = $this->entity_manager->getRepository(EServiziAggiuntivi::class);
 
         /** @var EIntervalloDisponibilitaRepository $intervalliRepo */
-        $intervalliRepo = $em->getRepository(EIntervalloDisponibilita::class);
+        $intervalliRepo = $this->entity_manager->getRepository(EIntervalloDisponibilita::class);
 
         foreach ($uffici as $ufficio) {
             $foto = $fotoRepo->getFirstPhotoByOffice($ufficio);
@@ -593,6 +628,11 @@ class COffice
 
         $user = USession::requireUser();
         $userId = $auth->getUserId();
+        if ($userId === null) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            return;
+        }
         if ($auth->admin()->doesUserHaveRole($userId, Roles::BASIC_USER)) {
             $view = new VRedirect();
             $view->redirect('/home');
@@ -600,10 +640,15 @@ class COffice
         }
 
         $office  = $this->entity_manager->find(EUfficio::class, $id);
-        error_log($office->getId());
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
+            return;
+        }
+
+        if (!($office->getStato() === StatoUfficioEnum::InAttesa)) {
+            $view = new VRedirect();
+            $view->redirect("/admin/offices/$id");
             return;
         }
 

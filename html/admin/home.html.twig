@@ -73,11 +73,15 @@
             <nav class="tabs" role="tablist" aria-label="Seleziona sezione uffici">
                 <div class="tab active" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-attivi"
                      id="tab-btn-attivi" data-target="attivi">
-                    Attivi <span class="badge bg-primary">{{ activeOffices|length }}</span>
+                    Attivi <span class="badge bg-white">{{ activeOffices|length }}</span>
                 </div>
                 <div class="tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-inattesa"
                      id="tab-btn-inattesa" data-target="inattesa">
-                    In attesa <span class="badge bg-warning">{{ pendingOffices|length }}</span>
+                    In attesa <span class="badge bg-white">{{ pendingOffices|length }}</span>
+                </div>
+                <div class="tab" role="tab" tabindex="0" aria-selected="false" aria-controls="tab-rifiutati"
+                     id="tab-btn-rifiutati" data-target="rifiutati">
+                    Rifiutati <span class="badge bg-white">{{ rejectedOffices|length }}</span>
                 </div>
             </nav>
 
@@ -92,7 +96,7 @@
                         <div>
                             <h5 class="mb-1">{{ office.titolo }}</h5>
                             <p class="mb-1 text-muted">{{ office.indirizzo.via }} {{ office.indirizzo.numeroCivico }}, {{ office.indirizzo.citta }} ({{ office.indirizzo.provincia }})</p>
-                            <small class="text-muted">Attivazione: {{ office.dataApprovazione|date('d/m/Y H:i') }}</small>
+                            <small class="text-muted">Attivato il: {{ office.dataApprovazione|date('d/m/Y H:i') }}</small>
                         </div>
                     </div>
                 </div>
@@ -103,16 +107,36 @@
             <section id="inattesa" class="section-tab" role="tabpanel" aria-labelledby="tab-btn-inattesa" hidden>
                 {% for office in pendingOffices %}
                 <!-- Card ufficio in attesa {{ office.id }} -->
-                <div class="card mb-3 cursor-pointer">
+                    <a href="/admin/offices/pending/{{ office.id }}">
+                <div class="card mb-3">
                     <div class="card-body office-card">
                         <img src="/static/img/{{ office.foto[0].id }}" alt="Foto principale ufficio {{ office.titolo }}" />
                         <div>
                             <h5 class="mb-1">{{ office.titolo }}</h5>
                             <p class="mb-1 text-muted">{{ office.indirizzo.via }} {{ office.indirizzo.numeroCivico }}, {{ office.indirizzo.citta }} ({{ office.indirizzo.provincia }})</p>
-                            <small class="text-muted">Inviato: {{ office.dataCaricamento|date('d/m/Y H:i') }}</small>
+                            <small class="text-muted">Inviato il: {{ office.dataCaricamento|date('d/m/Y H:i') }}</small>
                         </div>
                     </div>
                 </div>
+                    </a>
+                {% endfor %}
+            </section>
+
+            <section id="rifiutati" class="section-tab" role="tabpanel" aria-labelledby="tab-btn-rifiutati" hidden>
+                {% for office in rejectedOffices %}
+                    <!-- Card ufficio rifiutato {{ office.id }} -->
+                    <a href="/admin/offices/rejected/{{ office.id }}">
+                    <div class="card mb-3">
+                        <div class="card-body office-card">
+                            <img src="/static/img/{{ office.foto[0].id }}" alt="Foto principale ufficio {{ office.titolo }}" />
+                            <div>
+                                <h5 class="mb-1">{{ office.titolo }}</h5>
+                                <p class="mb-1 text-muted">{{ office.indirizzo.via }} {{ office.indirizzo.numeroCivico }}, {{ office.indirizzo.citta }} ({{ office.indirizzo.provincia }})</p>
+                                <small class="text-muted">Rifiutato il: {{ office.dataRifiuto|date('d/m/Y H:i') }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    </a>
                 {% endfor %}
             </section>
         </div>
