@@ -24,6 +24,7 @@ $router->get('/admin/home', 'CAdmin@home');
 $router->get('/admin/offices/{id}', 'COffice@showAdminOfficeDetails');
 $router->get('/admin/offices/pending/{id}', 'COffice@showPendingDetails');
 $router->get('/reports', 'CReport@index');
+$router->get('/reports/{id}', 'CReport@show');
 
 $router->get('/profile', 'CHome@showprofile');
 

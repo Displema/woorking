@@ -79,11 +79,10 @@ class CReport
         if ($auth->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
             $reports = $reportsRepo->findAll();
             $targetView = "showAdminReports";
-        } else if ($auth->admin()->doesUserHaveRole($userId, Roles::BASIC_USER)) {
+        } elseif ($auth->admin()->doesUserHaveRole($userId, Roles::BASIC_USER)) {
             $reports = $reportsRepo->findAllByUser($user);
             $targetView = "showUserReports";
-        }
-        else if ($auth->admin()->doesUserHaveRole($userId, Roles::LANDLORD)) {
+        } elseif ($auth->admin()->doesUserHaveRole($userId, Roles::LANDLORD)) {
             $view = new VRedirect();
             $view->redirect('/home');
             return;
@@ -102,5 +101,34 @@ class CReport
 
         $view = new VReport();
         $view->$targetView($activeReports, $closedReports);
+    }
+
+    public function show(string $id): void
+    {
+        $auth = getAuth();
+        if (!$auth->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            return;
+        }
+
+        $userId = $auth->getUserId();
+        $user = USession::requireUser();
+        $reportsRepo = $this->entity_manager->getRepository(ESegnalazione::class);
+        $report = $reportsRepo->find($id);
+
+        if (!$report) {
+            $view = new VRedirect();
+            $view->redirect('/reports');
+            return;
+        }
+
+        if (!($report->getState() === ReportStateEnum::ACTIVE)) {
+            $view = new VRedirect();
+            $view->redirect('/reports');
+            return;
+        }
+
+        // TODO: show report details page
     }
 }
