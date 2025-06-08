@@ -19,7 +19,7 @@ use View\VStatus;
 
 class CAdmin extends BaseController
 {
-    public function home(): void
+    public function index(): void
     {
         if (!$this->auth_manager->isLoggedIn()) {
             $view = new VRedirect();
