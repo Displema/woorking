@@ -445,7 +445,7 @@ class COffice extends BaseController
         $uffici = $this->entity_manager->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
 
         /** @var EFotoRepository $fotoRepo */
-        $fotoRepo = $this->entity_manager->getRepository(Efoto::class);
+        $fotoRepo = $this->entity_manager->getRepository(EFoto::class);
 
         /** @var EServiziAggiuntiviRepository $serviziRepo */
         $serviziRepo = $this->entity_manager->getRepository(EServiziAggiuntivi::class);
@@ -479,7 +479,6 @@ class COffice extends BaseController
 
     public function addOfficeInDB()
     {
-        $em = getEntityManager();
         $ufficio = new EUfficio();
         $indirizzo = new Eindirizzo();
         $intervallo = new EIntervalloDisponibilita();
@@ -504,10 +503,10 @@ class COffice extends BaseController
         $intervallo->setFascia(FasciaOrariaEnum::from($_POST['fascia']));
         $intervallo->setUfficio($ufficio);
 
-        $em->persist($indirizzo);
-        $em->persist($ufficio);
-        $em->persist($intervallo);
-        $em->flush();
+        $this->entity_manager->persist($indirizzo);
+        $this->entity_manager->persist($ufficio);
+        $this->entity_manager->persist($intervallo);
+        $this->entity_manager->flush();
 
         // Photos
         if (!empty($_FILES['foto']) && isset($_FILES['foto']['tmp_name'])) {
@@ -523,11 +522,11 @@ class COffice extends BaseController
                     $foto->setSize($size);
                     $foto->setUfficio($ufficio);
 
-                    $em->persist($foto);
+                    $this->entity_manager->persist($foto);
                 }
             }
             //Salva tutte le foto in una volta sola
-            $em->flush();
+            $this->entity_manager->flush();
         }
 
         // Prendo i servizi dalle checkbox
@@ -547,9 +546,9 @@ class COffice extends BaseController
             $servizio = new EServiziAggiuntivi();
             $servizio->setNomeServizio($nomeServizio);
             $servizio->setUfficio($ufficio);
-            $em->persist($servizio);
+            $this->entity_manager->persist($servizio);
         }
-        $em->flush();
+        $this->entity_manager->flush();
         header('Location: /uffici');
         exit;
     }
