@@ -5,7 +5,7 @@ namespace Controller;
 use Delight\Auth\Auth;
 use Doctrine\ORM\EntityManagerInterface;
 
-class BaseController
+abstract class BaseController
 {
     protected EntityManagerInterface $entity_manager;
     protected Auth $auth_manager;
