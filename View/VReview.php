@@ -31,4 +31,9 @@ class VReview extends BaseView
     {
         $this->twig->display('/conferme/confermarecensione.html.twig',['user' => $user]);
     }
+
+    public function reviews($array) : void
+    {
+        $this->twig->display('/locatore/recensioni/recensioni.html.twig', ['recensioni' => $array]);
+    }
 }

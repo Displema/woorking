@@ -46,9 +46,13 @@ $router->post('/aggiuntaUfficio', 'COffice@addOfficeInDB');
 //route to landlord's profile
 $router->get('/profilo', 'CLocatore@profilo');
 
+//route to reviews
+$router->get('/recensioni', 'CReview@getReviews');
+
 //stats
 $router->get('/api/grafici/entrate-mensili', 'CStats@entrateMensili');
 $router->get('/api/grafici/utilizzo-uffici', 'CStats@utilizzoUffici');
+$router->get('/api/recensioni/casuali', 'CStats@recensioniCasualiPerLocatore');
 
 
 $router->post(
