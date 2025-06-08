@@ -1,8 +1,6 @@
 <?php
 namespace Controller;
 
-
-
 use Doctrine\ORM\EntityManager;
 use Model\EPrenotazione;
 use Model\ERecensione;
@@ -13,18 +11,8 @@ use TechnicalServiceLayer\Repository\EUfficioRepository;
 use TechnicalServiceLayer\Utility\USession;
 use View\VHome;
 
-class CStats
+class CStats extends BaseController
 {
-
-    private EntityManager $entity_manager;
-
-    public function __construct()
-    {
-        $this->entity_manager = getEntityManager();
-        $this->auth_manager = getAuth();
-    }
-
-
     public function entrateMensili(): void
     {
         $user = USession::requireUser();
@@ -39,19 +27,16 @@ class CStats
 
     public function utilizzoUffici(): void
     {
-
-
-        $em = getEntityManager();
         $dati = [];
         $user = USession::requireUser();
         $id = $user->getId();
         /** @var EUfficioRepository $uffici */
-        $uffici = $em->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
+        $uffici = $this->entity_manager->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
 
 
         foreach ($uffici as $ufficio) {
         /** @var EPrenotazioneRepository $prenotazioni */
-        $prenotazioni = $em->getRepository(EPrenotazione::class)->countByOffice($ufficio);
+            $prenotazioni = $this->entity_manager->getRepository(EPrenotazione::class)->countByOffice($ufficio);
             $dati[] = [
                 'nome' => $ufficio->getTitolo(),
                 'numeroPrenotazioni' => $prenotazioni
@@ -69,6 +54,7 @@ class CStats
         $recensioni = $repo->getRandomReviewbyLandlord($user->getId());
 
         $response = array_map(function ($r) {
+            // TODO: si potrebbe fare l'accesso al nome e cognome direttamente nel template per tutte le entità
             return [
                 'utente' => $r->getPrenotazione()->getUtente()->getName() . ' ' . $r->getPrenotazione()->getUtente()->getSurname(),
                 'commento' => $r->getCommento(),
@@ -79,5 +65,4 @@ class CStats
         $view = new VHome();
         $view ->printJson($response);
     }
-
 }
