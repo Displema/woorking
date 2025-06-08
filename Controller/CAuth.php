@@ -25,17 +25,8 @@ use View\VResource;
 
 require_once __DIR__ . "/../bootstrap.php";
 
-class CAuth
+class CAuth extends BaseController
 {
-    public Auth $auth_manager;
-    private EntityManager $entity_manager;
-
-    public function __construct()
-    {
-        $this->entity_manager = getEntityManager();
-        $this->auth_manager = getAuth();
-    }
-
     public function showLoginForm(): void
     {
         $currentUser = USession::isSetSessionElement("user");
@@ -136,13 +127,10 @@ class CAuth
 
     public function loginUser(string $email, string $password, string $rememberMe = "0"): void
     {
-        $currentUser = USession::isSetSessionElement("user");
-
-        if ($currentUser) {
-            $user = USession::getSessionElement("user");
-
-            $view = new VRedirect();
-            $view->redirect("/home");
+        if ($this->auth_manager->isLoggedIn()) {
+            $redirectView = new VRedirect();
+            $redirectView->redirect("/home");
+            return;
         }
 
         try {
@@ -181,23 +169,27 @@ class CAuth
 
     public function getUser(): void
     {
-        try {
-            $user = USession::requireUser();
-        } catch (UserNotAuthenticatedException $e) {
+        if (!$this->auth_manager->isLoggedIn()) {
             $view = new VRedirect();
-            $view->redirect("/error");
+            $view->redirect("/login");
             return;
         }
+
+        $user = USession::requireUser();
 
         $view = new VResource();
         $view->printJson($user);
     }
 
+    /**
+     * @throws AuthError
+     */
     public function logoutUser(): void
     {
-            USession::destroy();
-            $view = new VRedirect();
-            $view->redirect("/home");
+        //USession::destroy();
+        $this->auth_manager->logout();
+        $view = new VRedirect();
+        $view->redirect("/home");
     }
 
     public function modifyUser(): void

@@ -9,18 +9,8 @@ use TechnicalServiceLayer\Repository\EUfficioRepository;
 use TechnicalServiceLayer\Utility\USession;
 use View\VHome;
 
-class CStats
+class CStats extends BaseController
 {
-
-    private EntityManager $entity_manager;
-
-    public function __construct()
-    {
-        $this->entity_manager = getEntityManager();
-        $this->auth_manager = getAuth();
-    }
-
-
     public function entrateMensili(): void
     {
         $user = USession::requireUser();
@@ -35,19 +25,16 @@ class CStats
 
     public function utilizzoUffici(): void
     {
-
-
-        $em = getEntityManager();
         $dati = [];
         $user = USession::requireUser();
         $id = $user->getId();
         /** @var EUfficioRepository $uffici */
-        $uffici = $em->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
+        $uffici = $this->entity_manager->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
 
 
         foreach ($uffici as $ufficio) {
         /** @var EPrenotazioneRepository $prenotazioni */
-            $prenotazioni = $em->getRepository(EPrenotazione::class)->countByOffice($ufficio);
+            $prenotazioni = $this->entity_manager->getRepository(EPrenotazione::class)->countByOffice($ufficio);
             $dati[] = [
                 'nome' => $ufficio->getTitolo(),
                 'numeroPrenotazioni' => $prenotazioni

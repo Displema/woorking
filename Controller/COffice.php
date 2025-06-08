@@ -29,7 +29,6 @@ use Model\ERimborso;
 use Model\ESegnalazione;
 use Model\EUfficio;
 
-use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
 use TechnicalServiceLayer\Repository\EUfficioRepository;
 use TechnicalServiceLayer\Utility\USession;
 use View\VReservation;
@@ -37,14 +36,8 @@ use View\VReview;
 use View\VRedirect;
 use View\VStatus;
 
-class COffice
+class COffice extends BaseController
 {
-
-    private EntityManager $entity_manager;
-    public function __construct()
-    {
-        $this->entity_manager = getEntityManager();
-    }
 
     public function show($id, $date, $fascia): void
     {
@@ -214,16 +207,15 @@ class COffice
 
     public function rejectPending(string $id, string $reason): void
     {
-        $auth = getAuth();
-        if (!$auth->isLoggedIn()) {
+        if (!$this->auth_manager->isLoggedIn()) {
             $view = new VRedirect();
             $view->redirect('/login');
             return;
         }
 
-        $userId = $auth->getUserId();
+        $userId = $this->auth_manager->getUserId();
 
-        if (!$auth->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
+        if (!$this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
             $view = new VStatus();
             $view->showStatus(403);
             return;
@@ -262,16 +254,15 @@ class COffice
 
     public function confirmPending(string $id): void
     {
-        $auth = getAuth();
-        if (!$auth->isLoggedIn()) {
+        if (!$this->auth_manager->isLoggedIn()) {
             $view = new VRedirect();
             $view->redirect('/login');
             return;
         }
 
-        $userId = $auth->getUserId();
+        $userId = $this->auth_manager->getUserId();
 
-        if (!$auth->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
+        if (!$this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
             $view = new VStatus();
             $view->showStatus(403);
             return;
@@ -318,49 +309,20 @@ class COffice
             return;
         }
 
-        $auth = getAuth();
-        if (!$auth->isLoggedIn()) {
+        if (!$this->auth_manager->isLoggedIn()) {
             $view = new VRedirect();
             $view->redirect('/login');
             return;
         }
 
-        $userId = $auth->getUserId();
+        $userId = $this->auth_manager->getUserId();
         $currentUser = USession::getSessionElement('user');
-        if (!$auth->admin()->doesUserHaveRole($userId, Roles::ADMIN) && !$currentUser->getId()!==$office->getId()) {
+        if (!$this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)
+            && !$currentUser->getId()!==$office->getId()) {
             $view = new VStatus();
             $view->showStatus(403);
             return;
         }
-
-//        try {
-//            USession::requireAdmin();
-//        } catch (UserNotAuthenticatedException) {
-//            try {
-//                $auth = getAuth();
-//                if (!$auth->admin()->doesUserHaveRole($auth->getUserId(), Roles::LANDLORD)) {
-//                    $view = new VStatus();
-//                    $view->showStatus(403);
-//                    return;
-//                }
-//                $user = $this->entity_manager->getRepository(EProfilo::class)
-//                    ->findOneBy(['user_id'=>getAuth()->getUserId()]);
-//
-//                if (!$user) {
-//                    $view = new VStatus();
-//                    $view->showStatus(403);
-//                }
-//
-//                if ($user->getId() !== $office->getLocatore()->getId()) {
-//                    throw new UserNotAuthenticatedException();
-//                }
-//            } catch (UserNotAuthenticatedException) {
-//                error_log($office->getLocatore()->getId());
-//                $view = new VStatus();
-//                $view->showStatus(403);
-//                return;
-//            }
-//        }
 
         $office->setIsHidden(true);
         $office->setDataCancellazione(new DateTime());
@@ -620,20 +582,19 @@ class COffice
 
     public function showPendingDetails(string $id): void
     {
-        $auth = getAuth();
-        if (!$auth->isLoggedIn()) {
+        if (!$this->auth_manager->isLoggedIn()) {
             $view = new VRedirect();
             $view->redirect('/login');
         }
 
         $user = USession::requireUser();
-        $userId = $auth->getUserId();
+        $userId = $this->auth_manager->getUserId();
         if ($userId === null) {
             $view = new VRedirect();
             $view->redirect('/login');
             return;
         }
-        if ($auth->admin()->doesUserHaveRole($userId, Roles::BASIC_USER)) {
+        if ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER)) {
             $view = new VRedirect();
             $view->redirect('/home');
             return;
@@ -652,7 +613,7 @@ class COffice
             return;
         }
 
-        if ($auth->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
+        if ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
             $targetView = "showPendingAdmin";
         } else {
             $targetView = "showPendingLandlord";

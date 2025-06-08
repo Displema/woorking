@@ -1,19 +1,17 @@
 <?php
 namespace Controller;
 
-use Exception;
 use Model\EFoto;
-use Ramsey\Uuid\Uuid;
 use View\VResource;
 use View\VStatus;
 
-class CPhoto
+class CPhoto extends BaseController
 {
     public function view(string $id): void
     {
 
-        $em = getEntityManager()->getRepository(EFoto::class);
-        $foto = $em->find($id);
+        $repository = $this->entity_manager->getRepository(EFoto::class);
+        $foto = $repository->find($id);
         if (!$foto) {
             $view = new VStatus();
             $view->showStatus(404);

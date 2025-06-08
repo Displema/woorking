@@ -15,17 +15,8 @@ use TechnicalServiceLayer\Repository\UserRepository;
 use View\VAdmin;
 use View\VStatus;
 
-class CAdmin
+class CAdmin extends BaseController
 {
-    public Auth $auth_manager;
-    private EntityManager $entity_manager;
-
-    public function __construct()
-    {
-        $this->entity_manager = getEntityManager();
-        $this->auth_manager = getAuth();
-    }
-
     public function home(): void
     {
         $view = new VAdmin();

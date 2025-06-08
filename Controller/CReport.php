@@ -1,31 +1,19 @@
 <?php
 namespace Controller;
 
-use DateTime;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Mapping\Entity;
 use Model\Enum\ReportStateEnum;
 use Model\EProfilo;
 use Model\ESegnalazione;
 use Model\EUfficio;
-use PHP_CodeSniffer\Reports\Report;
-
-use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
-use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
 use TechnicalServiceLayer\Roles\Roles;
 use TechnicalServiceLayer\Utility\USession;
 use View\VRedirect;
 use View\VReport;
 use View\VStatus;
 
-class CReport
+class CReport extends BaseController
 {
-    private EntityManager $entity_manager;
-
-    public function __construct()
-    {
-        $this->entity_manager = getEntityManager();
-    }
 
     public function showFormReport($id)
     {
@@ -65,24 +53,23 @@ class CReport
 
     public function index(): void
     {
-        $auth = getAuth();
-        if (!$auth->isLoggedIn()) {
+        if (!$this->auth_manager->isLoggedIn()) {
             $view = new VRedirect();
             $view->redirect('/login');
         }
 
-        $userId = $auth->getUserId();
+        $userId = $this->auth_manager->getUserId();
 
         $user = USession::requireUser();
         $reportsRepo = $this->entity_manager->getRepository(ESegnalazione::class);
 
-        if ($auth->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
+        if ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
             $reports = $reportsRepo->findAll();
             $targetView = "showAdminReports";
-        } elseif ($auth->admin()->doesUserHaveRole($userId, Roles::BASIC_USER)) {
+        } elseif ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER)) {
             $reports = $reportsRepo->findAllByUser($user);
             $targetView = "showUserReports";
-        } elseif ($auth->admin()->doesUserHaveRole($userId, Roles::LANDLORD)) {
+        } elseif ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::LANDLORD)) {
             $view = new VRedirect();
             $view->redirect('/home');
             return;
@@ -105,14 +92,13 @@ class CReport
 
     public function show(string $id): void
     {
-        $auth = getAuth();
-        if (!$auth->isLoggedIn()) {
+        if (!$this->auth_manager->isLoggedIn()) {
             $view = new VRedirect();
             $view->redirect('/login');
             return;
         }
 
-        $userId = $auth->getUserId();
+        $userId = $this->auth_manager->getUserId();
         $user = USession::requireUser();
         $reportsRepo = $this->entity_manager->getRepository(ESegnalazione::class);
         $report = $reportsRepo->find($id);
@@ -123,6 +109,14 @@ class CReport
             return;
         }
 
+        if (!$this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)
+            && $user->getId() !== $report->getUser()->getId()
+        ) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+
         if (!($report->getState() === ReportStateEnum::ACTIVE)) {
             $view = new VRedirect();
             $view->redirect('/reports');
@@ -130,5 +124,6 @@ class CReport
         }
 
         // TODO: show report details page
+        echo "Report con id" . $report->getId() . PHP_EOL;
     }
 }
