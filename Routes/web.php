@@ -20,7 +20,7 @@ $router->post('/salvaProfilo', 'CAuth@modifyUser');
 $router->get('/static/img/{id}', 'CPhoto@view');
 
 // Admin routes
-$router->get('/admin/home', 'CAdmin@home');
+$router->get('/admin/home', 'CAdmin@index');
 $router->get('/admin/offices/{id}', 'COffice@showAdminOfficeDetails');
 $router->get('/admin/offices/pending/{id}', 'COffice@showPendingDetails');
 $router->get('/reports', 'CReport@index');
@@ -56,7 +56,7 @@ $router->get('/api/recensioni/casuali', 'CStats@recensioniCasualiPerLocatore');
 
 
 $router->post(
-    "/office/{id}/delete",
+    "/offices/{id}/delete",
     'COffice@deleteOffice'
 );
 
@@ -82,6 +82,32 @@ $router->get('/showreservation', 'CReservation@showreservation');
 $router->get('/showreservation/showreservationdetails/{id}', 'CReservation@showReservationDetails');
 $router->get('/showreservation/sendreview/{idreservation}', 'CReservation@sendreview');
 $router->post('/showreservation/sendreview/confirmreview/{idreservation}', 'CReservation@confirmReview');
+
+
+// Home
+//$router->get('/home', 'CHome@index');
+//
+//// Ricerca uffici e disponibilità
+//$router->get('/offices/search', 'COffice@searchForm');                              // mostra form di ricerca
+//$router->get('/offices', 'COffice@searchResults');                                  // mostra risultati della ricerca
+//$router->get('/offices/{id}/availability/{date}/{fascia}', 'COffice@availability'); // dettaglio disponibilità
+//
+//// Prenotazione ufficio
+//$router->get('/offices/{id}/availability/{date}/{fascia}/confirm', 'COffice@confirmReservation'); // conferma prenotazione
+//
+//// Recensioni e segnalazioni su ufficio
+//$router->get('/offices/{id}/reviews', 'COffice@showReviews');                       // mostra recensioni
+//$router->get('/offices/{id}/report', 'CReport@showForm');                           // mostra form segnalazione
+//$router->post('/offices/{id}/report', 'CReport@store');                             // invia segnalazione
+//
+//// Prenotazioni dell’utente
+//$router->get('/reservations', 'CReservation@index');                                // mostra elenco prenotazioni
+//$router->get('/reservations/{id}', 'CReservation@show');                            // mostra dettagli prenotazione
+//
+//// Recensioni sulle prenotazioni
+//$router->get('/reservations/{id}/review', 'CReservation@reviewForm');              // mostra form recensione
+//$router->post('/reservations/{id}/review', 'CReservation@storeReview');            // conferma recensione
+
 
 
 return $router;
