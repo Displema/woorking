@@ -383,7 +383,7 @@ class COffice extends BaseController
         $fotoRepo = $this->entity_manager->getRepository(Efoto::class);
         $prenotazioniRepo = $this->entity_manager->getRepository(EPrenotazione::class);
         $intervalliRepo = $this->entity_manager->getRepository(EIntervalloDisponibilita::class);
-
+        // TODO: tutti questi $fotoUrl $servijiObj andrebbero fatti dentro il template
         try {
             foreach ($uffici as $ufficio) {
                 $prenotazioni = $prenotazioniRepo->getPrenotazioneByUfficio($ufficio);
