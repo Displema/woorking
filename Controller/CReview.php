@@ -1,5 +1,6 @@
 <?php
 namespace Controller;
+
 use Doctrine\ORM\EntityManager;
 use DateTime;
 use Model\EFoto;
@@ -15,26 +16,18 @@ use View\VRedirect;
 use View\VReservation;
 use View\VReview;
 
-
-class CReview
+class CReview extends BaseController
 {
-
-    private EntityManager $entity_manager;
-
-    public function __construct()
-    {
-        $this->entity_manager = getEntityManager();
-    }
-
     public function getReviews()
     {
 
         /** @var ERecensioneRepository $repo */
-        $repo = getEntityManager()->getRepository(ERecensione::class);
+        $repo = $this->entity_manager->getRepository(ERecensione::class);
         $user = USession::requireUser();
         $userId = $user->getId();
-        /** @var EUfficioRepository $uffici */
-        $uffici = getEntityManager()->getRepository(EUfficio::class)->getOfficeByLocatore($userId);
+        /** @var EUfficioRepository $officeRepo */
+        $officeRepo = $this->entity_manager->getRepository(EUfficio::class);
+        $uffici = $officeRepo->getOfficeByLocatore($userId);
         $arrayReviews = [];
         foreach ($uffici as $ufficio) {
             $reviews = $repo->getRecensioneByUfficio($ufficio->getId());
@@ -45,6 +38,5 @@ class CReview
 
         $view = new VReview();
         $view->reviews($arrayReviews);
-
     }
 }

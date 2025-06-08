@@ -12,13 +12,28 @@ use Model\EUfficio;
 use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
 use TechnicalServiceLayer\Repository\EUfficioRepository;
 use TechnicalServiceLayer\Repository\UserRepository;
+use TechnicalServiceLayer\Roles\Roles;
 use View\VAdmin;
+use View\VRedirect;
 use View\VStatus;
 
 class CAdmin extends BaseController
 {
     public function home(): void
     {
+        if (!$this->auth_manager->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            return;
+        }
+
+        $userId = $this->auth_manager->getUserId();
+
+        if (!$this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
+            $view = new VStatus();
+            $view->showStatus(403);
+            return;
+        }
         $view = new VAdmin();
 
         /** @var EUfficioRepository $officeRepo */
@@ -28,6 +43,4 @@ class CAdmin extends BaseController
         $rejectedOffices = $officeRepo->getOfficesByState(StatoUfficioEnum::NonApprovato);
         $view->showHome($activeOffices, $pendingOffices, $rejectedOffices);
     }
-
-
 }

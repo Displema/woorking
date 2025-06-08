@@ -17,7 +17,7 @@ class CHome extends BaseController
 
         $viewUser = new VHome();
         $viewLandlord = new VLocatore();
-
+        // TODO: aggiornare con nuovo modo per verificare se user è loggato
         if (USession::isSetSessionElement('user')) {
             $login="isLoggedIn";
             $user = USession::getSessionElement('user');
