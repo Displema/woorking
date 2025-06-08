@@ -5,8 +5,10 @@ namespace Controller;
 
 use Doctrine\ORM\EntityManager;
 use Model\EPrenotazione;
+use Model\ERecensione;
 use Model\EUfficio;
 use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
+use TechnicalServiceLayer\Repository\ERecensioneRepository;
 use TechnicalServiceLayer\Repository\EUfficioRepository;
 use TechnicalServiceLayer\Utility\USession;
 use View\VHome;
@@ -56,6 +58,25 @@ class CStats
         }
         $view = new VHome();
         $view ->printJson($dati);
+    }
+
+    public function recensioniCasualiPerLocatore(): void
+    {
+        $user = USession::requireUser();
+        /** @var ERecensioneRepository $repo */
+        $repo = $this->entity_manager->getRepository(ERecensione::class);
+        $recensioni = $repo->getRandomReviewbyLandlord($user->getId());
+
+        $response = array_map(function ($r) {
+            return [
+                'utente' => $r->getPrenotazione()->getUtente()->getName() . ' ' . $r->getPrenotazione()->getUtente()->getSurname(),
+                'commento' => $r->getCommento(),
+                'valutazione' => $r->getValutazione()
+            ];
+        }, $recensioni);
+
+        $view = new VHome();
+        $view ->printJson($response);
     }
 
 }

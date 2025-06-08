@@ -27,4 +27,22 @@ class ERecensioneRepository extends EntityRepository
             return [];
         }
     }
+
+    public function getRandomReviewbyLandlord($idLocatore, int $limit = 3): array
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('r')
+            ->from('Model\ERecensione', 'r')
+            ->join('r.prenotazione', 'p')
+            ->join('p.ufficio', 'u')
+            ->join('u.locatore', 'l')
+            ->where('l.id = :idLocatore')
+            ->andWhere($qb->expr()->in('r.valutazione', [1, 9, 10]))
+            ->setParameter('idLocatore', $idLocatore)
+            ->setMaxResults(5);
+
+        $recensioni = $qb->getQuery()->getResult();
+        return $recensioni;
+    }
 }
