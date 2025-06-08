@@ -13,6 +13,6 @@ abstract class BaseController
     public function __construct()
     {
         $this->entity_manager = getEntityManager();
-        $this->auth = getAuth();
+        $this->auth_manager = getAuth();
     }
 }
