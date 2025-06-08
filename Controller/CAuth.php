@@ -154,18 +154,18 @@ class CAuth
                 $duration = 60*60*24;
             }
             $this->auth_manager->login($email, $password, $duration);
-            $userid = $this->auth_manager->getUserId();
+            $userId = $this->auth_manager->getUserId();
             $repo = $this->entity_manager->getRepository(EProfilo::class);
-            $profile = $repo->findOneBy(['user_id' => $userid]);
+            $profile = $repo->findOneBy(['user_id' => $userId]);
 
             USession::setSessionElement("user", $profile);
 
             $view = new VRedirect();
-
-
-
-            $view->redirect("/home");
-            return;
+            if ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
+                $view->redirect("/admin/home");
+            } else {
+                $view->redirect("/home");
+            }
         } catch (InvalidEmailException $e) {
             die('Wrong email address');
         } catch (InvalidPasswordException $e) {

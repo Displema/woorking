@@ -13,16 +13,17 @@ class VAdmin extends BaseView
     /**
      * @param Collection<int, EUfficio> $activeOffices
      * @param Collection<int, EUfficio> $pendingOffices
+     * @param Collection<int, EUfficio> $rejectedOffices
      * @return void
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function showHome($activeOffices, $pendingOffices): void
+    public function showHome($activeOffices, $pendingOffices, $rejectedOffices): void
     {
         $this->twig->display(
             '/admin/home.html.twig',
-            ['activeOffices' => $activeOffices, 'pendingOffices'=>$pendingOffices],
+            ['activeOffices' => $activeOffices, 'pendingOffices'=>$pendingOffices, 'rejectedOffices'=>$rejectedOffices],
         );
     }
 

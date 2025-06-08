@@ -34,7 +34,8 @@ class CAdmin
         $officeRepo = $this->entity_manager->getRepository(EUfficio::class);
         $activeOffices = $officeRepo->getOfficesByState(StatoUfficioEnum::Approvato);
         $pendingOffices = $officeRepo->getOfficesByState(StatoUfficioEnum::InAttesa);
-        $view->showHome($activeOffices, $pendingOffices);
+        $rejectedOffices = $officeRepo->getOfficesByState(StatoUfficioEnum::NonApprovato);
+        $view->showHome($activeOffices, $pendingOffices, $rejectedOffices);
     }
 
 

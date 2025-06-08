@@ -7,7 +7,7 @@ use Delight\Db\PdoDatabase;
 class UserRepository
 {
     private static ?UserRepository $instance = null;
-    private ?PDODatabase $pdoDatabase = null;
+    private ?PDODatabase $pdoDatabase;
     private function __construct()
     {
         $this->pdoDatabase = getAuthDb();

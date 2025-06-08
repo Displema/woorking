@@ -37,7 +37,8 @@ class CStats
     }
 
 
-    public function utilizzoUffici(): void {
+    public function utilizzoUffici(): void
+    {
 
 
         $em = getEntityManager();
