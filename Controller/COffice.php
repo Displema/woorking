@@ -430,7 +430,7 @@ class COffice extends BaseController
         $uffici = $em->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
 
         /** @var EFotoRepository $fotoRepo */
-        $fotoRepo = $em->getRepository(Efoto::class);
+        $fotoRepo = $em->getRepository(EFoto::class);
 
         /** @var EServiziAggiuntiviRepository $serviziRepo */
         $serviziRepo = $em->getRepository(EServiziAggiuntivi::class);
