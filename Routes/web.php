@@ -6,7 +6,7 @@ use Core\Router;
 
 $router = new Router();
 
-$router->get('/', 'CHome@indexRedirect');
+$router->get('/', 'CHome@redirect');
 
 // Auth routes
 $router->get('/login', 'CAuth@showLoginForm');

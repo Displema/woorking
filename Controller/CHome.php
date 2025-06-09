@@ -32,6 +32,12 @@ class CHome extends BaseController
         $view->index($user);
     }
 
+    public function redirect(): void
+    {
+        $view = new VRedirect();
+        $view->redirect('/home');
+    }
+
     public function profile(): void
     {
         $this->requireLogin();
