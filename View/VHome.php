@@ -7,9 +7,9 @@ use Twig\Loader\FilesystemLoader;
 class VHome extends BaseView
 {
 
-    public function index($login, $user): void
+    public function index($user): void
     {
-        $this->twig->display('./home/homeaccess.html.twig', ['isloggedin' => $login,'user'=>$user]);
+        $this->twig->display('./home/homeaccess.html.twig', ['user'=>$user]);
     }
 
     public function profile($user): void

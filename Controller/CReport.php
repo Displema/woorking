@@ -18,72 +18,79 @@ use View\VRedirect;
 use View\VReport;
 use View\VStatus;
 
-class CReport
+class CReport extends BaseController
 {
-    private EntityManager $entity_manager;
-
-    public function __construct()
-    {
-        $this->entity_manager = getEntityManager();
-    }
-
     public function showFormReport($id)
     {
-        $view = new VReport();
-        if (USession::isSetSessionElement('user')) {
-            $utente = USession::requireUser();
-            $login="isLoggedIn";
-            $user = $this->entity_manager->getRepository(EProfilo::class)->find($utente->getId());
+        if (!$this->auth_manager->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            return;
         }
-        $view->showReportForm($id, $user, $login);
+        $user = USession::requireUser();
+        $view = new VReport();
+        $view->showReportForm($id, $user);
     }
     public function showConfirmOfReport($id)
     {
+        if (!$this->auth_manager->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            return;
+        }
+
+        $userId = $this->auth_manager->getUserId();
+
+        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+
+        $office=$this->entity_manager->getRepository(EUfficio::class)->find($id);
+
+        if (!$office) {
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
+        }
+
         $commento = $_POST['motivo'] ?? null;
 
-        if ($commento == 'Altro') {
+        if ($commento === 'Altro') {
             $commento = $_POST['altroTesto'] ?? null;
         }
-        if (USession::isSetSessionElement('user')) {
-            $utente = USession::requireUser();
-            $login="isLoggedIn";
-            $user = $this->entity_manager->getRepository(EProfilo::class)->find($utente->getId());
-        }
-
-        $ufficio=$this->entity_manager->getRepository(EUfficio::class)->find($id);
 
         $Report= new ESegnalazione();
         $Report->setCommento($commento);
-        $Report->setUfficio($ufficio);
+        $Report->setUfficio($office);
         $Report->setState(ReportStateEnum::class::ACTIVE);
         $this->entity_manager->persist($Report);
         $this->entity_manager->flush();
-
+        $user = USession::requireUser();
         $view = new VReport();
-        $view->showReportConfirmation($user, $login);
+        $view->showReportConfirmation($user);
     }
 
     public function index(): void
     {
-        $auth = getAuth();
-        if (!$auth->isLoggedIn()) {
+        if (!$this->auth_manager->isLoggedIn()) {
             $view = new VRedirect();
             $view->redirect('/login');
         }
 
-        $userId = $auth->getUserId();
+        $userId = $this->auth_manager->getUserId();
 
         $user = USession::requireUser();
         $reportsRepo = $this->entity_manager->getRepository(ESegnalazione::class);
 
-        if ($auth->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
+        if ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
             $reports = $reportsRepo->findAll();
             $targetView = "showAdminReports";
-        } else if ($auth->admin()->doesUserHaveRole($userId, Roles::BASIC_USER)) {
+        } elseif ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER)) {
             $reports = $reportsRepo->findAllByUser($user);
             $targetView = "showUserReports";
-        }
-        else if ($auth->admin()->doesUserHaveRole($userId, Roles::LANDLORD)) {
+        } elseif ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::LANDLORD)) {
             $view = new VRedirect();
             $view->redirect('/home');
             return;

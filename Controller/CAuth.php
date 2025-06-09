@@ -29,22 +29,22 @@ class CAuth extends BaseController
 {
     public function showLoginForm(): void
     {
-        $currentUser = USession::isSetSessionElement("user");
-        if ($currentUser) {
+        if ($this->auth_manager->isLoggedIn()) {
             $redirectView = new VRedirect();
             $redirectView->redirect("/home");
+            return;
         }
-
+        
         $authView = new VAuth();
         $authView->showLoginForm();
     }
 
     public function showRegisterForm(): void
     {
-        $currentUser = USession::isSetSessionElement("user");
-        if ($currentUser) {
+        if ($this->auth_manager->isLoggedIn()) {
             $redirectView = new VRedirect();
             $redirectView->redirect("/home");
+            return;
         }
 
         $authView = new VAuth();

@@ -14,28 +14,21 @@ class CHome extends BaseController
 {
     public function index(): void
     {
-
-        $viewUser = new VHome();
-        $viewLandlord = new VLocatore();
-        // TODO: aggiornare con nuovo modo per verificare se user è loggato
         if ($this->auth_manager->isLoggedIn()) {
-            $login="isLoggedIn";
-            $user = USession::getSessionElement('user');
-
-
+            $user = USession::requireUser();
             $userid = $this->auth_manager->getUserId();
 
             if ($this->auth_manager->admin()->doesUserHaveRole($userid, Roles::LANDLORD)) {
-                $viewLandlord->goHome();
+                $view = new VLocatore();
+                $view->goHome();
                 return;
             }
         } else {
-            $login="NotLoggedIn";
             $user = null;
         }
 
-
-        $viewUser->index($login, $user);
+        $view = new VHome();
+        $view->index($user);
     }
 
     public function indexRedirect(): void

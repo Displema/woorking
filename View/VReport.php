@@ -7,14 +7,14 @@ use Model\ESegnalazione;
 
 class VReport extends BaseView
 {
-    public function showReportForm($id, $user, $login): void
+    public function showReportForm($id, $user): void
     {
-        $this->twig->display('/segnalazioni/segnalazioni.html.twig', ['idufficio' => $id,'isloggedin'=>$login,'user'=>$user]);
+        $this->twig->display('/segnalazioni/segnalazioni.html.twig', ['idufficio' => $id,'user'=>$user]);
     }
 
-    public function showReportConfirmation($user, $login): void
+    public function showReportConfirmation($user): void
     {
-        $this->twig->display('/conferme/ConfermaSegnalazione.html.twig', ['user' => $user, 'isloggedin' => $login]);
+        $this->twig->display('/conferme/ConfermaSegnalazione.html.twig', ['user' => $user]);
     }
 
     public function showUserReports($activeReports, $closedReports): void

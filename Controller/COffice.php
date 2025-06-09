@@ -1,6 +1,7 @@
 <?php
 namespace Controller;
 
+use Controller;
 use DateTime;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
@@ -37,15 +38,8 @@ use View\VReview;
 use View\VRedirect;
 use View\VStatus;
 
-class COffice
+class COffice extends BaseController
 {
-
-    private EntityManager $entity_manager;
-    public function __construct()
-    {
-        $this->entity_manager = getEntityManager();
-    }
-
     public function show($id,$fascia ,$date ): void
     {
 
@@ -60,10 +54,9 @@ class COffice
             $view->showStatus(404);
             return;
         }
-        if (USession::isSetSessionElement('user')) {
-            $utente = USession::requireUser();
-            $login="isLoggedIn";
-            $user = $this->entity_manager->getRepository(EProfilo::class)->find($utente->getId());
+
+        if ($this->auth_manager->isLoggedIn()) {
+            $user = USession::requireUser();
         }
 
         $photosRepo = $this->entity_manager->getRepository(EFoto::class);
@@ -79,11 +72,26 @@ class COffice
         'foto' => $photoUrls
         ];
         $view = new VOffice();
-        $view->showOfficeDetails($officeDetails, $date, $fascia, $user, $login);
+        $view->showOfficeDetails($officeDetails, $date, $fascia, $user);
     }
 
     public function confirmReservation($date, $idOffice, $fascia)
     {
+        if (!$this->auth_manager->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            return;
+        }
+
+        $userId = $this->auth_manager->getUserId();
+
+        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+
+
         $date_parsed = new DateTime($date);
         $FasciaEnum=FasciaOrariaEnum::from($fascia);
         $em = $this->entity_manager;
@@ -95,16 +103,7 @@ class COffice
 
             $placesAvaible = $office->getNumeroPostazioni();
 
-            if (USession::isSetSessionElement('user')) {
-                $utente = USession::requireUser();
-                $login="isLoggedIn";
-                $user = $em->getRepository(EProfilo::class)->find($utente->getId());
-            } else {
-                $view = new VRedirect();
-                $view->redirect('/login');
-                exit;
-            }
-            //$utente=$em->getRepository(EProfilo::class)->find($uuid);
+            $user = USession::requireUser();
 
             if ($reservationCount >= $placesAvaible) {
                 $view  = new VReservation();
@@ -122,7 +121,7 @@ class COffice
             $em->commit();
 
             $view = new VOffice();
-            $view->showconfirmedpage1($user, $login);
+            $view->showconfirmedpage1($user);
         } catch (Exception $e) {
             $em->rollback();
             echo $e->getMessage();
@@ -131,24 +130,39 @@ class COffice
 
     public function ShowReview($id)
     {
+        if ($this->auth_manager->isLoggedIn()) {
+            $user = USession::requireUser();
+        } else {
+            $user = null;
+        }
+
         $em = $this->entity_manager;
         $review = [];
         $reporec=$em->getRepository(ERecensione::class);
         $review = $reporec->getRecensioneByUfficio($id);
         $office = $em->getRepository(EUfficio::class)->find($id);
-        if (USession::isSetSessionElement('user')) {
-            $utente = USession::requireUser();
-            $login="isLoggedIn";
-            $user = $em->getRepository(EProfilo::class)->find($utente->getId());
-        }
-
 
         $view = new VReview();
-        $view->showAllReviews($review, $office, $user, $login);
+        $view->showAllReviews($review, $office, $user);
     }
 
     public function search(string $query, string $date, string $slot): void
     {
+        if ($this->auth_manager->isLoggedIn()) {
+            $user = USession::requireUser();
+        } else {
+            $user = null;
+        }
+
+        $userId = $this->auth_manager->getUserId();
+
+        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+
+
         $repo=$this->entity_manager->getRepository(EUfficio::class);
         $login='';
         $user='';
@@ -169,12 +183,7 @@ class COffice
 
         $reservationRepo=$this->entity_manager->getRepository(EPrenotazione::class);
 
-        if (USession::isSetSessionElement('user')) {
-            $login="isLoggedIn";
-            $utente = USession::requireUser();
 
-            $user = $this->entity_manager->getRepository(EProfilo::class)->find($utente->getId());
-        }
         $photoEntity = [];
         foreach ($offices as $office) {
             if ($office->isHidden()) {
@@ -204,9 +213,8 @@ class COffice
         }
 
         $view= new VOffice();
-        $view->showOfficeSearch($officewithphoto, $date, $slot, $user, $login);
+        $view->showOfficeSearch($officewithphoto, $date, $slot, $user);
     }
-
 
 
     public function rejectPending(string $id, string $reason): void
@@ -582,29 +590,27 @@ class COffice
 
     public function showPendingDetails(string $id): void
     {
-        $auth = getAuth();
-        if (!$auth->isLoggedIn()) {
+        if (!$this->auth_manager->isLoggedIn()) {
             $view = new VRedirect();
             $view->redirect('/login');
         }
 
-        $user = USession::requireUser();
-        $userId = $auth->getUserId();
-        if ($auth->admin()->doesUserHaveRole($userId, Roles::BASIC_USER)) {
+        $userId = $this->auth_manager->getUserId();
+        if ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER)) {
             $view = new VRedirect();
             $view->redirect('/home');
             return;
         }
 
         $office  = $this->entity_manager->find(EUfficio::class, $id);
-        error_log($office->getId());
+
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
             return;
         }
 
-        if ($auth->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
+        if ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
             $targetView = "showPendingAdmin";
         } else {
             $targetView = "showPendingLandlord";
