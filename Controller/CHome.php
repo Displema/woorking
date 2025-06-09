@@ -30,6 +30,12 @@ class CHome extends BaseController
             return;
         }
 
+        if ($userId && $this->doesUserHaveRole(Roles::ADMIN)) {
+            $view = new VRedirect();
+            $view->redirect('/admin/home');
+            return;
+        }
+
         $view = new VHome();
         $view->index($user);
     }
