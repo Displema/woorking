@@ -102,7 +102,7 @@ class COffice extends BaseController
 
     public function search(string $query, string $date, string $slot): void
     {
-        if ($this->auth_manager->isLoggedIn()) {
+        if ($this->isLoggedIn()) {
             $user = USession::getUser();
         } else {
             $user = null;
@@ -417,7 +417,7 @@ class COffice extends BaseController
     }
 
     //show all lessor's offices
-    public static function showOfficesLocatore()
+    public function showOfficesLocatore()
     {
         $this->requireRole(Roles::LANDLORD);
 
