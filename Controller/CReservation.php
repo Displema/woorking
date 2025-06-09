@@ -32,7 +32,7 @@ class CReservation extends BaseController
 
         $repository = $this->entity_manager->getRepository(EPrenotazione::class);
         $user = USession::requireUser();
-        print ($user);
+
         $userId = $this->auth_manager->getUserId();
 
         if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
@@ -42,12 +42,12 @@ class CReservation extends BaseController
         }
 
         $reservations = $repository->findBy(['utente' => $user->getId()]);
-        print ($user);
+
         $reservationWithOffice = [];
         $oldreservationWithOffice = [];
 
         foreach ($reservations as $reservation) {
-            echo 'Prenotazioni attive: ' . count($reservations) . '<br>';
+
             $idOffice = $reservation->getUfficio();
             $photo = $this->entity_manager->getRepository(EFoto::class)->findOneBy(['ufficio' => $idOffice]);
             $office = $this->entity_manager->getRepository(EUfficio::class)->find($idOffice);
@@ -76,8 +76,7 @@ class CReservation extends BaseController
                 ];
             }
         }
-        echo 'Prenotazioni attive: ' . count($reservationWithOffice) . '<br>';
-        echo 'Prenotazioni passate: ' . count($oldreservationWithOffice) . '<br>';
+
 
         $view = new VReservation();
         $view->showReservation($reservationWithOffice, $oldreservationWithOffice, $user);

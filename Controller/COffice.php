@@ -191,9 +191,10 @@ class COffice extends BaseController
             $placesAvaible = $office->getNumeroPostazioni();
 
 
+
             if ($reservationCount >= $placesAvaible) {
                 $view  = new VReservation();
-                $view ->showAlreadyBookedPage();
+                $view ->showAlreadyBookedPage($user);
                 exit;
             }
             $reservation = new EPrenotazione();
@@ -213,7 +214,6 @@ class COffice extends BaseController
             echo $e->getMessage();
         }
     }
-
 
 
     public function rejectPending(string $id, string $reason): void
