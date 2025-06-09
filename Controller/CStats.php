@@ -16,6 +16,7 @@ class CStats extends BaseController
     public function entrateMensili(): void
     {
         $user = USession::getUser();
+        /** @var EPrenotazioneRepository $repo */
         $repo = $this->entity_manager->getRepository(EPrenotazione::class);
 
         $data = $repo->getEntrateMensili($user->getId());
@@ -35,7 +36,6 @@ class CStats extends BaseController
 
 
         foreach ($uffici as $ufficio) {
-        /** @var EPrenotazioneRepository $prenotazioni */
             $prenotazioni = $this->entity_manager->getRepository(EPrenotazione::class)->countByOffice($ufficio);
             $dati[] = [
                 'nome' => $ufficio->getTitolo(),

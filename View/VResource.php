@@ -29,7 +29,7 @@ class VResource
     public function printJson(mixed $data): void
     {
         header('Content-Type: application/json');
-        echo $data;
+        echo json_encode($data, JSON_THROW_ON_ERROR);
     }
 
     public function printText(string $data): void

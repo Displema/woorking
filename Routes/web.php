@@ -32,7 +32,7 @@ $router->get('/profile', 'CHome@profile');
 $router->get('/uffici', 'COffice@showOfficesLocatore');
 
 //route to print photos
-$router->get('/foto/{id}', 'CPhoto@serveImage');
+//$router->get('/foto/{id}', 'CPhoto@serveImage');
 
 //route to manage reservations
 $router->get('/prenotazioni', 'COffice@showPrenotazioni');
