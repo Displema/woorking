@@ -25,12 +25,18 @@ class EUfficioFixture extends AbstractFixture implements DependentFixtureInterfa
                 ->setDescrizione($faker->text(100))
                 ->setLocatore($this->getReference('ELocatore_' . $i, ELocatore::class))
                 ->setPrezzo($faker->randomNumber(2, true))
-                ->setStato($faker->randomElement(StatoUfficioEnum::class::cases()))
                 ->setNumeroPostazioni($faker->randomNumber(2, true))
                 ->setSuperficie($faker->randomNumber(2, true))
                 ->setDataCaricamento($faker->dateTimeBetween("-80 days", "-61 days"))
                 ->setIndirizzo($this
                     ->getReference('EIndirizzo_' . $i, EIndirizzo::class));
+
+            $stato = $faker->randomElement(StatoUfficioEnum::class::cases());
+            $ufficio->setStato($stato);
+            if ($stato === StatoUfficioEnum::NonApprovato) {
+                $ufficio->setDataCancellazione($faker->dateTimeBetween("-60 days", "-18 days"))
+                ->setMotivoRifiuto($faker->text(100));
+            }
 
             $manager->persist($ufficio);
             $this->addReference('EUfficio_' . $i, $ufficio);

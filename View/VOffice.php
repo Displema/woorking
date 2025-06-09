@@ -57,13 +57,13 @@ class VOffice extends BaseView
         $this->twig->display('/locatore/aggiuntaUfficio/aggiungi_ufficio.html.twig');
     }
 
-    public function showPendingLandlord($office): void
-    {
-        //TODO: vista locatore ufficio in attesa
-    }
-
     public function showPendingAdmin(EUfficio $office): void
     {
         $this->twig->display('/admin/offices/pending_details_page.html.twig', ['office' => $office]);
+    }
+
+    public function showRejectedDetails(EUfficio $office): void
+    {
+        $this->twig->display('/admin/offices/rejected_details.html.twig', ['office' => $office]);
     }
 }

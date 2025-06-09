@@ -188,7 +188,7 @@ class CAuth extends BaseController
      */
     public function logoutUser(): void
     {
-        //USession::destroy();
+        USession::destroy();
         $this->auth_manager->logout();
         USession::unsetElement('user');
         $view = new VRedirect();
@@ -226,7 +226,7 @@ class CAuth extends BaseController
 
 
         $view = new VRedirect();
-        $view->redirect("/homeLocatore");
+        $view->redirect("/home");
     }
 
     public function registerAdmin(): void
@@ -247,7 +247,9 @@ class CAuth extends BaseController
         $this->auth_manager->admin()->addRoleForUserById($userId, Roles::ADMIN);
         $this->entity_manager->persist($user);
         $this->entity_manager->flush();
+        $this->loginUser("admin@admin.it", "admin");
+
         $view = new VRedirect();
-        $view->redirect("/admin");
+        $view->redirect("/admin/home");
     }
 }

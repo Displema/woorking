@@ -16,11 +16,12 @@ class CHome extends BaseController
 {
     public function index(): void
     {
-
+        $userId="";
 
 
         if ($this->isLoggedIn()) {
             try {
+
                 $user = USession::getUser();
                 $userId = $user->getId();
             }catch(UserNotAuthenticatedException $e){
@@ -34,6 +35,12 @@ class CHome extends BaseController
         if ($userId && $this->doesUserHaveRole(Roles::LANDLORD)) {
             $view = new VLocatore();
             $view->index();
+            return;
+        }
+
+        if ($userId && $this->doesUserHaveRole(Roles::ADMIN)) {
+            $view = new VRedirect();
+            $view->redirect('/admin/home');
             return;
         }
 

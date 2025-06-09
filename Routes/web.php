@@ -23,6 +23,7 @@ $router->get('/static/img/{id}', 'CPhoto@view');
 $router->get('/admin/home', 'CAdmin@index');
 $router->get('/admin/offices/{id}', 'COffice@showAdminOfficeDetails');
 $router->get('/admin/offices/pending/{id}', 'COffice@showPendingDetails');
+$router->get('/admin/offices/rejected/{id}', 'COffice@showRejectedDetails');
 $router->get('/reports', 'CReport@index');
 $router->get('/reports/{id}', 'CReport@show');
 
