@@ -21,9 +21,10 @@ class CReservation extends BaseController
 {
     public function showreservation()
     {
-        if (!$this->isLoggedIn()) {
+        $this->requireLogin();
+        if (!($this->doesUserHaveRole(Roles::BASIC_USER))) {
             $view = new VRedirect();
-            $view->redirect('/login');
+            $view->redirect('/home');
             return;
         }
 
@@ -34,12 +35,6 @@ class CReservation extends BaseController
         $user = USession::getUser();
 
         $userId = $this->auth_manager->getUserId();
-
-        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
-            $view = new VRedirect();
-            $view->redirect('/home');
-            return;
-        }
 
         $reservations = $repository->findBy(['utente' => $user->getId()]);
 

@@ -33,6 +33,9 @@ abstract class BaseController
     {
         $validRoles = (new \ReflectionClass(Roles::class))->getConstants();
 
+        echo $validRoles;
+        echo "--------------";
+
         if (!in_array($role, $validRoles, true)) {
             throw new InvalidArgumentException('Invalid role: ' . $role . 'passed to requireRole()');
         }
@@ -73,12 +76,12 @@ abstract class BaseController
         }
     }
 
-    public function doesUserHaveRole(string $role): bool
+    public function doesUserHaveRole(int $role): bool
     {
         $validRoles = (new \ReflectionClass(Roles::class))->getConstants();
 
         if (!in_array($role, $validRoles, true)) {
-            throw new InvalidArgumentException('Invalid role: ' . $role . 'passed to requireRole()');
+            throw new InvalidArgumentException('Invalid role: ' . $role . ' passed to requireRole()');
         }
 
         $this->requireLogin();

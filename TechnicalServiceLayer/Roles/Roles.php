@@ -2,12 +2,14 @@
 
 namespace TechnicalServiceLayer\Roles;
 
+use Delight\Auth\Role;
+
 final class Roles
 {
 
-    public const LANDLORD = \Delight\Auth\Role::PUBLISHER;
-    public const BASIC_USER = \Delight\Auth\Role::CONSUMER;
-    public const ADMIN = \Delight\Auth\Role::ADMIN;
+    public const LANDLORD = Role::PUBLISHER;
+    public const BASIC_USER = Role::CONSUMER;
+    public const ADMIN = Role::ADMIN;
 
     private function __construct()
     {
