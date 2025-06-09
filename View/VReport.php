@@ -9,12 +9,12 @@ class VReport extends BaseView
 {
     public function showReportForm($id, $user): void
     {
-        $this->twig->display('/segnalazioni/segnalazioni.html.twig', ['idufficio' => $id,'user'=>$user]);
+        $this->twig->display('/User/segnalazioni/segnalazioni.html.twig', ['idoffice' => $id,'user'=>$user]);
     }
 
     public function showReportConfirmation($user): void
     {
-        $this->twig->display('/conferme/ConfermaSegnalazione.html.twig', ['user' => $user]);
+        $this->twig->display('/User/conferme/ConfermaSegnalazione.html.twig', ['user' => $user]);
     }
 
     public function showUserReports($activeReports, $closedReports): void

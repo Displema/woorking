@@ -18,12 +18,12 @@
 <body>
 
 
-<!-- NAVBAR -->
+<!-- include the navbar from another template -->
 {% include 'navbar/navbar.html.twig' %}
 
 
 
-<!-- HERO + DESCRIZIONE + BARRA DI RICERCA -->
+<!-- in this point of template we can see the  hero that is a way to contain the photo as a background for the searchbar-->
 <section class="hero-background py-5">
     <div class="container">
         <div class="text-center mb-4">
@@ -32,8 +32,9 @@
             <p>Seleziona la data, il luogo e la fascia oraria preferita e trova l’ambiente perfetto per lavorare in serenità.</p>
         </div>
 
-        <form action="/search/showoffice" method="GET" class="row g-3 align-items-end">
+        <form action="/offices" method="GET" class="row g-3 align-items-end">
             <div class="col-md-4">
+                <!-- input form to send the request     -->
                 <label class="form-label">Nome ufficio o Luogo</label>
                 <div class="input-group">
                     <input type="text" name="place" class="form-control" placeholder="Nome ufficio o luogo" required>
@@ -66,7 +67,7 @@
     </div>
 </section>
 
-<!-- SEZIONE SERVIZI -->
+<!-- in this point we can see some service that the place can offers -->
 <section class="py-5 nero">
     <div class="container">
         <h2 class="text-center mb-4">Servizi Aggiuntivi</h2>
@@ -116,9 +117,9 @@
 
 </section>
 
-<!-- FOOTER -->
+<!-- include footer-->
 {% include 'Footer/footer.html.twig' %}
-<!-- Bootstrap JS -->
+
 
 </body>
 </html>

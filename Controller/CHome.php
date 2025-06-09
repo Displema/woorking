@@ -3,7 +3,9 @@ namespace Controller;
 
 use Delight\Auth\Auth;
 use Doctrine\ORM\EntityManager;
+use Model\EProfilo;
 use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
+use TechnicalServiceLayer\Repository\UserRepository;
 use TechnicalServiceLayer\Roles\Roles;
 use TechnicalServiceLayer\Utility\USession;
 use View\VHome;
@@ -46,15 +48,13 @@ class CHome extends BaseController
     }
 
     public function profile(): void
-    {
+    {   //check is the user is logged
         $this->requireLogin();
-
+        //take the user from the session
         $user = USession::getUser();
 
-
-
-
-
+         //take the email from a method
+         $email = UserRepository::getInstance()->getEmailByUserId($user->getUserId())[0]['email'];
 
         if ($this->doesUserHaveRole(Roles::LANDLORD)) {
             $view = new VLocatore();
@@ -63,6 +63,6 @@ class CHome extends BaseController
         }
 
         $view = new VHome();
-        $view->profile($user);
+        $view->profile($user,$email);
     }
 }

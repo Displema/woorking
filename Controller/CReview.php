@@ -11,10 +11,12 @@ use Model\ERecensione;
 use Model\EUfficio;
 use TechnicalServiceLayer\Repository\ERecensioneRepository;
 use TechnicalServiceLayer\Repository\EUfficioRepository;
+use TechnicalServiceLayer\Roles\Roles;
 use TechnicalServiceLayer\Utility\USession;
 use View\VRedirect;
 use View\VReservation;
 use View\VReview;
+use View\VStatus;
 
 class CReview extends BaseController
 {
@@ -38,5 +40,95 @@ class CReview extends BaseController
 
         $view = new VReview();
         $view->reviews($arrayReviews);
+    }
+    public function showReviews($id)
+    {
+        //check if the user is looged
+        if ($this->isLoggedIn()) {
+
+            //take the user from the session
+            $user = USession::getUser();
+        } else {
+            $user = null;
+        }
+
+        //take the office from the DB with the repository
+        $office = $this->entity_manager->getRepository(EUfficio::class)->find($id);
+
+        //check if the office exist
+        if (!$office) {
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
+        }
+
+        //take the reporitory of Erecensione to use the function that take the reviews from the office
+        /** @var ERecensioneRepository $repo */
+        $repo=$this->entity_manager->getRepository(ERecensione::class);
+        $review = $repo->getRecensioneByUfficio($id);
+
+        $view = new VReview();
+        $view->showAllReviews($review, $office, $user);
+    }
+    public function reviewForm($idreservation): void
+    {    //chekc if the user is logged
+        if (!$this->auth_manager->isLoggedIn()) {
+            $view = new VRedirect();
+            //redirect to login
+            $view->redirect('/login');
+            return;
+        }
+        //take the user id from the auth manager
+        $userId = $this->auth_manager->getUserId();
+        //check the role of user
+        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+        //take the user from the session
+        $user = USession::getUser();
+        //show form for review
+        $view = new VReview();
+        $view ->showReviewForm($idreservation, $user);
+    }
+    public function storeReview($idreservation,$voto,$comment)
+
+    {
+        if (!$this->auth_manager->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            return;
+        }
+
+        $userId = $this->auth_manager->getUserId();
+
+        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+
+        //$value = $_POST['voto'];           // value 1-5
+        //$comment = $_POST['review']; // comment of review
+        $user = USession::getUser();
+        $reservation = $this->entity_manager->getRepository(EPrenotazione::class)->find($idreservation);
+
+        if (!$reservation) {
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
+        }
+
+        $review= new ERecensione();
+        $review->setCommento($comment);
+        $review->setValutazione((int)$voto);
+        $review->setPrenotazione($reservation);
+
+        $this->entity_manager->persist($review);
+        $this->entity_manager->flush();
+
+        $view = new VReview();
+        $view->showReviewConfirmation($user);
     }
 }
