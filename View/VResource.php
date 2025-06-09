@@ -20,6 +20,7 @@ class VResource
 
         if (empty($content)) {
             echo "404 not found";
+            exit;
         }
 
         echo $content;
