@@ -228,13 +228,13 @@ class COffice extends BaseController
             return;
         }
 
-        if (!(StatoUfficioEnum::tryFrom(!$office->getStato()) === StatoUfficioEnum::InAttesa)) {
+        if (!($office->getStato()->value === StatoUfficioEnum::InAttesa->value)) {
             $view = new VStatus();
             $view->showStatus(400);
             return;
         }
 
-        $office->setReason($reason);
+        $office->setMotivoRifiuto($reason);
         $office->setStato(StatoUfficioEnum::NonApprovato);
 
         try {
@@ -263,7 +263,7 @@ class COffice extends BaseController
             return;
         }
 
-        if (!(StatoUfficioEnum::tryFrom(!$office->getStato()) === StatoUfficioEnum::InAttesa)) {
+        if (!($office->getStato()->value === StatoUfficioEnum::InAttesa->value)) {
             $view = new VStatus();
             $view->showStatus(400);
             return;
@@ -417,7 +417,7 @@ class COffice extends BaseController
     }
 
     //show all lessor's offices
-    public function showOfficesLocatore()
+    public function showOfficesLocatore(): void
     {
         $this->requireRole(Roles::LANDLORD);
 
@@ -540,7 +540,8 @@ class COffice extends BaseController
             $this->entity_manager->persist($servizio);
         }
         $this->entity_manager->flush();
-        header('Location: /uffici');
+        $view = new VRedirect();
+        $view->redirect('/uffici');
         exit;
     }
 
@@ -570,18 +571,20 @@ class COffice extends BaseController
         $office  = $this->entity_manager->find(EUfficio::class, $id);
 
         $user = USession::getUser();
+
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
             return;
         }
 
-        if ($user->getId() !== $office->getLocatore()->getId()) {
-            $view = new VStatus();
-            $view->showStatus(403);
-            return;
+        if ($this->doesUserHaveRole(Roles::LANDLORD)) {
+            if ($user->getId() !== $office->getLocatore()->getId()) {
+                $view = new VStatus();
+                $view->showStatus(403);
+                return;
+            }
         }
-
 
         if ($this->doesUserHaveRole(Roles::ADMIN)) {
             $targetView = "showPendingAdmin";
@@ -591,5 +594,28 @@ class COffice extends BaseController
 
         $view = new VOffice();
         $view->$targetView($office);
+    }
+
+    public function showRejectedDetails(string $id): void
+    {
+        $this->requireRoles([Roles::ADMIN]);
+        $office  = $this->entity_manager->find(EUfficio::class, $id);
+
+        if (!$office) {
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
+        }
+
+        $user = USession::getUser();
+        
+//        if ($this->doesUserHaveRole(Roles::LANDLORD) && $user->getId() !== $office->getLocatore()->getUserId()) {
+//            $view = new VStatus();
+//            $view->showStatus(403);
+//            return;
+//        }
+
+        $view = new VOffice();
+        $view->showRejectedDetails($office);
     }
 }
