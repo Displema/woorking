@@ -16,11 +16,4 @@ class VHome extends BaseView
     {
         $this->twig->display('./login/profile.html.twig', ['user'=>$user]);
     }
-
-    public function printJson($data)
-    {
-        header('Content-Type: application/json');
-        echo json_encode($data, JSON_THROW_ON_ERROR);
-        exit;
-    }
 }

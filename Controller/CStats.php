@@ -9,6 +9,7 @@ use TechnicalServiceLayer\Repository\ERecensioneRepository;
 use TechnicalServiceLayer\Repository\EUfficioRepository;
 use TechnicalServiceLayer\Utility\USession;
 use View\VHome;
+use View\VResource;
 
 class CStats extends BaseController
 {
@@ -19,7 +20,7 @@ class CStats extends BaseController
 
         $data = $repo->getEntrateMensili($user->getId());
 
-        $view = new VHome();
+        $view = new VResource();
         $view->printJson($data); // Restituisce un JSON tipo: [{"mese": "2024-06", "entrate": 230}]
     }
 
@@ -41,7 +42,7 @@ class CStats extends BaseController
                 'numeroPrenotazioni' => $prenotazioni
             ];
         }
-        $view = new VHome();
+        $view = new VResource();
         $view ->printJson($dati);
     }
 
@@ -61,7 +62,7 @@ class CStats extends BaseController
             ];
         }, $recensioni);
 
-        $view = new VHome();
+        $view = new VResource();
         $view ->printJson($response);
     }
 }

@@ -25,7 +25,7 @@ class VResource
         echo $content;
     }
 
-    public function printJson(string $data): void
+    public function printJson(mixed $data): void
     {
         header('Content-Type: application/json');
         echo $data;
