@@ -40,6 +40,179 @@ use View\VStatus;
 
 class COffice extends BaseController
 {
+    public function show($id,$fascia ,$date ): void
+    {
+        $officeDetails=[];
+        $photoUrls=[];
+        $login ='';
+        $user ='';
+        $office = $this->entity_manager->getRepository(EUfficio::class)->find($id);
+
+        if (!$office) {
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
+        }
+
+        if ($this->auth_manager->isLoggedIn()) {
+            $userId = $this->auth_manager->getUserId();
+            $user =  $this->entity_manager->getRepository(EProfilo::class)->findoneBy(['user_id' => $userId]);
+        }
+
+        $photosRepo = $this->entity_manager->getRepository(EFoto::class);
+        $photos = $photosRepo->findBy(['ufficio' => $office->getId()]);
+        foreach ($photos as $photo) {
+            if ($photo) {
+                $photoUrls[] = '/static/img/' . $photo->getId();
+            }
+        }
+
+        $officeDetails[]= [
+            'ufficio' => $office,
+            'foto' => $photoUrls
+        ];
+        $view = new VOffice();
+        $view->showOfficeDetails($officeDetails, $date, $fascia, $user);
+    }
+
+
+
+    public function ShowReview($id)
+    {
+        if ($this->auth_manager->isLoggedIn()) {
+            $user = USession::requireUser();
+        } else {
+            $user = null;
+        }
+
+        $em = $this->entity_manager;
+        $review = [];
+        $reporec=$em->getRepository(ERecensione::class);
+        $review = $reporec->getRecensioneByUfficio($id);
+        $office = $em->getRepository(EUfficio::class)->find($id);
+
+        $view = new VReview();
+        $view->showAllReviews($review, $office, $user);
+    }
+
+    public function search(string $query, string $date, string $slot): void
+    {
+        if ($this->auth_manager->isLoggedIn()) {
+            $user = USession::requireUser();
+        } else {
+            $user = null;
+        }
+
+        $userId = $this->auth_manager->getUserId();
+
+        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+
+
+        $repo=$this->entity_manager->getRepository(EUfficio::class);
+
+        $place = $query;
+        try {
+            $date_parsed = new DateTime($date);
+        } catch (\Exception $e) {
+            $view = new VStatus();
+
+            $view->showStatus(400);
+            return;
+        }
+
+        $fascia = $slot;
+        $offices= $repo->findbythree($place, $date_parsed, $fascia);
+
+        $officewithphoto=[];
+
+        $reservationRepo=$this->entity_manager->getRepository(EPrenotazione::class);
+
+
+        $photoEntity = [];
+        foreach ($offices as $office) {
+            if ($office->isHidden()) {
+                continue;
+            }
+            $fasciaEnum = FasciaOrariaEnum::tryFrom($fascia);
+            $reservationcount=$reservationRepo->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $fasciaEnum);
+            $placeavaible= $office->getNumeroPostazioni();
+            if ($reservationcount<$placeavaible) {
+                $photoEntity = $this->entity_manager->getRepository(\Model\EFoto::class)->findOneBy(['ufficio' => $office->getId()]);
+
+                if ($photoEntity) {
+                    $idPhoto = $photoEntity->getId();
+
+                    $photoUrl = $photoEntity ? "/static/img/" . $idPhoto : null;
+                } else {
+                    $photoUrl = "https://cdn.pixabay.com/photo/2024/07/20/17/12/warning-8908707_1280.png";
+                }
+            } else {
+                continue;
+            }
+            $officewithphoto[] = [
+                'office' => $office,
+                'photo' => $photoUrl,
+
+            ];
+        }
+
+        $view= new VOffice();
+        $view->showOfficeSearch($officewithphoto, $date, $slot, $user);
+    }
+    public function confirmReservation($date, $idOffice, $fascia)
+    {    $em = $this->entity_manager;
+        if (!$this->auth_manager->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            return;
+        }
+
+        $userId = $this->auth_manager->getUserId();
+        $user =  $em->getRepository(EProfilo::class)->findoneBy(['user_id' => $userId]);
+        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+
+
+        $date_parsed = new DateTime($date);
+        $FasciaEnum=FasciaOrariaEnum::from($fascia);
+
+        $em->beginTransaction();
+        try {
+            // With PessimisticWrite the first one that gets access to the office locks it until it's finished
+            $office = $em->getRepository(EUfficio::class)->find($idOffice, LockMode::PESSIMISTIC_WRITE);
+            $reservationCount = $em->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $FasciaEnum);
+            $placesAvaible = $office->getNumeroPostazioni();
+
+
+            if ($reservationCount >= $placesAvaible) {
+                $view  = new VReservation();
+                $view ->showAlreadyBookedPage();
+                exit;
+            }
+            $reservation = new EPrenotazione();
+            $reservation->setData(new DateTime($date));
+            $reservation->setUfficio($office);
+            $reservation->setFascia($FasciaEnum);
+            $reservation->setUtente($user);
+
+            $em->persist($reservation);
+            $em->flush();
+            $em->commit();
+
+            $view = new VOffice();
+            $view->showconfirmedpage1($user);
+        } catch (Exception $e) {
+            $em->rollback();
+            echo $e->getMessage();
+        }
+    }
 
 
     public function rejectPending(string $id, string $reason): void
@@ -444,178 +617,6 @@ class COffice extends BaseController
         $view = new VOffice();
         $view->$targetView($office);
     }
-    public function show($id,$fascia ,$date ): void
-{
-    $officeDetails=[];
-    $photoUrls=[];
-    $login ='';
-    $user ='';
-    $office = $this->entity_manager->getRepository(EUfficio::class)->find($id);
 
-    if (!$office) {
-        $view = new VStatus();
-        $view->showStatus(404);
-        return;
-    }
-
-    if ($this->auth_manager->isLoggedIn()) {
-        $userId = $this->auth_manager->getUserId();
-        $user =  $this->entity_manager->getRepository(EProfilo::class)->findoneBy(['user_id' => $userId]);
-    }
-
-    $photosRepo = $this->entity_manager->getRepository(EFoto::class);
-    $photos = $photosRepo->findBy(['ufficio' => $office->getId()]);
-    foreach ($photos as $photo) {
-        if ($photo) {
-            $photoUrls[] = '/static/img/' . $photo->getId();
-        }
-    }
-
-    $officeDetails[]= [
-        'ufficio' => $office,
-        'foto' => $photoUrls
-    ];
-    $view = new VOffice();
-    $view->showOfficeDetails($officeDetails, $date, $fascia, $user);
-}
-
-
-
-    public function ShowReview($id)
-    {
-        if ($this->auth_manager->isLoggedIn()) {
-            $user = USession::requireUser();
-        } else {
-            $user = null;
-        }
-
-        $em = $this->entity_manager;
-        $review = [];
-        $reporec=$em->getRepository(ERecensione::class);
-        $review = $reporec->getRecensioneByUfficio($id);
-        $office = $em->getRepository(EUfficio::class)->find($id);
-
-        $view = new VReview();
-        $view->showAllReviews($review, $office, $user);
-    }
-
-    public function search(string $query, string $date, string $slot): void
-    {
-        if ($this->auth_manager->isLoggedIn()) {
-            $user = USession::requireUser();
-        } else {
-            $user = null;
-        }
-
-        $userId = $this->auth_manager->getUserId();
-
-        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
-            $view = new VRedirect();
-            $view->redirect('/home');
-            return;
-        }
-
-
-        $repo=$this->entity_manager->getRepository(EUfficio::class);
-
-        $place = $query;
-        try {
-            $date_parsed = new DateTime($date);
-        } catch (\Exception $e) {
-            $view = new VStatus();
-
-            $view->showStatus(400);
-            return;
-        }
-
-        $fascia = $slot;
-        $offices= $repo->findbythree($place, $date_parsed, $fascia);
-
-        $officewithphoto=[];
-
-        $reservationRepo=$this->entity_manager->getRepository(EPrenotazione::class);
-
-
-        $photoEntity = [];
-        foreach ($offices as $office) {
-            if ($office->isHidden()) {
-                continue;
-            }
-            $fasciaEnum = FasciaOrariaEnum::tryFrom($fascia);
-            $reservationcount=$reservationRepo->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $fasciaEnum);
-            $placeavaible= $office->getNumeroPostazioni();
-            if ($reservationcount<$placeavaible) {
-                $photoEntity = $this->entity_manager->getRepository(\Model\EFoto::class)->findOneBy(['ufficio' => $office->getId()]);
-
-                if ($photoEntity) {
-                    $idPhoto = $photoEntity->getId();
-
-                    $photoUrl = $photoEntity ? "/static/img/" . $idPhoto : null;
-                } else {
-                    $photoUrl = "https://cdn.pixabay.com/photo/2024/07/20/17/12/warning-8908707_1280.png";
-                }
-            } else {
-                continue;
-            }
-            $officewithphoto[] = [
-                'office' => $office,
-                'photo' => $photoUrl,
-
-            ];
-        }
-
-        $view= new VOffice();
-        $view->showOfficeSearch($officewithphoto, $date, $slot, $user);
-    }
-    public function confirmReservation($date, $idOffice, $fascia)
-    {    $em = $this->entity_manager;
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
-
-        $userId = $this->auth_manager->getUserId();
-        $user =  $em->getRepository(EProfilo::class)->findoneBy(['user_id' => $userId]);
-        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
-            $view = new VRedirect();
-            $view->redirect('/home');
-            return;
-        }
-
-
-        $date_parsed = new DateTime($date);
-        $FasciaEnum=FasciaOrariaEnum::from($fascia);
-
-        $em->beginTransaction();
-        try {
-            // With PessimisticWrite the first one that gets access to the office locks it until it's finished
-            $office = $em->getRepository(EUfficio::class)->find($idOffice, LockMode::PESSIMISTIC_WRITE);
-            $reservationCount = $em->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $FasciaEnum);
-            $placesAvaible = $office->getNumeroPostazioni();
-
-
-            if ($reservationCount >= $placesAvaible) {
-                $view  = new VReservation();
-                $view ->showAlreadyBookedPage();
-                exit;
-            }
-            $reservation = new EPrenotazione();
-            $reservation->setData(new DateTime($date));
-            $reservation->setUfficio($office);
-            $reservation->setFascia($FasciaEnum);
-            $reservation->setUtente($user);
-
-            $em->persist($reservation);
-            $em->flush();
-            $em->commit();
-
-            $view = new VOffice();
-            $view->showconfirmedpage1($user);
-        } catch (Exception $e) {
-            $em->rollback();
-            echo $e->getMessage();
-        }
-    }
 
 }
