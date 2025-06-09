@@ -9,6 +9,6 @@ use View\VHome;
 use View\VLocatore;
 use View\VRedirect;
 
-class CLocatore extends BaseController
+class CLandlord extends BaseController
 {
 }
