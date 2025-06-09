@@ -15,15 +15,20 @@ class CHome extends BaseController
     public function index(): void
     {
         if ($this->auth_manager->isLoggedIn()) {
+            try{
             $user = USession::requireUser();
+
             $userid = $this->auth_manager->getUserId();
 
             if ($this->auth_manager->admin()->doesUserHaveRole($userid, Roles::LANDLORD)) {
                 $view = new VLocatore();
                 $view->goHome();
                 return;
-            }
-        } else {
+            }}catch (\TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException $e) {
+        // Optional: log error, fallback a null
+        $user = null;
+    }
+        }else {
             $user = null;
         }
 

@@ -1,6 +1,7 @@
 <?php
 namespace Controller;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use DateTime;
 use Model\EFoto;
@@ -20,7 +21,6 @@ class CReservation extends BaseController
 {
     public function showreservation()
     {
-
         if (!$this->auth_manager->isLoggedIn()) {
             $view = new VRedirect();
             $view->redirect('/login');
@@ -28,9 +28,11 @@ class CReservation extends BaseController
         }
 
         $today = new DateTime();
-        $repository = $this->entity_manager->getRepository(EPrenotazione::class);
+        $today->setTime(0, 0, 0);
 
+        $repository = $this->entity_manager->getRepository(EPrenotazione::class);
         $user = USession::requireUser();
+        print ($user);
         $userId = $this->auth_manager->getUserId();
 
         if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
@@ -40,31 +42,33 @@ class CReservation extends BaseController
         }
 
         $reservations = $repository->findBy(['utente' => $user->getId()]);
+        print ($user);
         $reservationWithOffice = [];
         $oldreservationWithOffice = [];
 
         foreach ($reservations as $reservation) {
+            echo 'Prenotazioni attive: ' . count($reservations) . '<br>';
             $idOffice = $reservation->getUfficio();
             $photo = $this->entity_manager->getRepository(EFoto::class)->findOneBy(['ufficio' => $idOffice]);
             $office = $this->entity_manager->getRepository(EUfficio::class)->find($idOffice);
 
-            if ($reservation->getData() >= $today) {
-                if ($photo) {
-                    $idPhoto = $photo->getId();
+            $photoUrl = null;
+            if ($photo) {
+                $photoUrl = "/static/img/" . $photo->getId();
+            }
 
-                    $photoUrl = "/static/img/" . $idPhoto;
-                }
+            $resDate = $reservation->getData();
+            if ($resDate instanceof \DateTimeInterface) {
+                $resDate->setTime(0, 0, 0);
+            }
+
+            if ($resDate >= $today) {
                 $reservationWithOffice[] = [
                     'reservation' => $reservation,
                     'office' => $office,
                     'photo' => $photoUrl
                 ];
             } else {
-                if ($photo) {
-                    $idPhoto = $photo->getId();
-
-                    $photoUrl = "/static/img/" . $idPhoto;
-                }
                 $oldreservationWithOffice[] = [
                     'reservation' => $reservation,
                     'office' => $office,
@@ -72,10 +76,13 @@ class CReservation extends BaseController
                 ];
             }
         }
+        echo 'Prenotazioni attive: ' . count($reservationWithOffice) . '<br>';
+        echo 'Prenotazioni passate: ' . count($oldreservationWithOffice) . '<br>';
 
         $view = new VReservation();
         $view->showReservation($reservationWithOffice, $oldreservationWithOffice, $user);
     }
+
 
     public function showReservationDetails($id)
     {
@@ -84,7 +91,7 @@ class CReservation extends BaseController
             $view->redirect('/login');
             return;
         }
-
+        $user = USession::requireUser();
         $userId = $this->auth_manager->getUserId();
 
         if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {

@@ -27,6 +27,8 @@
 
         <!-- Prenotazioni -->
         <div id="lista-prenotazioni">
+            <p>Attive: {{ reservations|length }}</p>
+            <p>Passate: {{ oldreservations|length }}</p>
             {%for reservation in reservations %}
             <!-- Prenotazione Attiva -->
             <div class="card card-custom mb-4 d-flex flex-row p-3 align-items-center prenotazione attiva">
