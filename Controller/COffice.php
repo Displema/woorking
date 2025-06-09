@@ -479,56 +479,7 @@ class COffice extends BaseController
     $view->showOfficeDetails($officeDetails, $date, $fascia, $user);
 }
 
-    public function confirmReservation($date, $idOffice, $fascia)
-    {    $em = $this->entity_manager;
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
 
-        $userId = $this->auth_manager->getUserId();
-        $user =  $em->getRepository(EProfilo::class)->findoneBy(['user_id' => $userId]);
-        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
-            $view = new VRedirect();
-            $view->redirect('/home');
-            return;
-        }
-
-
-        $date_parsed = new DateTime($date);
-        $FasciaEnum=FasciaOrariaEnum::from($fascia);
-
-        $em->beginTransaction();
-        try {
-            // With PessimisticWrite the first one that gets access to the office locks it until it's finished
-            $office = $em->getRepository(EUfficio::class)->find($idOffice, LockMode::PESSIMISTIC_WRITE);
-            $reservationCount = $em->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $FasciaEnum);
-            $placesAvaible = $office->getNumeroPostazioni();
-
-
-            if ($reservationCount >= $placesAvaible) {
-                $view  = new VReservation();
-                $view ->showAlreadyBookedPage();
-                exit;
-            }
-            $reservation = new EPrenotazione();
-            $reservation->setData(new DateTime($date));
-            $reservation->setUfficio($office);
-            $reservation->setFascia($FasciaEnum);
-            $reservation->setUtente($user);
-
-            $em->persist($reservation);
-            $em->flush();
-            $em->commit();
-
-            $view = new VOffice();
-            $view->showconfirmedpage1($user);
-        } catch (Exception $e) {
-            $em->rollback();
-            echo $e->getMessage();
-        }
-    }
 
     public function ShowReview($id)
     {
@@ -615,6 +566,56 @@ class COffice extends BaseController
 
         $view= new VOffice();
         $view->showOfficeSearch($officewithphoto, $date, $slot, $user);
+    }
+    public function confirmReservation($date, $idOffice, $fascia)
+    {    $em = $this->entity_manager;
+        if (!$this->auth_manager->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            return;
+        }
+
+        $userId = $this->auth_manager->getUserId();
+        $user =  $em->getRepository(EProfilo::class)->findoneBy(['user_id' => $userId]);
+        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+
+
+        $date_parsed = new DateTime($date);
+        $FasciaEnum=FasciaOrariaEnum::from($fascia);
+
+        $em->beginTransaction();
+        try {
+            // With PessimisticWrite the first one that gets access to the office locks it until it's finished
+            $office = $em->getRepository(EUfficio::class)->find($idOffice, LockMode::PESSIMISTIC_WRITE);
+            $reservationCount = $em->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $FasciaEnum);
+            $placesAvaible = $office->getNumeroPostazioni();
+
+
+            if ($reservationCount >= $placesAvaible) {
+                $view  = new VReservation();
+                $view ->showAlreadyBookedPage();
+                exit;
+            }
+            $reservation = new EPrenotazione();
+            $reservation->setData(new DateTime($date));
+            $reservation->setUfficio($office);
+            $reservation->setFascia($FasciaEnum);
+            $reservation->setUtente($user);
+
+            $em->persist($reservation);
+            $em->flush();
+            $em->commit();
+
+            $view = new VOffice();
+            $view->showconfirmedpage1($user);
+        } catch (Exception $e) {
+            $em->rollback();
+            echo $e->getMessage();
+        }
     }
 
 }
