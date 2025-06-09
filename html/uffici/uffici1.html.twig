@@ -41,7 +41,7 @@
             <div class="ufficio-card d-flex flex-column flex-md-row mx-auto">
                 <img src="{{ office.photo }}" alt="Ufficio" class="ufficio-img">
                 <div class="ufficio-info">
-                    <a href="/search/showoffice/detailsoffice/{{ office.office.id }}/{{ date }}/{{ fascia }}"" class="btn-prenota"><i class="fa-solid fa-calendar-check"></i> Prenota</a>
+                    <a href="/search/showoffice/detailsoffice/{{ office.office.id }}/{{ date }}/{{ fascia.value }}" class="btn-prenota"><i class="fa-solid fa-calendar-check"></i> Prenota</a>
                     <h2>{{office.office.titolo}}</h2>
                     <p><strong>Indirizzo:</strong> {{ office.office.indirizzo }}</p>
                     <p><strong>Posti disponibili:</strong> {{ office.office.numeroPostazioni }}</p>

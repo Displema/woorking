@@ -46,8 +46,9 @@ class COffice
         $this->entity_manager = getEntityManager();
     }
 
-    public function show($id, $date, $fascia): void
+    public function show($id,$fascia ,$date ): void
     {
+
         $officeDetails=[];
         $photoUrls=[];
         $login ='';
@@ -83,13 +84,14 @@ class COffice
 
     public function confirmReservation($date, $idOffice, $fascia)
     {
+        $date_parsed = new DateTime($date);
         $FasciaEnum=FasciaOrariaEnum::from($fascia);
         $em = $this->entity_manager;
         $em->beginTransaction();
         try {
             // With PessimisticWrite the first one that gets access to the office locks it until it's finished
             $office = $em->getRepository(EUfficio::class)->find($idOffice, LockMode::PESSIMISTIC_WRITE);
-            $reservationCount = $em->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($office, $date, $FasciaEnum);
+            $reservationCount = $em->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $FasciaEnum);
 
             $placesAvaible = $office->getNumeroPostazioni();
 
@@ -155,6 +157,7 @@ class COffice
             $date_parsed = new DateTime($date);
         } catch (\Exception $e) {
             $view = new VStatus();
+
             $view->showStatus(400);
             return;
         }
@@ -177,7 +180,8 @@ class COffice
             if ($office->isHidden()) {
                 continue;
             }
-            $reservationcount=$reservationRepo->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $fascia);
+            $fasciaEnum = FasciaOrariaEnum::tryFrom($fascia);
+            $reservationcount=$reservationRepo->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $fasciaEnum);
             $placeavaible= $office->getNumeroPostazioni();
             if ($reservationcount<$placeavaible) {
                 $photoEntity = $this->entity_manager->getRepository(\Model\EFoto::class)->findOneBy(['ufficio' => $office->getId()]);
@@ -200,7 +204,7 @@ class COffice
         }
 
         $view= new VOffice();
-        $view->showOfficeSearch($officewithphoto, $date, $fascia, $user, $login);
+        $view->showOfficeSearch($officewithphoto, $date, $slot, $user, $login);
     }
 
 

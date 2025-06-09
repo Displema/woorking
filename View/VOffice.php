@@ -9,10 +9,10 @@ use Twig\Loader\FilesystemLoader;
 class VOffice extends BaseView
 {
 
-    public function showOfficeSearch($Result, $date, $fascia, $user, $login): void
+    public function showOfficeSearch($Result, $date, $fascia1, $user, $login): void
     {
 
-        $this->twig->display('/uffici/uffici.html.twig', ['offices' => $Result,'date' => $date,'fascia' => $fascia,'user' => $user,'isloggedin' => $login]);
+        $this->twig->display('/uffici/uffici.html.twig', ['offices' => $Result,'date' => $date,'fascia' => $fascia1,'user' => $user,'isloggedin' => $login]);
     }
 
     public function showOfficeDetails($Result, $date, $fascia, $user, $login): void
