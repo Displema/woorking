@@ -25,17 +25,8 @@ use View\VResource;
 
 require_once __DIR__ . "/../bootstrap.php";
 
-class CAuth
+class CAuth extends BaseController
 {
-    public Auth $auth_manager;
-    private EntityManager $entity_manager;
-
-    public function __construct()
-    {
-        $this->entity_manager = getEntityManager();
-        $this->auth_manager = getAuth();
-    }
-
     public function showLoginForm(): void
     {
         $currentUser = USession::isSetSessionElement("user");
@@ -136,13 +127,10 @@ class CAuth
 
     public function loginUser(string $email, string $password, string $rememberMe = "0"): void
     {
-        $currentUser = USession::isSetSessionElement("user");
-
-        if ($currentUser) {
-            $user = USession::getSessionElement("user");
-
-            $view = new VRedirect();
-            $view->redirect("/home");
+        if ($this->auth_manager->isLoggedIn()) {
+            $redirectView = new VRedirect();
+            $redirectView->redirect("/home");
+            return;
         }
 
         try {
@@ -154,18 +142,18 @@ class CAuth
                 $duration = 60*60*24;
             }
             $this->auth_manager->login($email, $password, $duration);
-            $userid = $this->auth_manager->getUserId();
+            $userId = $this->auth_manager->getUserId();
             $repo = $this->entity_manager->getRepository(EProfilo::class);
-            $profile = $repo->findOneBy(['user_id' => $userid]);
+            $profile = $repo->findOneBy(['user_id' => $userId]);
 
             USession::setSessionElement("user", $profile);
 
             $view = new VRedirect();
-
-
-
-            $view->redirect("/home");
-            return;
+            if ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
+                $view->redirect("/admin/home");
+            } else {
+                $view->redirect("/home");
+            }
         } catch (InvalidEmailException $e) {
             die('Wrong email address');
         } catch (InvalidPasswordException $e) {
@@ -181,23 +169,27 @@ class CAuth
 
     public function getUser(): void
     {
-        try {
-            $user = USession::requireUser();
-        } catch (UserNotAuthenticatedException $e) {
+        if (!$this->auth_manager->isLoggedIn()) {
             $view = new VRedirect();
-            $view->redirect("/error");
+            $view->redirect("/login");
             return;
         }
+
+        $user = USession::requireUser();
 
         $view = new VResource();
         $view->printJson($user);
     }
 
+    /**
+     * @throws AuthError
+     */
     public function logoutUser(): void
     {
-            USession::destroy();
-            $view = new VRedirect();
-            $view->redirect("/home");
+        //USession::destroy();
+        $this->auth_manager->logout();
+        $view = new VRedirect();
+        $view->redirect("/home");
     }
 
     public function modifyUser(): void

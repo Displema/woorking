@@ -1,5 +1,6 @@
 <?php
 namespace Controller;
+
 use Doctrine\ORM\EntityManager;
 use DateTime;
 use Model\EFoto;
@@ -13,25 +14,16 @@ use View\VRedirect;
 use View\VReservation;
 use View\VReview;
 
-
-class CReservation
+class CReservation extends BaseController
 {
-
-    private EntityManager $entity_manager;
-    public function __construct()
-    {
-        $this->entity_manager = getEntityManager();
-    }
-
     public function showreservation()
     {
         $today = new DateTime();
-        $em = getEntityManager();
-        $repository = $em->getRepository(EPrenotazione::class);
+        $repository = $this->entity_manager->getRepository(EPrenotazione::class);
         if (USession::isSetSessionElement('user')) {
             $user = USession::requireUser();
 
-            $user = $em->getRepository(EProfilo::class)->find($user->getId());
+            $user = $this->entity_manager->getRepository(EProfilo::class)->find($user->getId());
         } else {
             $view = new VRedirect();
             $view->redirect('/login');
@@ -43,15 +35,14 @@ class CReservation
 
         foreach ($reservations as $reservation) {
             $idOffice = $reservation->getUfficio();
-            $photo = $em->getRepository(EFoto::class)->findOneBy(['ufficio' => $idOffice]);
-            $office = $em->getRepository(EUfficio::class)->find($idOffice);
+            $photo = $this->entity_manager->getRepository(EFoto::class)->findOneBy(['ufficio' => $idOffice]);
+            $office = $this->entity_manager->getRepository(EUfficio::class)->find($idOffice);
 
             if ($reservation->getData() >= $today) {
                 if ($photo) {
                     $idPhoto = $photo->getId();
 
                     $photoUrl = "/static/img/" . $idPhoto;
-
                 }
                 $reservationWithOffice[] = [
                     'reservation' => $reservation,
@@ -63,7 +54,6 @@ class CReservation
                     $idPhoto = $photo->getId();
 
                     $photoUrl = "/static/img/" . $idPhoto;
-
                 }
                 $oldreservationWithOffice[] = [
                     'reservation' => $reservation,
@@ -71,38 +61,32 @@ class CReservation
                     'photo' => $photoUrl
                 ];
             }
-
-
         }
 
         $view = new VReservation();
-        $view->showReservation($reservationWithOffice, $oldreservationWithOffice,$user);
-
+        $view->showReservation($reservationWithOffice, $oldreservationWithOffice, $user);
     }
 
     public function showReservationDetails($id)
     {
         $reservationwithoffice = [];
 
-        $em = getEntityManager();
+
         if (USession::isSetSessionElement('user')) {
             $user = USession::requireUser();
 
-            $user = $em->getRepository(EProfilo::class)->find($user->getId());
+            $user = $this->entity_manager->getRepository(EProfilo::class)->find($user->getId());
         }
-        $repository = $em->getRepository(EPrenotazione::class);
+        $repository = $this->entity_manager->getRepository(EPrenotazione::class);
         $reservation = $repository->find($id);
         $photoUrl = [];
-        $office= $em->getRepository(EUfficio::class)->find($reservation->getUfficio());
-        $photoOffice = $em->getRepository(\Model\EFoto::class)->findBy(['ufficio' => $office->getId()]);
+        $office= $this->entity_manager->getRepository(EUfficio::class)->find($reservation->getUfficio());
+        $photoOffice = $this->entity_manager->getRepository(\Model\EFoto::class)->findBy(['ufficio' => $office->getId()]);
         foreach ($photoOffice as $photo) {
             if ($photo) {
                 $idPhoto = $photo->getId();
                 $photoUrl[] = "/static/img/" . $idPhoto;
-
             }
-
-
         }
         $reservationwithoffice[] = [
             'office' => $office,
@@ -111,46 +95,42 @@ class CReservation
         ];
 
         $view = new VReservation();
-        $view ->showReservationDetails($reservationwithoffice,$user);
+        $view ->showReservationDetails($reservationwithoffice, $user);
     }
 
-    public function sendreview($idreservation){
-        $em = getEntityManager();
+    public function sendreview($idreservation)
+    {
         if (USession::isSetSessionElement('user')) {
             $user = USession::requireUser();
 
-            $user = $em->getRepository(EProfilo::class)->find($user->getId());
+            $user = $this->entity_manager->getRepository(EProfilo::class)->find($user->getId());
         }
         $view = new VReview();
-        $view ->showReviewForm($idreservation,$user);
+        $view ->showReviewForm($idreservation, $user);
     }
 
-    public function confirmreview($idreservation,){
+    public function confirmreview($idreservation,)
+        // TODO: rimuovere accesso ai dati diretto dall'array POST
+    {
         $value = $_POST['voto'];           // value 1-5
         $comment = $_POST['review']; // comment of review
 
-        $em = getEntityManager();
         if (USession::isSetSessionElement('user')) {
             $user = USession::requireUser();
 
-            $user = $em->getRepository(EProfilo::class)->find($user->getId());
+            $user = $this->entity_manager->getRepository(EProfilo::class)->find($user->getId());
         }
-        $reservation = $em->getRepository(EPrenotazione::class)->find($idreservation);
+        $reservation = $this->entity_manager->getRepository(EPrenotazione::class)->find($idreservation);
 
         $review= new ERecensione();
         $review->setCommento($comment);
         $review->setValutazione((int)$value);
         $review->setPrenotazione($reservation);
 
-        $em->persist($review);
-        $em->flush();
+        $this->entity_manager->persist($review);
+        $this->entity_manager->flush();
 
         $view = new VReview();
         $view->showReviewConfirmation($user);
-
-
-
-
-
     }
 }

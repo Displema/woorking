@@ -127,7 +127,7 @@
                         <div class="carousel-inner">
                             {% for photo in office.foto %}
                             <img src="/static/img/{{ photo.id }}" alt="Foto {{ loop.index }} dell'ufficio"
-                                 class="carousel-item {% if loop.index == 0 %} active{% endif %}" />
+                                 class="carousel-item {% if loop.index == 1 %} active{% endif %}" />
                             {% endfor %}
                         </div>
                         <button class="carousel-control carousel-control-prev" type="button"
@@ -250,8 +250,11 @@
 
     document.getElementById('confirmApprove').addEventListener('click', () => {
         modalApprove.hide();
-        alert('Ufficio approvato!');
-        // Qui inserisci la chiamata AJAX o redirect
+        const approveForm = document.createElement("form")
+        approveForm.setAttribute("action", "/admin/offices/pending/{{ office.id }}/approve")
+        approveForm.setAttribute("method", "POST")
+        document.body.appendChild(approveForm);
+        approveForm.submit()
     });
 
     document.getElementById('rejectForm').addEventListener('submit', (e) => {
@@ -262,7 +265,17 @@
             return;
         }
         modalReject.hide();
-        alert('Ufficio rifiutato con motivazione:\n' + reason);
+        const rejectForm = document.createElement("form")
+        const reasonInput = document.createElement("input")
+        reasonInput.setAttribute("type", "text")
+        reasonInput.setAttribute("name", "reason")
+        reasonInput.setAttribute("value", reason)
+        rejectForm.append(reasonInput)
+        rejectForm.setAttribute("action", "/admin/offices/pending/{{ office.id }}/reject")
+        rejectForm.setAttribute("method", "POST")
+        document.body.appendChild(rejectForm);
+        rejectForm.submit()
+
         // Qui inserisci invio dati via AJAX o form submit
     });
 </script>

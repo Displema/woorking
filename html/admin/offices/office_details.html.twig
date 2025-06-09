@@ -116,7 +116,7 @@
                                     </div>
                                     <div class="carousel-inner">
                                         {% for photo in office.foto %}
-                                        <div class="carousel-item active">
+                                        <div class="carousel-item {% if loop.index == 1 %} active {% endif %}">
                                             <img
                                                     class="d-block w-100"
                                                     alt="Ufficio {{ office.title }} foto {{ loop.index }}"
@@ -257,7 +257,7 @@
                                 <a href="#" class="btn w-100" data-bs-dismiss="modal"> Torna indietro </a>
                             </div>
                             <div class="col">
-                                <form action="/office/{{ office.id }}/delete" method="POST" id="deleteForm">
+                                <form action="/offices/{{ office.id }}/delete" method="POST" id="deleteForm">
                                     <input type="hidden" name="shouldRefund" id="shouldRefundHidden" value="0">
                                 </form>
                                 <a href="#" id="submitAnchor" class="btn btn-danger w-100" data-bs-dismiss="modal">

@@ -82,14 +82,14 @@ class COffice
     }
 
     public function confirmReservation($date, $idOffice, $fascia)
-    {   $date_Parsed= new DateTime($date);
+    {
         $FasciaEnum=FasciaOrariaEnum::from($fascia);
         $em = $this->entity_manager;
         $em->beginTransaction();
         try {
             // With PessimisticWrite the first one that gets access to the office locks it until it's finished
             $office = $em->getRepository(EUfficio::class)->find($idOffice, LockMode::PESSIMISTIC_WRITE);
-            $reservationCount = $em->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($office, $date_Parsed, $FasciaEnum);
+            $reservationCount = $em->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($office, $date, $FasciaEnum);
 
             $placesAvaible = $office->getNumeroPostazioni();
 
@@ -110,7 +110,7 @@ class COffice
                 exit;
             }
             $reservation = new EPrenotazione();
-            $reservation->setData($date_Parsed);
+            $reservation->setData(new DateTime($date));
             $reservation->setUfficio($office);
             $reservation->setFascia($FasciaEnum);
             $reservation->setUtente($user);
@@ -159,9 +159,7 @@ class COffice
             return;
         }
 
-
-        $fascia = FasciaOrariaEnum::tryFrom($slot);
-
+        $fascia = $slot;
         $offices= $repo->findbythree($place, $date_parsed, $fascia);
 
         $officewithphoto=[];
@@ -194,7 +192,6 @@ class COffice
             } else {
                 continue;
             }
-
             $officewithphoto[] = [
                 'office' => $office,
                 'photo' => $photoUrl,

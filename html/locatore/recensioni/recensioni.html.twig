@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Recensioni - Coworking</title>
+
+    <!-- Tabler Core CSS -->
+    <link href="https://unpkg.com/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet"/>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- CSS personalizzato -->
+    <link rel="stylesheet" href="/html/locatore/recensioni/recensioni.css" />
+</head>
+
+<body>
+<!-- Creo la navbar -->
+{% include '/locatore/navbar/NavBarLocatore.html.twig' %}
+
+<!-- Main Content -->
+<div class="page-wrapper main-content">
+    <div class="container-xl mt-5">
+        <h1 class="mb-3">Recensioni Ricevute</h1>
+        <p class="text-muted mb-4">Consulta le recensioni lasciate dai tuoi utenti per migliorare i servizi offerti.</p>
+
+        <div class="recensioni-list">
+
+            {% for recensione in recensioni %}
+                <div class="card mb-4 shadow-sm rounded-3 p-3">
+                    <h5 class="text-primary">
+                        {{ recensione.prenotazione.utente.name }} {{ recensione.prenotazione.utente.surname }}
+                    </h5>
+                    <p class="mb-2">
+                        {% for i in 1..5 %}
+                            {% if i <= recensione.valutazione %}
+                                <i class="fas fa-star text-warning"></i>
+                            {% else %}
+                                <i class="far fa-star text-warning"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </p>
+                    <p>{{ recensione.commento }}</p>
+                </div>
+            {% else %}
+                <p class="text-center text-muted">Nessuna recensione disponibile.</p>
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+
+<!-- Tabler Core JS -->
+<script src="https://unpkg.com/@tabler/core@latest/dist/js/tabler.min.js"></script>
+
+</body>
+</html>

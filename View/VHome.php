@@ -7,7 +7,7 @@ use Twig\Loader\FilesystemLoader;
 class VHome extends BaseView
 {
 
-    public function index($login,$user): void
+    public function index($login, $user): void
     {
         $this->twig->display('./home/homeaccess.html.twig', ['isloggedin' => $login,'user'=>$user]);
     }
@@ -17,9 +17,10 @@ class VHome extends BaseView
         $this->twig->display('./login/profile.html.twig', ['user'=>$user]);
     }
 
-    public function printJson($data) {
+    public function printJson($data)
+    {
         header('Content-Type: application/json');
-        echo json_encode($data);
+        echo json_encode($data, JSON_THROW_ON_ERROR);
         exit;
     }
 }

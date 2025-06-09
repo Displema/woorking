@@ -10,25 +10,15 @@ use View\VHome;
 use View\VLocatore;
 use View\VRedirect;
 
-class CHome
+class CHome extends BaseController
 {
-    //private EntityManager $entity_manager;
-    public Auth $auth_manager;
-
-    public function __construct()
-    {
-        $this->auth_manager = getAuth();
-
-    }
-
     public function index(): void
     {
 
         $viewUser = new VHome();
         $viewLandlord = new VLocatore();
-
+        // TODO: aggiornare con nuovo modo per verificare se user è loggato
         if (USession::isSetSessionElement('user')) {
-
             $login="isLoggedIn";
             $user = USession::getSessionElement('user');
 
@@ -36,8 +26,8 @@ class CHome
             $userid = $this->auth_manager->getUserId();
 
             if ($this->auth_manager->admin()->doesUserHaveRole($userid, Roles::LANDLORD)) {
-              $viewLandlord->goHome();
-            return;
+                $viewLandlord->goHome();
+                return;
             }
         } else {
             $login="NotLoggedIn";

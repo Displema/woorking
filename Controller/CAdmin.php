@@ -12,30 +12,35 @@ use Model\EUfficio;
 use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
 use TechnicalServiceLayer\Repository\EUfficioRepository;
 use TechnicalServiceLayer\Repository\UserRepository;
+use TechnicalServiceLayer\Roles\Roles;
 use View\VAdmin;
+use View\VRedirect;
 use View\VStatus;
 
-class CAdmin
+class CAdmin extends BaseController
 {
-    public Auth $auth_manager;
-    private EntityManager $entity_manager;
-
-    public function __construct()
+    public function index(): void
     {
-        $this->entity_manager = getEntityManager();
-        $this->auth_manager = getAuth();
-    }
+        if (!$this->auth_manager->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            return;
+        }
 
-    public function home(): void
-    {
+        $userId = $this->auth_manager->getUserId();
+
+        if (!$this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
+            $view = new VStatus();
+            $view->showStatus(403);
+            return;
+        }
         $view = new VAdmin();
 
         /** @var EUfficioRepository $officeRepo */
         $officeRepo = $this->entity_manager->getRepository(EUfficio::class);
         $activeOffices = $officeRepo->getOfficesByState(StatoUfficioEnum::Approvato);
         $pendingOffices = $officeRepo->getOfficesByState(StatoUfficioEnum::InAttesa);
-        $view->showHome($activeOffices, $pendingOffices);
+        $rejectedOffices = $officeRepo->getOfficesByState(StatoUfficioEnum::NonApprovato);
+        $view->showHome($activeOffices, $pendingOffices, $rejectedOffices);
     }
-
-
 }
