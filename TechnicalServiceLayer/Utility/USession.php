@@ -46,7 +46,7 @@ class USession
     /**
      * unset of an element of _SESSION superglobal
      */
-    public static function elementUnset($id)
+    public static function unsetElement($id)
     {
         unset($_SESSION[$id]);
     }
@@ -74,7 +74,7 @@ class USession
     /**
      * @throws UserNotAuthenticatedException if the session doesn't contain a valid user
      */
-    public static function requireUser(): EProfilo
+    public static function getUser(): EProfilo
     {
         if (!self::isSetSessionElement('user')) {
             throw new UserNotAuthenticatedException();

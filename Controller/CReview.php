@@ -23,7 +23,7 @@ class CReview extends BaseController
 
         /** @var ERecensioneRepository $repo */
         $repo = $this->entity_manager->getRepository(ERecensione::class);
-        $user = USession::requireUser();
+        $user = USession::getUser();
         $userId = $user->getId();
         /** @var EUfficioRepository $officeRepo */
         $officeRepo = $this->entity_manager->getRepository(EUfficio::class);

@@ -25,6 +25,4 @@ class UserRepository
     {
         return $this->pdoDatabase->select("SELECT email FROM users WHERE id = :id", [":id" => $id]);
     }
-
-
 }

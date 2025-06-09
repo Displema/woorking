@@ -14,39 +14,42 @@ class CHome extends BaseController
 {
     public function index(): void
     {
-        $viewUser = new VHome();
-        $viewLandlord = new VLocatore();
 
-        if (!$this->auth_manager->isLoggedIn()) {
-            $viewUser->index("NotLoggedIn", null);
+        if ($this->isLoggedIn()) {
+            $user = USession::getUser();
+            $userId = $user->getId();
+        } else {
+            $user = null;
+            $userId = null;
+        }
+
+
+        if ($userId && $this->doesUserHaveRole(Roles::LANDLORD)) {
+            $view = new VLocatore();
+            $view->index();
             return;
         }
 
-        $userid = $this->auth_manager->getUserId();
-
-        if ($this->auth_manager->admin()->doesUserHaveRole($userid, Roles::LANDLORD)) {
-            $viewLandlord->goHome();
-            return;
-        }
-
-        $user = USession::getSessionElement('user'); // oppure caricalo dal DB
-        $viewUser->index("isLoggedIn", $user);
+        $view = new VHome();
+        $view->index($user);
     }
 
-
-    public function indexRedirect(): void
+    public function redirect(): void
     {
         $view = new VRedirect();
         $view->redirect('/home');
     }
 
-    public function showprofile()
+    public function profile(): void
     {
-        try {
-            $user=USession::requireUser();
-        } catch (UserNotAuthenticatedException) {
-            $view = new VRedirect();
-            $view->redirect('/login');
+        $this->requireLogin();
+
+        $user = USession::getUser();
+
+        if ($this->doesUserHaveRole(Roles::LANDLORD)) {
+            $view = new VLocatore();
+            $view->goProfile($user);
+            return;
         }
 
         $view = new VHome();

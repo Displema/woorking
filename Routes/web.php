@@ -6,7 +6,7 @@ use Core\Router;
 
 $router = new Router();
 
-$router->get('/', 'CHome@indexRedirect');
+$router->get('/', 'CHome@redirect');
 
 // Auth routes
 $router->get('/login', 'CAuth@showLoginForm');
@@ -26,13 +26,13 @@ $router->get('/admin/offices/pending/{id}', 'COffice@showPendingDetails');
 $router->get('/reports', 'CReport@index');
 $router->get('/reports/{id}', 'CReport@show');
 
-$router->get('/profile', 'CHome@showprofile');
+$router->get('/profile', 'CHome@profile');
 
 //route to manage the offices
 $router->get('/uffici', 'COffice@showOfficesLocatore');
 
 //route to print photos
-$router->get('/foto/{id}', 'CPhoto@serveImage');
+//$router->get('/foto/{id}', 'CPhoto@serveImage');
 
 //route to manage reservations
 $router->get('/prenotazioni', 'COffice@showPrenotazioni');
@@ -44,7 +44,7 @@ $router->get('/aggiunta', 'COffice@addOffice');
 $router->post('/aggiuntaUfficio', 'COffice@addOfficeInDB');
 
 //route to landlord's profile
-$router->get('/profilo', 'CLocatore@profilo');
+//$router->get('/profilo', 'CLocatore@profilo');
 
 //route to reviews
 $router->get('/recensioni', 'CReview@getReviews');

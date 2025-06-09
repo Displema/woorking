@@ -11,16 +11,8 @@
 </head>
 <body>
 
-<!-- NAVBAR -->
-{% if isloggedin == 'isLoggedIn' %}
 
-    {% include 'navbar/navbar.html.twig' %}
-
-{% else %}
-
-    {% include 'navbar/navbar1.html.twig' %}
-
-{%  endif %}
+{% include 'navbar/navbar.html.twig' %}
 
 <!-- CONTENUTO PRINCIPALE -->
 <div class="container my-5 dettagli-container">

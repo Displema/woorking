@@ -19,15 +19,7 @@
 
 <!-- NAVBAR -->
 
-{% if isloggedin == 'isLoggedIn' %}
-
-    {% include 'navbar/navbar.html.twig' %}
-
-{% else %}
-
-    {% include 'navbar/navbar1.html.twig' %}
-
-{%  endif %}
+{% include 'navbar/navbar.html.twig' %}
 
 <!-- RISULTATI -->
 <div class="container-fluid text-center py-5 bg-black text-white">
@@ -51,10 +43,10 @@
             <div class="ufficio-card d-flex flex-column flex-md-row mx-auto">
                 <img src="{{ office.photo }}" alt="Foto Ufficio" class="ufficio-img">
                 <div class="ufficio-info">
-                    <a href="/search/showoffice/detailsoffice/{{ office.office.id }}/{{ date }}/{{ fascia }}" class="btn-prenota"><i class="fa-solid fa-calendar-check"></i> Prenota</a>
+                    <a href="/search/showoffice/detailsoffice/{{ office.office.id }}/{{ fascia }}/{{ date }}" class="btn-prenota"><i class="fa-solid fa-calendar-check"></i> Prenota</a>
                     <h2>{{ office.office.titolo }}</h2>
                     <p><strong>Indirizzo: </strong>{{office.office.indirizzo}}</p>
-                    <p><strong>Posti disponibili: </strong>{{ office.office.numeropostazioni }} </p>
+                    <p><strong>Posti disponibili: </strong>{{ office.office.numeroPostazioni }} </p>
                     <div class="prezzo"> Prezzo : {{ office.office.prezzo }} euro al giorno</div>
                 </div>
             </div>

@@ -1,10 +1,9 @@
 <?php
 namespace TechnicalServiceLayer\Repository;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\Common\Collections\Collection;
-
+use Exception;
+use Model\ERecensione;
 
 class ERecensioneRepository extends EntityRepository
 {
@@ -33,7 +32,7 @@ class ERecensioneRepository extends EntityRepository
         $qb = $this->getEntityManager()->createQueryBuilder();
 
         $qb->select('r')
-            ->from('Model\ERecensione', 'r')
+            ->from(ERecensione::class, 'r')
             ->join('r.prenotazione', 'p')
             ->join('p.ufficio', 'u')
             ->join('u.locatore', 'l')
@@ -42,7 +41,6 @@ class ERecensioneRepository extends EntityRepository
             ->setParameter('idLocatore', $idLocatore)
             ->setMaxResults(5);
 
-        $recensioni = $qb->getQuery()->getResult();
-        return $recensioni;
+        return $qb->getQuery()->getResult();
     }
 }

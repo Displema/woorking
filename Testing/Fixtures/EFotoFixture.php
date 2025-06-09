@@ -21,7 +21,7 @@ class EFotoFixture extends AbstractFixture implements DependentFixtureInterface
 
         for ($i = 0; $i < 10; $i++) {
             $ufficio = $this->getReference("EUfficio_" . $i, EUfficio::class);
-            for ($j = 0; $j < 5; $j++) {
+            for ($j = 0; $j < 3; $j++) {
                 $url = $faker->imageUrl(width: 800, height: 600);
 
                 $content = file_get_contents($url);
@@ -35,7 +35,6 @@ class EFotoFixture extends AbstractFixture implements DependentFixtureInterface
                     ->setMimeType($mime_type)
                     ->setSize($size);
                 $manager->persist($foto);
-                //$this->addReference('EFoto_' . $i . '_' . $j, $foto);
             }
         }
         $manager->flush();

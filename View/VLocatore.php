@@ -18,7 +18,7 @@ class VLocatore
     }
 
     //rendering home
-    public function goHome() {
+    public function index() {
         $twig = new \Twig\Environment($this->loader);
         echo $twig->render('/locatore/homeLocatore/homeLocatore.html.twig', [
             'messaggio' => 'Questa è la pagina principale'

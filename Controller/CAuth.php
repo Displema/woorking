@@ -29,22 +29,22 @@ class CAuth extends BaseController
 {
     public function showLoginForm(): void
     {
-        $currentUser = USession::isSetSessionElement("user");
-        if ($currentUser) {
+        if ($this->isLoggedIn()) {
             $redirectView = new VRedirect();
             $redirectView->redirect("/home");
+            return;
         }
-
+        
         $authView = new VAuth();
         $authView->showLoginForm();
     }
 
     public function showRegisterForm(): void
     {
-        $currentUser = USession::isSetSessionElement("user");
-        if ($currentUser) {
+        if ($this->auth_manager->isLoggedIn()) {
             $redirectView = new VRedirect();
             $redirectView->redirect("/home");
+            return;
         }
 
         $authView = new VAuth();
@@ -121,6 +121,8 @@ class CAuth extends BaseController
             die('Unknown id');
         }
 
+        $this->auth_manager->admin()->logInAsUserById($userId);
+
         $view = new VRedirect();
         $view->redirect("/home");
     }
@@ -175,7 +177,7 @@ class CAuth extends BaseController
             return;
         }
 
-        $user = USession::requireUser();
+        $user = USession::getUser();
 
         $view = new VResource();
         $view->printJson($user);
@@ -188,6 +190,7 @@ class CAuth extends BaseController
     {
         USession::destroy();
         $this->auth_manager->logout();
+        USession::unsetElement('user');
         $view = new VRedirect();
         $view->redirect("/home");
     }
@@ -195,7 +198,7 @@ class CAuth extends BaseController
     public function modifyUser(): void
     {
         try {
-            $sessionUser = USession::requireUser();
+            $sessionUser = USession::getUser();
             // Forza il reattacco all'EntityManager (managed entity)
             $user = $this->entity_manager->getRepository(get_class($sessionUser))->find($sessionUser->getId());
         } catch (UserNotAuthenticatedException $e) {

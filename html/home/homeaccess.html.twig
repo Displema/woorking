@@ -19,15 +19,7 @@
 
 
 <!-- NAVBAR -->
-{% if isloggedin == 'isLoggedIn' %}
-
 {% include 'navbar/navbar.html.twig' %}
-
-{% else %}
-
-{% include 'navbar/navbar1.html.twig' %}
-
-{%  endif %}
 
 
 
@@ -51,7 +43,7 @@
 
             <div class="col-md-3">
                 <label class="form-label">Data</label>
-                <input type="date" name="date" class="form-control" required>
+                <input type="date" name="date" class="form-control" required min="{{ "now"|date_modify("+1 day")|date('Y-m-d') }}">
             </div>
 
             <div class="col-md-3">

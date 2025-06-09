@@ -1,6 +1,7 @@
 <?php
 namespace Controller;
 
+use Controller;
 use DateTime;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
@@ -18,6 +19,7 @@ use Model\EServiziAggiuntivi;
 use TechnicalServiceLayer\Repository\EFotoRepository;
 use TechnicalServiceLayer\Repository\EIntervalloDisponibilitaRepository;
 use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
+use TechnicalServiceLayer\Repository\ERecensioneRepository;
 use TechnicalServiceLayer\Repository\EServiziAggiuntiviRepository;
 use TechnicalServiceLayer\Repository\UserRepository;
 use TechnicalServiceLayer\Roles\Roles;
@@ -29,6 +31,7 @@ use Model\ERimborso;
 use Model\ESegnalazione;
 use Model\EUfficio;
 
+use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
 use TechnicalServiceLayer\Repository\EUfficioRepository;
 use TechnicalServiceLayer\Utility\USession;
 use View\VReservation;
@@ -38,25 +41,23 @@ use View\VStatus;
 
 class COffice extends BaseController
 {
-
-    public function show($id, $date, $fascia): void
+    public function show(string $id, string $fascia, string $date): void
     {
-        $officeDetails=[];
-        $photoUrls=[];
-        $login ='';
-        $user ='';
-        $office = $this->entity_manager->getRepository(EUfficio::class)->find($id);
+        if ($this->isLoggedIn()) {
+            $user = USession::getUser();
+        } else {
+            $user = null;
+        }
 
+        $office = $this->entity_manager->getRepository(EUfficio::class)->find($id);
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
             return;
         }
-        if (USession::isSetSessionElement('user')) {
-            $utente = USession::requireUser();
-            $login="isLoggedIn";
-            $user = $this->entity_manager->getRepository(EProfilo::class)->find($utente->getId());
-        }
+
+        $officeDetails=[];
+        $photoUrls=[];
 
         $photosRepo = $this->entity_manager->getRepository(EFoto::class);
         $photos = $photosRepo->findBy(['ufficio' => $office->getId()]);
@@ -67,117 +68,73 @@ class COffice extends BaseController
         }
 
         $officeDetails[]= [
-        'ufficio' => $office,
-        'foto' => $photoUrls
+            'ufficio' => $office,
+            'foto' => $photoUrls
         ];
         $view = new VOffice();
-        $view->showOfficeDetails($officeDetails, $date, $fascia, $user, $login);
+        $view->showOfficeDetails($officeDetails, $date, $fascia, $user);
     }
 
-    public function confirmReservation($date, $idOffice, $fascia)
-    {
-        $FasciaEnum=FasciaOrariaEnum::from($fascia);
-        $em = $this->entity_manager;
-        $em->beginTransaction();
-        try {
-            // With PessimisticWrite the first one that gets access to the office locks it until it's finished
-            $office = $em->getRepository(EUfficio::class)->find($idOffice, LockMode::PESSIMISTIC_WRITE);
-            $reservationCount = $em->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($office, $date, $FasciaEnum);
 
-            $placesAvaible = $office->getNumeroPostazioni();
-
-            if (USession::isSetSessionElement('user')) {
-                $utente = USession::requireUser();
-                $login="isLoggedIn";
-                $user = $em->getRepository(EProfilo::class)->find($utente->getId());
-            } else {
-                $view = new VRedirect();
-                $view->redirect('/login');
-                exit;
-            }
-            //$utente=$em->getRepository(EProfilo::class)->find($uuid);
-
-            if ($reservationCount >= $placesAvaible) {
-                $view  = new VReservation();
-                $view ->showAlreadyBookedPage();
-                exit;
-            }
-            $reservation = new EPrenotazione();
-            $reservation->setData(new DateTime($date));
-            $reservation->setUfficio($office);
-            $reservation->setFascia($FasciaEnum);
-            $reservation->setUtente($user);
-
-            $em->persist($reservation);
-            $em->flush();
-            $em->commit();
-
-            $view = new VOffice();
-            $view->showconfirmedpage1($user, $login);
-        } catch (Exception $e) {
-            $em->rollback();
-            echo $e->getMessage();
-        }
-    }
 
     public function ShowReview($id)
     {
-        $em = $this->entity_manager;
-        $review = [];
-        $reporec=$em->getRepository(ERecensione::class);
-        $review = $reporec->getRecensioneByUfficio($id);
-        $office = $em->getRepository(EUfficio::class)->find($id);
-        if (USession::isSetSessionElement('user')) {
-            $utente = USession::requireUser();
-            $login="isLoggedIn";
-            $user = $em->getRepository(EProfilo::class)->find($utente->getId());
+        if ($this->isLoggedIn()) {
+            $user = USession::getUser();
+        } else {
+            $user = null;
         }
 
+        $office = $this->entity_manager->getRepository(EUfficio::class)->find($id);
+        if (!$office) {
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
+        }
+
+        /** @var ERecensioneRepository $repo */
+        $repo=$this->entity_manager->getRepository(ERecensione::class);
+        $review = $repo->getRecensioneByUfficio($id);
 
         $view = new VReview();
-        $view->showAllReviews($review, $office, $user, $login);
+        $view->showAllReviews($review, $office, $user);
     }
 
     public function search(string $query, string $date, string $slot): void
     {
+        if ($this->isLoggedIn()) {
+            $user = USession::getUser();
+        } else {
+            $user = null;
+        }
+
         /** @var EUfficioRepository $repo */
         $repo=$this->entity_manager->getRepository(EUfficio::class);
-        $login='';
-        $user='';
+
         $place = $query;
         try {
             $date_parsed = new DateTime($date);
-        } catch (\Exception $e) {
+        } catch (Exception) {
             $view = new VStatus();
             $view->showStatus(400);
             return;
         }
 
-        $fascia = FasciaOrariaEnum::tryFrom($slot);
-        if (!$fascia) {
-            $view = new VStatus();
-            $view->showStatus(400);
-            return;
-        }
+        $fascia = $slot;
         $offices= $repo->findbythree($place, $date_parsed, $fascia);
 
         $officewithphoto=[];
 
-        /** @var EPrenotazioneRepository $reservationRepo */
         $reservationRepo=$this->entity_manager->getRepository(EPrenotazione::class);
 
-        if (USession::isSetSessionElement('user')) {
-            $login="isLoggedIn";
-            $utente = USession::requireUser();
 
-            $user = $this->entity_manager->getRepository(EProfilo::class)->find($utente->getId());
-        }
         $photoEntity = [];
         foreach ($offices as $office) {
             if ($office->isHidden()) {
                 continue;
             }
-            $reservationcount=$reservationRepo->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $fascia);
+            $fasciaEnum = FasciaOrariaEnum::tryFrom($fascia);
+            $reservationcount=$reservationRepo->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $fasciaEnum);
             $placeavaible= $office->getNumeroPostazioni();
             if ($reservationcount<$placeavaible) {
                 $photoEntity = $this->entity_manager->getRepository(\Model\EFoto::class)->findOneBy(['ufficio' => $office->getId()]);
@@ -200,26 +157,68 @@ class COffice extends BaseController
         }
 
         $view= new VOffice();
-        $view->showOfficeSearch($officewithphoto, $date, $fascia, $user, $login);
+        $view->showOfficeSearch($officewithphoto, $date, $slot, $user);
     }
+    public function confirmReservation($date, $idOffice, $fascia)
+    {
+        $this->requireLogin();
+        if ($this->doesUserHaveRole(Roles::LANDLORD)) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
 
+        $user = USession::getUser();
+
+        $date_parsed = new DateTime($date);
+        $FasciaEnum=FasciaOrariaEnum::from($fascia);
+
+        $this->entity_manager->beginTransaction();
+        try {
+            // With PessimisticWrite the first one that gets access to the office locks it until it's finished
+            //$office = $this->entity_manager->getRepository(EUfficio::class)->find($idOffice, LockMode::PESSIMISTIC_WRITE);
+
+            $office = $this->entity_manager->find(EUfficio::class, $idOffice, LockMode::PESSIMISTIC_WRITE);
+
+            if (!$office) {
+                $this->entity_manager->rollback();
+                $view = new VStatus();
+                $view->showStatus(404);
+                return;
+            }
+
+            $reservationCount = $this->entity_manager->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $FasciaEnum);
+            $placesAvaible = $office->getNumeroPostazioni();
+
+
+
+            if ($reservationCount >= $placesAvaible) {
+                $view  = new VReservation();
+                $view ->showAlreadyBookedPage($user);
+                exit;
+            }
+            $reservation = new EPrenotazione();
+            $reservation->setData(new DateTime($date));
+            $reservation->setUfficio($office);
+            $reservation->setFascia($FasciaEnum);
+            $reservation->setUtente($user);
+
+            $this->entity_manager->persist($reservation);
+            $this->entity_manager->flush();
+            $this->entity_manager->commit();
+
+            $view = new VOffice();
+            $view->showconfirmedpage1($user);
+        } catch (Exception $e) {
+            $this->entity_manager->rollback();
+            echo $e->getMessage();
+        }
+    }
 
 
     public function rejectPending(string $id, string $reason): void
     {
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
-
-        $userId = $this->auth_manager->getUserId();
-
-        if (!$this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
-            $view = new VStatus();
-            $view->showStatus(403);
-            return;
-        }
+        $this->requireRole(Roles::ADMIN);
 
         $repo = $this->entity_manager->getRepository(EUfficio::class);
         $office = $repo->find($id);
@@ -229,14 +228,13 @@ class COffice extends BaseController
             return;
         }
 
-        if (!($office->getStato() === StatoUfficioEnum::InAttesa)) {
+        if (!(StatoUfficioEnum::tryFrom(!$office->getStato()) === StatoUfficioEnum::InAttesa)) {
             $view = new VStatus();
             $view->showStatus(400);
             return;
         }
 
-        $office->setMotivoRifiuto($reason);
-        $office->setDataRifiuto(new DateTime());
+        $office->setReason($reason);
         $office->setStato(StatoUfficioEnum::NonApprovato);
 
         try {
@@ -254,36 +252,24 @@ class COffice extends BaseController
 
     public function confirmPending(string $id): void
     {
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
-
-        $userId = $this->auth_manager->getUserId();
-
-        if (!$this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
-            $view = new VStatus();
-            $view->showStatus(403);
-            return;
-        }
+        $this->requireRole(Roles::ADMIN);
 
         $repo = $this->entity_manager->getRepository(EUfficio::class);
         $office = $repo->find($id);
+
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
             return;
         }
 
-        if (!($office->getStato() === StatoUfficioEnum::InAttesa)) {
+        if (!(StatoUfficioEnum::tryFrom(!$office->getStato()) === StatoUfficioEnum::InAttesa)) {
             $view = new VStatus();
             $view->showStatus(400);
             return;
         }
 
         $office->setStato(StatoUfficioEnum::Approvato);
-        $office->setDataRifiuto(new DateTime());
         $this->entity_manager->persist($office);
         $this->entity_manager->flush();
 
@@ -293,8 +279,11 @@ class COffice extends BaseController
 
     public function deleteOffice(string $id, string $shouldRefund = '0'): void
     {
+        $this->requireRoles([Roles::ADMIN, Roles::LANDLORD]);
+
         /** @var EUfficioRepository $officeRepo */
         $officeRepo = $this->entity_manager->getRepository(EUfficio::class);
+        /** @var EUfficio $office */
         $office = $officeRepo->findOneBy(['id'=>$id]);
 
         if (!$office) {
@@ -309,23 +298,16 @@ class COffice extends BaseController
             return;
         }
 
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
-
-        $userId = $this->auth_manager->getUserId();
-        $currentUser = USession::getSessionElement('user');
-        if (!$this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)
-            && !$currentUser->getId()!==$office->getId()) {
-            $view = new VStatus();
-            $view->showStatus(403);
-            return;
+        if ($this->doesUserHaveRole(Roles::LANDLORD)) {
+            $user = USession::getUser();
+            if ($office->getLocatore()->getId() !== $user->getId()) {
+                $view = new VStatus();
+                $view->showStatus(403);
+                return;
+            }
         }
 
         $office->setIsHidden(true);
-        $office->setDataCancellazione(new DateTime());
 
         $reservations = $officeRepo->getActiveReservations($office);
         if ($shouldRefund && !$reservations->isEmpty()) {
@@ -368,261 +350,205 @@ class COffice extends BaseController
     }
 
     //search all bookings of the landlord's offices
-    public function showPrenotazioni()
+    public function showPrenotazioni(): void
     {
+        $this->requireLogin();
 
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
-
-        $user = USession::requireUser();
+        $user = USession::getUser();
         $id = $user->getId();
+        $oggi = new \DateTime();
 
-        if ($this->auth_manager->admin()->doesUserHaveRole($id, Roles::LANDLORD)) {
-            $oggi = new \DateTime();
+        $UfficiCompletiPassati = [];
+        $UfficiCompletiPresenti = [];
 
-            $UfficiCompletiPassati = [];
-            $UfficiCompletiPresenti = [];
+        // Repositories
+        $userRepo = UserRepository::getInstance();
+        $uffici = $this->entity_manager->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
+        $fotoRepo = $this->entity_manager->getRepository(EFoto::class);
+        $prenotazioniRepo = $this->entity_manager->getRepository(EPrenotazione::class);
+        $intervalliRepo = $this->entity_manager->getRepository(EIntervalloDisponibilita::class);
 
-            // Repositories
-            $userRepo = UserRepository::getInstance();
-            $uffici = $this->entity_manager->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
-            $fotoRepo = $this->entity_manager->getRepository(Efoto::class);
-            $prenotazioniRepo = $this->entity_manager->getRepository(EPrenotazione::class);
-            $intervalliRepo = $this->entity_manager->getRepository(EIntervalloDisponibilita::class);
-            // TODO: tutti questi $fotoUrl $servijiObj andrebbero fatti dentro il template
-            try {
-                foreach ($uffici as $ufficio) {
-                    $prenotazioni = $prenotazioniRepo->getPrenotazioneByUfficio($ufficio);
-                    if (empty($prenotazioni)) {
-                        continue;
-                    }
+        try {
+            foreach ($uffici as $ufficio) {
+                $prenotazioni = $prenotazioniRepo->getPrenotazioneByUfficio($ufficio);
+                if (empty($prenotazioni)) {
+                    continue;
+                }
 
-                    $intervallo = $intervalliRepo->getIntervallobyOffice($ufficio);
-                    $foto = $fotoRepo->getFirstPhotoByOffice($ufficio);
-                    $fotoUrl = $foto ? '/static/img/' . $foto->getId() : null;
+                $intervallo = $intervalliRepo->getIntervallobyOffice($ufficio);
+                $foto = $fotoRepo->getFirstPhotoByOffice($ufficio);
+                $fotoUrl = $foto ? "/static/img/"  . $foto->getId() : null;
 
-                    $serviziObj = $ufficio->getServiziAggiuntivi();
-                    $servizi = [];
-                    foreach ($serviziObj as $s) {
-                        $servizi[] = $s->getNomeServizio();
-                    }
-                    $serviziStringa = implode(', ', $servizi);
+                $serviziObj = $ufficio->getServiziAggiuntivi();
+                $servizi = [];
+                foreach ($serviziObj as $s) {
+                    $servizi[] = $s->getNomeServizio();
+                }
+                $serviziStringa = implode(', ', $servizi);
 
-                    // Per ogni prenotazione creo un oggetto singolo da passare al template
-                    foreach ($prenotazioni as $prenotazione) {
-                        $data = $prenotazione->getData();
-                        $email = $userRepo->getEmailByUserId($prenotazione->getUtente()->getUserId())[0]['email'];
+                // Per ogni prenotazione creo un oggetto singolo da passare al template
+                foreach ($prenotazioni as $prenotazione) {
+                    $data = $prenotazione->getData();
+                    $email = $userRepo->getEmailByUserId($prenotazione->getUtente()->getUserId())[0]['email'];
 
-                        $elemento = [
-                            'ufficio' => $ufficio,
-                            'email' => $email,
-                            'foto' => $fotoUrl,
-                            'prenotazioni' => $prenotazione,
-                            'intervallo' => $intervallo,
-                            'servizio' => $serviziStringa
-                        ];
+                    $elemento = [
+                        'ufficio' => $ufficio,
+                        'email' => $email,
+                        'foto' => $fotoUrl,
+                        'prenotazioni' => $prenotazione,
+                        'intervallo' => $intervallo,
+                        'servizio' => $serviziStringa
+                    ];
 
-                        if ($data < $oggi) {
-                            $UfficiCompletiPassati[] = $elemento;
-                        } else {
-                            $UfficiCompletiPresenti[] = $elemento;
-                        }
+                    if ($data < $oggi) {
+                        $UfficiCompletiPassati[] = $elemento;
+                    } else {
+                        $UfficiCompletiPresenti[] = $elemento;
                     }
                 }
-            } catch (Exception $e) {
-                error_log("Errore nella gestione delle prenotazioni per ufficio: " . $e->getMessage());
             }
-
-            // Call the view
-            $view = new VOffice();
-            $view->searchReservations($UfficiCompletiPassati, $UfficiCompletiPresenti);
-        } else {
-            $view = new VRedirect();
-            $view->redirect('/login');
+        } catch (Exception $e) {
+            error_log("Errore nella gestione delle prenotazioni per ufficio: " . $e->getMessage());
         }
+
+        // Call the view
+        $view = new VOffice();
+        $view->searchReservations($UfficiCompletiPassati, $UfficiCompletiPresenti);
     }
-
-
 
     //show all lessor's offices
     public function showOfficesLocatore()
     {
+        $this->requireRole(Roles::LANDLORD);
 
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
-
-
-        $user = USession::requireUser();
+        $user = USession::getUser();
         $id = $user->getId();
+        $UfficiCompleti = [];
+        $em = getEntityManager();
 
-        if ($this->auth_manager->admin()->doesUserHaveRole($id, Roles::LANDLORD)) {
+        /** @var EUfficioRepository $uffici */
+        $uffici = $em->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
 
+        /** @var EFotoRepository $fotoRepo */
+        $fotoRepo = $em->getRepository(EFoto::class);
 
-            $UfficiCompleti = [];
+        /** @var EServiziAggiuntiviRepository $serviziRepo */
+        $serviziRepo = $em->getRepository(EServiziAggiuntivi::class);
 
-            /** @var EUfficioRepository $uffici */
-            $uffici = $this->entity_manager->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
+        /** @var EIntervalloDisponibilitaRepository $intervalliRepo */
+        $intervalliRepo = $em->getRepository(EIntervalloDisponibilita::class);
 
-            /** @var EFotoRepository $fotoRepo */
-            $fotoRepo = $this->entity_manager->getRepository(EFoto::class);
+        foreach ($uffici as $ufficio) {
+            $foto = $fotoRepo->getFirstPhotoByOffice($ufficio);
+            $fotoUrl = $foto ? "/static/img/" . $foto->getId() : null;
+            $servizi = $serviziRepo->getServiziAggiuntivibyOffice($ufficio);
+            $intervallo = $intervalliRepo->getIntervallobyOffice($ufficio);
 
-            /** @var EServiziAggiuntiviRepository $serviziRepo */
-            $serviziRepo = $this->entity_manager->getRepository(EServiziAggiuntivi::class);
-
-            /** @var EIntervalloDisponibilitaRepository $intervalliRepo */
-            $intervalliRepo = $this->entity_manager->getRepository(EIntervalloDisponibilita::class);
-
-            foreach ($uffici as $ufficio) {
-                $foto = $fotoRepo->getFirstPhotoByOffice($ufficio);
-                $fotoUrl = $foto ? '/static/img/' . $foto->getId() : null;
-                $servizi = $serviziRepo->getServiziAggiuntivibyOffice($ufficio);
-                $intervallo = $intervalliRepo->getIntervallobyOffice($ufficio);
-
-                $UfficiCompleti[] = [
-                    'ufficio' => $ufficio,
-                    'foto' => $fotoUrl,
-                    'servizi' => $servizi,
-                    'intervallo' => $intervallo
-                ];
-            }
-
-            $view = new VOffice();
-            $view->searchOfficeLocatore($UfficiCompleti);
-        } else {
-            $view = new VRedirect();
-            $view->redirect('/login');
+            $UfficiCompleti[] = [
+                'ufficio' => $ufficio,
+                'foto' => $fotoUrl,
+                'servizi' => $servizi,
+                'intervallo' => $intervallo
+            ];
         }
+
+        $view = new VOffice();
+        $view->searchOfficeLocatore($UfficiCompleti);
     }
 
-    public function addOffice()
+    public function addOffice(): void
     {
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
+        $this->requireRole(Roles::LANDLORD);
 
-
-        $user = USession::requireUser();
-        $id = $user->getId();
-
-        if ($this->auth_manager->admin()->doesUserHaveRole($id, Roles::LANDLORD)) {
-            $view = new VOffice();
-            $view->addOfficeV();
-        } else {
-            $view = new VRedirect();
-            $view->redirect('/login');
-        }
+        $view = new VOffice();
+        $view->addOfficeV();
     }
 
     public function addOfficeInDB()
+        // TODO: aggiungere parametri e non accesso diretto a POST
     {
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
+        $this->requireRole(Roles::LANDLORD);
 
 
-        $user = USession::requireUser();
-        $id = $user->getId();
+        $ufficio = new EUfficio();
+        $indirizzo = new Eindirizzo();
+        $intervallo = new EIntervalloDisponibilita();
 
-        if ($this->auth_manager->admin()->doesUserHaveRole($id, Roles::LANDLORD)) {
-            $ufficio = new EUfficio();
-            $indirizzo = new Eindirizzo();
-            $intervallo = new EIntervalloDisponibilita();
+        $indirizzo->setProvincia($_POST['provincia']);
+        $indirizzo->setCitta($_POST['comune']);
+        $indirizzo->setCap($_POST['cap']);
+        $indirizzo->setNumeroCivico($_POST['civico']);
+        $indirizzo->setVia($_POST['indirizzo']);
 
-            $indirizzo->setProvincia($_POST['provincia']);
-            $indirizzo->setCitta($_POST['comune']);
-            $indirizzo->setCap($_POST['cap']);
-            $indirizzo->setNumeroCivico($_POST['civico']);
-            $indirizzo->setVia($_POST['indirizzo']);
+        $ufficio->setTitolo($_POST['nome-ufficio']);
+        $ufficio->setPrezzo($_POST['prezzo']);
+        $ufficio->setDescrizione($_POST['descrizione']);
+        $ufficio->setNumeroPostazioni($_POST['postazioni']);
+        $ufficio->setSuperficie($_POST['superficie']);
+        $ufficio->setDataCaricamento(new \DateTime());
+        $ufficio->setStato(StatoUfficioEnum::InAttesa);
+        $ufficio->setIndirizzo($indirizzo);
 
-            $ufficio->setTitolo($_POST['nome-ufficio']);
-            $ufficio->setPrezzo($_POST['prezzo']);
-            $ufficio->setDescrizione($_POST['descrizione']);
-            $ufficio->setNumeroPostazioni($_POST['postazioni']);
-            $ufficio->setSuperficie($_POST['superficie']);
-            $ufficio->setDataCaricamento(new \DateTime());
-            $ufficio->setStato(StatoUfficioEnum::InAttesa);
-            $ufficio->setIndirizzo($indirizzo);
+        $intervallo->setDataInizio(new \DateTime($_POST['data_inizio']));
+        $intervallo->setDataFine(new \DateTime($_POST['data_fine']));
+        $intervallo->setFascia(FasciaOrariaEnum::from($_POST['fascia']));
+        $intervallo->setUfficio($ufficio);
 
-            $intervallo->setDataInizio(new \DateTime($_POST['data_inizio']));
-            $intervallo->setDataFine(new \DateTime($_POST['data_fine']));
-            $intervallo->setFascia(FasciaOrariaEnum::from($_POST['fascia']));
-            $intervallo->setUfficio($ufficio);
+        $this->entity_manager->persist($indirizzo);
+        $this->entity_manager->persist($ufficio);
+        $this->entity_manager->persist($intervallo);
+        $this->entity_manager->flush();
 
-            $this->entity_manager->persist($indirizzo);
-            $this->entity_manager->persist($ufficio);
-            $this->entity_manager->persist($intervallo);
-            $this->entity_manager->flush();
+        // Photos
+        if (!empty($_FILES['foto']) && isset($_FILES['foto']['tmp_name'])) {
+            foreach ($_FILES['foto']['tmp_name'] as $key => $tmpName) {
+                if (is_uploaded_file($tmpName)) {
+                    $content = file_get_contents($tmpName);
+                    $mimeType = $_FILES['foto']['type'][$key];
+                    $size = $_FILES['foto']['size'][$key];
 
-            // Photos
-            if (!empty($_FILES['foto']) && isset($_FILES['foto']['tmp_name'])) {
-                foreach ($_FILES['foto']['tmp_name'] as $key => $tmpName) {
-                    if (is_uploaded_file($tmpName)) {
-                        $content = file_get_contents($tmpName);
-                        $mimeType = $_FILES['foto']['type'][$key];
-                        $size = $_FILES['foto']['size'][$key];
+                    $foto = new EFoto();
+                    $foto->setContent($content);
+                    $foto->setMimeType($mimeType);
+                    $foto->setSize($size);
+                    $foto->setUfficio($ufficio);
 
-                        $foto = new EFoto();
-                        $foto->setContent($content);
-                        $foto->setMimeType($mimeType);
-                        $foto->setSize($size);
-                        $foto->setUfficio($ufficio);
-
-                        $this->entity_manager->persist($foto);
-                    }
-                }
-                //Salva tutte le foto in una volta sola
-                $this->entity_manager->flush();
-            }
-
-            // Prendo i servizi dalle checkbox
-            var_dump($_POST['servizi']);
-            $listaServizi = $_POST['servizi'] ?? [];
-
-            // Se è stato compilato "altro", aggiungo quel servizio
-            if (!empty($_POST['altro-servizio'])) {
-                $nomeAltro = trim($_POST['altro-servizio']);
-                if ($nomeAltro !== '') {
-                    $listaServizi[] = $nomeAltro;
+                    $this->entity_manager->persist($foto);
                 }
             }
-
-            // Salvo i servizi nel DB
-            foreach ($listaServizi as $nomeServizio) {
-                $servizio = new EServiziAggiuntivi();
-                $servizio->setNomeServizio($nomeServizio);
-                $servizio->setUfficio($ufficio);
-                $this->entity_manager->persist($servizio);
-            }
+            //Salva tutte le foto in una volta sola
             $this->entity_manager->flush();
-            header('Location: /uffici');
-            exit;
-        } else {
-            $view = new VRedirect();
-            $view->redirect("/login");
         }
+
+        // Prendo i servizi dalle checkbox
+        var_dump($_POST['servizi']);
+        $listaServizi = $_POST['servizi'] ?? [];
+
+        // Se è stato compilato "altro", aggiungo quel servizio
+        if (!empty($_POST['altro-servizio'])) {
+            $nomeAltro = trim($_POST['altro-servizio']);
+            if ($nomeAltro !== '') {
+                $listaServizi[] = $nomeAltro;
+            }
+        }
+
+        // Salvo i servizi nel DB
+        foreach ($listaServizi as $nomeServizio) {
+            $servizio = new EServiziAggiuntivi();
+            $servizio->setNomeServizio($nomeServizio);
+            $servizio->setUfficio($ufficio);
+            $this->entity_manager->persist($servizio);
+        }
+        $this->entity_manager->flush();
+        header('Location: /uffici');
+        exit;
     }
 
     public function showAdminOfficeDetails(string $id): void
     {
-        $view = new VAdmin();
-        try {
-            $office = $this->entity_manager->find(EUfficio::class, $id);
-        } catch (ORMException $e) {
-            $view = new VStatus();
-            $view->showStatus(500);
-            return;
-        }
+        $this->requireRole(Roles::ADMIN);
 
+        $office = $this->entity_manager->find(EUfficio::class, $id);
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
@@ -640,38 +566,24 @@ class COffice extends BaseController
 
     public function showPendingDetails(string $id): void
     {
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-        }
-
-        $user = USession::requireUser();
-        $userId = $this->auth_manager->getUserId();
-        if ($userId === null) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
-        if ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER)) {
-            $view = new VRedirect();
-            $view->redirect('/home');
-            return;
-        }
-
+        $this->requireRoles([Roles::ADMIN, Roles::LANDLORD]);
         $office  = $this->entity_manager->find(EUfficio::class, $id);
+
+        $user = USession::getUser();
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
             return;
         }
 
-        if (!($office->getStato() === StatoUfficioEnum::InAttesa)) {
-            $view = new VRedirect();
-            $view->redirect("/admin/offices/$id");
+        if ($user->getId() !== $office->getLocatore()->getId()) {
+            $view = new VStatus();
+            $view->showStatus(403);
             return;
         }
 
-        if ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
+
+        if ($this->doesUserHaveRole(Roles::ADMIN)) {
             $targetView = "showPendingAdmin";
         } else {
             $targetView = "showPendingLandlord";

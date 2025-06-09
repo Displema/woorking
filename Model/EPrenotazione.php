@@ -27,11 +27,11 @@ class EPrenotazione
      #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
     
-     #[ORM\ManyToOne(targetEntity: EUfficio::class,cascade: ["persist"])]
+     #[ORM\ManyToOne(targetEntity: EUfficio::class)]
      //#[ORM\JoinColumn(name:"idUtente", referencedColumnName:"id")]
     private EUfficio $ufficio;
     
-     #[ORM\ManyToOne(targetEntity:EProfilo::class)]
+     #[ORM\ManyToOne(targetEntity:EProfilo::class, cascade: ['persist'])]
     //#[ORM\JoinColumn(name:"idUtente", referencedColumnName:"id")]
     private EProfilo $utente;
     
