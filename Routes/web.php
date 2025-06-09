@@ -26,7 +26,7 @@ $router->get('/admin/offices/pending/{id}', 'COffice@showPendingDetails');
 $router->get('/reports', 'CReport@index');
 $router->get('/reports/{id}', 'CReport@show');
 
-$router->get('/profile', 'CHome@showprofile');
+$router->get('/profile', 'CHome@profile');
 
 //route to manage the offices
 $router->get('/uffici', 'COffice@showOfficesLocatore');
@@ -44,7 +44,7 @@ $router->get('/aggiunta', 'COffice@addOffice');
 $router->post('/aggiuntaUfficio', 'COffice@addOfficeInDB');
 
 //route to landlord's profile
-$router->get('/profilo', 'CLocatore@profilo');
+//$router->get('/profilo', 'CLocatore@profilo');
 
 //route to reviews
 $router->get('/recensioni', 'CReview@getReviews');

@@ -21,19 +21,9 @@ class CAdmin extends BaseController
 {
     public function index(): void
     {
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
+        $this->requireRole(Roles::ADMIN);
 
-        $userId = $this->auth_manager->getUserId();
 
-        if (!$this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
-            $view = new VStatus();
-            $view->showStatus(403);
-            return;
-        }
         $view = new VAdmin();
 
         /** @var EUfficioRepository $officeRepo */

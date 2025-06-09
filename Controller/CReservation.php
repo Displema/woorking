@@ -31,7 +31,7 @@ class CReservation extends BaseController
         $today->setTime(0, 0, 0);
 
         $repository = $this->entity_manager->getRepository(EPrenotazione::class);
-        $user = USession::requireUser();
+        $user = USession::getUser();
 
         $userId = $this->auth_manager->getUserId();
 
@@ -90,7 +90,7 @@ class CReservation extends BaseController
             $view->redirect('/login');
             return;
         }
-        $user = USession::requireUser();
+        $user = USession::getUser();
         $userId = $this->auth_manager->getUserId();
 
         if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
@@ -137,7 +137,7 @@ class CReservation extends BaseController
             return;
         }
 
-        $user = USession::requireUser();
+        $user = USession::getUser();
 
         $view = new VReview();
         $view ->showReviewForm($idreservation, $user);
@@ -162,7 +162,7 @@ class CReservation extends BaseController
 
         $value = $_POST['voto'];           // value 1-5
         $comment = $_POST['review']; // comment of review
-        $user = USession::requireUser();
+        $user = USession::getUser();
         $reservation = $this->entity_manager->getRepository(EPrenotazione::class)->find($idreservation);
 
         if (!$reservation) {

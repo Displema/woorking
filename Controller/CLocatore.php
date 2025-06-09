@@ -11,13 +11,4 @@ use View\VRedirect;
 
 class CLocatore extends BaseController
 {
-    public function profilo()
-    {
-        // TODO: aggiungere controlli sicurezza
-        $view = new VLocatore();
-        $user = USession::requireUser();
-
-
-        $view->goProfile($user);
-    }
 }

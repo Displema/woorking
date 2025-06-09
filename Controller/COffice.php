@@ -19,6 +19,7 @@ use Model\EServiziAggiuntivi;
 use TechnicalServiceLayer\Repository\EFotoRepository;
 use TechnicalServiceLayer\Repository\EIntervalloDisponibilitaRepository;
 use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
+use TechnicalServiceLayer\Repository\ERecensioneRepository;
 use TechnicalServiceLayer\Repository\EServiziAggiuntiviRepository;
 use TechnicalServiceLayer\Repository\UserRepository;
 use TechnicalServiceLayer\Roles\Roles;
@@ -40,24 +41,23 @@ use View\VStatus;
 
 class COffice extends BaseController
 {
-    public function show($id,$fascia ,$date ): void
+    public function show(string $id, string $fascia, string $date): void
     {
-        $officeDetails=[];
-        $photoUrls=[];
-        $login ='';
-        $user ='';
+        if ($this->isLoggedIn()) {
+            $user = USession::getUser();
+        } else {
+            $user = null;
+        }
+        
         $office = $this->entity_manager->getRepository(EUfficio::class)->find($id);
-
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
             return;
         }
 
-        if ($this->auth_manager->isLoggedIn()) {
-            $userId = $this->auth_manager->getUserId();
-            $user =  $this->entity_manager->getRepository(EProfilo::class)->findoneBy(['user_id' => $userId]);
-        }
+        $officeDetails=[];
+        $photoUrls=[];
 
         $photosRepo = $this->entity_manager->getRepository(EFoto::class);
         $photos = $photosRepo->findBy(['ufficio' => $office->getId()]);
@@ -79,17 +79,22 @@ class COffice extends BaseController
 
     public function ShowReview($id)
     {
-        if ($this->auth_manager->isLoggedIn()) {
-            $user = USession::requireUser();
+        if ($this->isLoggedIn()) {
+            $user = USession::getUser();
         } else {
             $user = null;
         }
 
-        $em = $this->entity_manager;
-        $review = [];
-        $reporec=$em->getRepository(ERecensione::class);
-        $review = $reporec->getRecensioneByUfficio($id);
-        $office = $em->getRepository(EUfficio::class)->find($id);
+        $office = $this->entity_manager->getRepository(EUfficio::class)->find($id);
+        if (!$office) {
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
+        }
+
+        /** @var ERecensioneRepository $repo */
+        $repo=$this->entity_manager->getRepository(ERecensione::class);
+        $review = $repo->getRecensioneByUfficio($id);
 
         $view = new VReview();
         $view->showAllReviews($review, $office, $user);
@@ -98,28 +103,19 @@ class COffice extends BaseController
     public function search(string $query, string $date, string $slot): void
     {
         if ($this->auth_manager->isLoggedIn()) {
-            $user = USession::requireUser();
+            $user = USession::getUser();
         } else {
             $user = null;
         }
 
-        $userId = $this->auth_manager->getUserId();
-
-        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
-            $view = new VRedirect();
-            $view->redirect('/home');
-            return;
-        }
-
-
+        /** @var EUfficioRepository $repo */
         $repo=$this->entity_manager->getRepository(EUfficio::class);
 
         $place = $query;
         try {
             $date_parsed = new DateTime($date);
-        } catch (\Exception $e) {
+        } catch (Exception) {
             $view = new VStatus();
-
             $view->showStatus(400);
             return;
         }
@@ -164,30 +160,34 @@ class COffice extends BaseController
         $view->showOfficeSearch($officewithphoto, $date, $slot, $user);
     }
     public function confirmReservation($date, $idOffice, $fascia)
-    {    $em = $this->entity_manager;
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
-
-        $userId = $this->auth_manager->getUserId();
-        $user =  $em->getRepository(EProfilo::class)->findoneBy(['user_id' => $userId]);
-        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+    {
+        $this->requireLogin();
+        if ($this->doesUserHaveRole(Roles::LANDLORD)) {
             $view = new VRedirect();
             $view->redirect('/home');
             return;
         }
 
+        $user = USession::getUser();
 
         $date_parsed = new DateTime($date);
         $FasciaEnum=FasciaOrariaEnum::from($fascia);
 
-        $em->beginTransaction();
+        $this->entity_manager->beginTransaction();
         try {
             // With PessimisticWrite the first one that gets access to the office locks it until it's finished
-            $office = $em->getRepository(EUfficio::class)->find($idOffice, LockMode::PESSIMISTIC_WRITE);
-            $reservationCount = $em->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $FasciaEnum);
+            //$office = $this->entity_manager->getRepository(EUfficio::class)->find($idOffice, LockMode::PESSIMISTIC_WRITE);
+
+            $office = $this->entity_manager->find(EUfficio::class, $idOffice, LockMode::PESSIMISTIC_WRITE);
+
+            if (!$office) {
+                $this->entity_manager->rollback();
+                $view = new VStatus();
+                $view->showStatus(404);
+                return;
+            }
+
+            $reservationCount = $this->entity_manager->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $FasciaEnum);
             $placesAvaible = $office->getNumeroPostazioni();
 
 
@@ -203,14 +203,14 @@ class COffice extends BaseController
             $reservation->setFascia($FasciaEnum);
             $reservation->setUtente($user);
 
-            $em->persist($reservation);
-            $em->flush();
-            $em->commit();
+            $this->entity_manager->persist($reservation);
+            $this->entity_manager->flush();
+            $this->entity_manager->commit();
 
             $view = new VOffice();
             $view->showconfirmedpage1($user);
         } catch (Exception $e) {
-            $em->rollback();
+            $this->entity_manager->rollback();
             echo $e->getMessage();
         }
     }
@@ -218,22 +218,20 @@ class COffice extends BaseController
 
     public function rejectPending(string $id, string $reason): void
     {
-        try {
-            $user = USession::requireAdmin();
-        } catch (UserNotAuthenticatedException $e) {
-            $view = new VStatus();
-            $view->showStatus(403);
-            return;
-        }
+        $this->requireRole(Roles::ADMIN);
 
         $repo = $this->entity_manager->getRepository(EUfficio::class);
         $office = $repo->find($id);
         if (!$office) {
-            //TODO: show bad request
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
         }
 
-        if (StatoUfficioEnum::tryFrom(!$office->getStato()) === StatoUfficioEnum::InAttesa) {
-            // TODO: show bad request
+        if (!(StatoUfficioEnum::tryFrom(!$office->getStato()) === StatoUfficioEnum::InAttesa)) {
+            $view = new VStatus();
+            $view->showStatus(400);
+            return;
         }
 
         $office->setReason($reason);
@@ -249,28 +247,26 @@ class COffice extends BaseController
 
 
         $view = new VRedirect();
-        // TODO: remove placeholder string and add correct view
-        $view->redirect('/rejectedoffice');
+        $view->redirect('/admin/home');
     }
 
     public function confirmPending(string $id): void
     {
-        try {
-            $user = USession::requireAdmin();
-        } catch (UserNotAuthenticatedException) {
-            $view = new VStatus();
-            $view->showStatus(403);
-            return;
-        }
+        $this->requireRole(Roles::ADMIN);
 
         $repo = $this->entity_manager->getRepository(EUfficio::class);
         $office = $repo->find($id);
+
         if (!$office) {
-            //TODO: like on reject
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
         }
 
-        if (StatoUfficioEnum::tryFrom(!$office->getStato()) === StatoUfficioEnum::InAttesa) {
-            // TODO: show bad request
+        if (!(StatoUfficioEnum::tryFrom(!$office->getStato()) === StatoUfficioEnum::InAttesa)) {
+            $view = new VStatus();
+            $view->showStatus(400);
+            return;
         }
 
         $office->setStato(StatoUfficioEnum::Approvato);
@@ -278,13 +274,16 @@ class COffice extends BaseController
         $this->entity_manager->flush();
 
         $view = new VRedirect();
-        $view->redirect('/approvedoffice');
+        $view->redirect('/admin/home');
     }
 
     public function deleteOffice(string $id, string $shouldRefund = '0'): void
     {
+        $this->requireRoles([Roles::ADMIN, Roles::LANDLORD]);
+
         /** @var EUfficioRepository $officeRepo */
         $officeRepo = $this->entity_manager->getRepository(EUfficio::class);
+        /** @var EUfficio $office */
         $office = $officeRepo->findOneBy(['id'=>$id]);
 
         if (!$office) {
@@ -299,29 +298,9 @@ class COffice extends BaseController
             return;
         }
 
-        try {
-            USession::requireAdmin();
-        } catch (UserNotAuthenticatedException) {
-            try {
-                $auth = getAuth();
-                if (!$auth->admin()->doesUserHaveRole($auth->getUserId(), Roles::LANDLORD)) {
-                    $view = new VStatus();
-                    $view->showStatus(403);
-                    return;
-                }
-                $user = $this->entity_manager->getRepository(EProfilo::class)
-                    ->findOneBy(['user_id'=>getAuth()->getUserId()]);
-
-                if (!$user) {
-                    $view = new VStatus();
-                    $view->showStatus(403);
-                }
-
-                if ($user->getId() !== $office->getLocatore()->getId()) {
-                    throw new UserNotAuthenticatedException();
-                }
-            } catch (UserNotAuthenticatedException) {
-                error_log($office->getLocatore()->getId());
+        if ($this->doesUserHaveRole(Roles::LANDLORD)) {
+            $user = USession::getUser();
+            if ($office->getLocatore()->getId() !== $user->getId()) {
                 $view = new VStatus();
                 $view->showStatus(403);
                 return;
@@ -331,14 +310,12 @@ class COffice extends BaseController
         $office->setIsHidden(true);
 
         $reservations = $officeRepo->getActiveReservations($office);
-        $refunds = 0;
         if ($shouldRefund && !$reservations->isEmpty()) {
             foreach ($reservations as $reservation) {
                 $report = new ESegnalazione();
                 $report->setUfficio($office)
                     ->setCommento("Rimborso per cancellazione ufficio")
                     ->setState(ReportStateEnum::class::SOLVED);
-                $refunds++;
                 $refund = new ERimborso();
                 $refund
                     ->setImporto($reservation->getPagamento()->getImporto())
@@ -373,22 +350,23 @@ class COffice extends BaseController
     }
 
     //search all bookings of the landlord's offices
-    public static function showPrenotazioni()
+    public function showPrenotazioni(): void
     {
-        $user = USession::requireUser();
+        $this->requireLogin();
+
+        $user = USession::getUser();
         $id = $user->getId();
         $oggi = new \DateTime();
-        $em = getEntityManager();
 
         $UfficiCompletiPassati = [];
         $UfficiCompletiPresenti = [];
 
         // Repositories
         $userRepo = UserRepository::getInstance();
-        $uffici = $em->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
-        $fotoRepo = $em->getRepository(Efoto::class);
-        $prenotazioniRepo = $em->getRepository(EPrenotazione::class);
-        $intervalliRepo = $em->getRepository(EIntervalloDisponibilita::class);
+        $uffici = $this->entity_manager->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
+        $fotoRepo = $this->entity_manager->getRepository(EFoto::class);
+        $prenotazioniRepo = $this->entity_manager->getRepository(EPrenotazione::class);
+        $intervalliRepo = $this->entity_manager->getRepository(EIntervalloDisponibilita::class);
 
         try {
             foreach ($uffici as $ufficio) {
@@ -438,12 +416,12 @@ class COffice extends BaseController
         $view->searchReservations($UfficiCompletiPassati, $UfficiCompletiPresenti);
     }
 
-
-
     //show all lessor's offices
     public static function showOfficesLocatore()
     {
-        $user = USession::requireUser();
+        $this->requireRole(Roles::LANDLORD);
+
+        $user = USession::getUser();
         $id = $user->getId();
         $UfficiCompleti = [];
         $em = getEntityManager();
@@ -478,15 +456,20 @@ class COffice extends BaseController
         $view->searchOfficeLocatore($UfficiCompleti);
     }
 
-    public function addOffice()
+    public function addOffice(): void
     {
+        $this->requireRole(Roles::LANDLORD);
+
         $view = new VOffice();
         $view->addOfficeV();
     }
 
     public function addOfficeInDB()
+        // TODO: aggiungere parametri e non accesso diretto a POST
     {
-        $em = getEntityManager();
+        $this->requireRole(Roles::LANDLORD);
+
+
         $ufficio = new EUfficio();
         $indirizzo = new Eindirizzo();
         $intervallo = new EIntervalloDisponibilita();
@@ -511,10 +494,10 @@ class COffice extends BaseController
         $intervallo->setFascia(FasciaOrariaEnum::from($_POST['fascia']));
         $intervallo->setUfficio($ufficio);
 
-        $em->persist($indirizzo);
-        $em->persist($ufficio);
-        $em->persist($intervallo);
-        $em->flush();
+        $this->entity_manager->persist($indirizzo);
+        $this->entity_manager->persist($ufficio);
+        $this->entity_manager->persist($intervallo);
+        $this->entity_manager->flush();
 
         // Photos
         if (!empty($_FILES['foto']) && isset($_FILES['foto']['tmp_name'])) {
@@ -530,11 +513,11 @@ class COffice extends BaseController
                     $foto->setSize($size);
                     $foto->setUfficio($ufficio);
 
-                    $em->persist($foto);
+                    $this->entity_manager->persist($foto);
                 }
             }
             //Salva tutte le foto in una volta sola
-            $em->flush();
+            $this->entity_manager->flush();
         }
 
         // Prendo i servizi dalle checkbox
@@ -554,24 +537,18 @@ class COffice extends BaseController
             $servizio = new EServiziAggiuntivi();
             $servizio->setNomeServizio($nomeServizio);
             $servizio->setUfficio($ufficio);
-            $em->persist($servizio);
+            $this->entity_manager->persist($servizio);
         }
-        $em->flush();
+        $this->entity_manager->flush();
         header('Location: /uffici');
         exit;
     }
 
     public function showAdminOfficeDetails(string $id): void
     {
-        $view = new VAdmin();
-        try {
-            $office = $this->entity_manager->find(EUfficio::class, $id);
-        } catch (ORMException $e) {
-            $view = new VStatus();
-            $view->showStatus(500);
-            return;
-        }
+        $this->requireRole(Roles::ADMIN);
 
+        $office = $this->entity_manager->find(EUfficio::class, $id);
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
@@ -589,27 +566,24 @@ class COffice extends BaseController
 
     public function showPendingDetails(string $id): void
     {
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-        }
-
-        $userId = $this->auth_manager->getUserId();
-        if ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER)) {
-            $view = new VRedirect();
-            $view->redirect('/home');
-            return;
-        }
-
+        $this->requireRoles([Roles::ADMIN, Roles::LANDLORD]);
         $office  = $this->entity_manager->find(EUfficio::class, $id);
 
+        $user = USession::getUser();
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
             return;
         }
 
-        if ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
+        if ($user->getId() !== $office->getLocatore()->getId()) {
+            $view = new VStatus();
+            $view->showStatus(403);
+            return;
+        }
+
+
+        if ($this->doesUserHaveRole(Roles::ADMIN)) {
             $targetView = "showPendingAdmin";
         } else {
             $targetView = "showPendingLandlord";
@@ -618,6 +592,4 @@ class COffice extends BaseController
         $view = new VOffice();
         $view->$targetView($office);
     }
-
-
 }

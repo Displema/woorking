@@ -12,7 +12,7 @@ use View\VStatus;
 abstract class BaseController
 {
     protected EntityManagerInterface $entity_manager;
-    protected Auth $auth_manager;
+    private Auth $auth_manager;
 
     public function __construct()
     {
@@ -29,7 +29,7 @@ abstract class BaseController
         }
     }
 
-    public function requireRole(string $role): void
+    public function requireRole(int $role): void
     {
         $validRoles = (new \ReflectionClass(Roles::class))->getConstants();
 
@@ -41,6 +41,32 @@ abstract class BaseController
         $userId = $this->auth_manager->getUserId();
 
         if (!($this->auth_manager->admin()->doesUserHaveRole($userId, $role))) {
+            $view = new VStatus();
+            $view->showStatus(403);
+            exit;
+        }
+    }
+
+    public function requireRoles(array $roles): void
+    {
+        $validRoles = (new \ReflectionClass(Roles::class))->getConstants();
+
+        foreach ($roles as $role) {
+            if (!in_array($role, $validRoles, true)) {
+                throw new InvalidArgumentException('Invalid role passed to requireRoles()');
+            }
+        }
+
+        $this->requireLogin();
+        $userId = $this->auth_manager->getUserId();
+
+        $found = false;
+        foreach ($roles as $role) {
+            if ($this->auth_manager->admin()->doesUserHaveRole($userId, $role)) {
+                $found = true;
+            }
+        }
+        if (!$found) {
             $view = new VStatus();
             $view->showStatus(403);
             exit;
@@ -63,5 +89,15 @@ abstract class BaseController
         }
 
         return true;
+    }
+
+    public function isLoggedIn(): bool
+    {
+        return $this->auth_manager->isLoggedIn();
+    }
+
+    public function getUserId(): int
+    {
+        return $this->auth_manager->getUserId();
     }
 }

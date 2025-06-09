@@ -14,41 +14,34 @@ class CHome extends BaseController
 {
     public function index(): void
     {
-        if ($this->auth_manager->isLoggedIn()) {
-            try{
-            $user = USession::requireUser();
 
-            $userid = $this->auth_manager->getUserId();
-
-            if ($this->auth_manager->admin()->doesUserHaveRole($userid, Roles::LANDLORD)) {
-                $view = new VLocatore();
-                $view->goHome();
-                return;
-            }}catch (\TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException $e) {
-        // Optional: log error, fallback a null
-        $user = null;
-    }
-        }else {
+        if ($this->isLoggedIn()) {
+            $user = USession::getUser();
+        } else {
             $user = null;
+        }
+
+        $userId = $user->getId();
+        if ($userId && $this->doesUserHaveRole(Roles::LANDLORD)) {
+            $view = new VLocatore();
+            $view->index();
+            return;
         }
 
         $view = new VHome();
         $view->index($user);
     }
 
-    public function indexRedirect(): void
+    public function profile(): void
     {
-        $view = new VRedirect();
-        $view->redirect('/home');
-    }
+        $this->requireLogin();
 
-    public function showprofile()
-    {
-        try {
-            $user=USession::requireUser();
-        } catch (UserNotAuthenticatedException) {
-            $view = new VRedirect();
-            $view->redirect('/login');
+        $user = USession::getUser();
+
+        if ($this->doesUserHaveRole(Roles::LANDLORD)) {
+            $view = new VLocatore();
+            $view->goProfile($user);
+            return;
         }
 
         $view = new VHome();
