@@ -121,6 +121,8 @@ class CAuth extends BaseController
             die('Unknown id');
         }
 
+        $this->auth_manager->admin()->logInAsUserById($userId);
+
         $view = new VRedirect();
         $view->redirect("/home");
     }
@@ -188,6 +190,7 @@ class CAuth extends BaseController
     {
         //USession::destroy();
         $this->auth_manager->logout();
+        USession::unsetElement('user');
         $view = new VRedirect();
         $view->redirect("/home");
     }
