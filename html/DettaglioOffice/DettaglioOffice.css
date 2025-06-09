@@ -13,9 +13,12 @@ body {
 
 /* NAVBAR */
 .navbar {
-    padding: 30px 40px;
-    height: 120px;
+
     background-color: #000;
+    position: relative;
+    z-index: 1050;
+    height: auto;
+
 }
 
 .navbar-brand img {

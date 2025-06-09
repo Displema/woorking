@@ -378,7 +378,7 @@ class COffice extends BaseController
 
                 $intervallo = $intervalliRepo->getIntervallobyOffice($ufficio);
                 $foto = $fotoRepo->getFirstPhotoByOffice($ufficio);
-                $fotoUrl = $foto ? "/foto/" . $foto->getId() : null;
+                $fotoUrl = $foto ? "/static/img/"  . $foto->getId() : null;
 
                 $serviziObj = $ufficio->getServiziAggiuntivi();
                 $servizi = [];
@@ -441,7 +441,7 @@ class COffice extends BaseController
 
         foreach ($uffici as $ufficio) {
             $foto = $fotoRepo->getFirstPhotoByOffice($ufficio);
-            $fotoUrl = $foto ? "/foto/" . $foto->getId() : null;
+            $fotoUrl = $foto ? "/static/img/" . $foto->getId() : null;
             $servizi = $serviziRepo->getServiziAggiuntivibyOffice($ufficio);
             $intervallo = $intervalliRepo->getIntervallobyOffice($ufficio);
 

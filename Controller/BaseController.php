@@ -5,6 +5,7 @@ namespace Controller;
 use Delight\Auth\Auth;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
+use Model\ELocatore;
 use TechnicalServiceLayer\Roles\Roles;
 use View\VRedirect;
 use View\VStatus;
@@ -22,6 +23,13 @@ abstract class BaseController
 
     public function requireLogin(): void
     {
+//        $this->auth_manager->admin()->logInAsUserByEmail("moraema@outlook.it");
+//        $userId = $this->auth_manager->getUserId();
+//        $_SESSION['user'] = $this->entity_manager->getRepository(ELocatore::class)->findOneBy(
+//            ["user_id" => $userId]
+//        );
+//        echo $_SESSION['user'];
+
         if (!$this->auth_manager->isLoggedIn()) {
             $view = new VRedirect();
             $view->redirect('/login');
@@ -32,9 +40,6 @@ abstract class BaseController
     public function requireRole(int $role): void
     {
         $validRoles = (new \ReflectionClass(Roles::class))->getConstants();
-
-        echo $validRoles;
-        echo "--------------";
 
         if (!in_array($role, $validRoles, true)) {
             throw new InvalidArgumentException('Invalid role: ' . $role . 'passed to requireRole()');

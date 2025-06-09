@@ -127,7 +127,7 @@ class CAuth extends BaseController
         $view->redirect("/home");
     }
 
-    public function loginUser(string $email, string $password, string $rememberMe = "0"): void
+    public function loginUser(string $email, string $password, string $rememberMe): void
     {
         if ($this->auth_manager->isLoggedIn()) {
             $redirectView = new VRedirect();

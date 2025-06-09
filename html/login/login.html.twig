@@ -33,6 +33,16 @@
                         <label for="login-password" class="form-label">Password</label>
                         <input name="password" type="password" class="form-control" id="login-password" required>
                     </div>
+
+                    <div class = "form-check mb-3" >
+
+                        <!-- give to the field of checkbox the default value of 0-->
+                        <input type="hidden" name="rememberMe" value="0">
+                        <input class = "form-checkinput" type="checkbox" name="rememberMe" id="remembermecheckbox" value="1">
+                        <label class = "form-check-label" for="remembermecheckbox">Ricordami
+                        </label>
+
+                    </div>
                     <button type="submit" class="btn btn-danger w-100">Accedi</button>
                 </form>
 
