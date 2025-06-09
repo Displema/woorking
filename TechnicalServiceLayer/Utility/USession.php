@@ -46,7 +46,7 @@ class USession
     /**
      * unset of an element of _SESSION superglobal
      */
-    public static function elementUnset($id)
+    public static function unsetElement($id)
     {
         unset($_SESSION[$id]);
     }

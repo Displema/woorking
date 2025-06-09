@@ -188,6 +188,7 @@ class CAuth extends BaseController
     {
         //USession::destroy();
         $this->auth_manager->logout();
+        USession::unsetElement("user");
         $view = new VRedirect();
         $view->redirect("/home");
     }
