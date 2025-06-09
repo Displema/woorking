@@ -29,7 +29,7 @@ class CAuth extends BaseController
 {
     public function showLoginForm(): void
     {
-        if ($this->auth_manager->isLoggedIn()) {
+        if ($this->isLoggedIn()) {
             $redirectView = new VRedirect();
             $redirectView->redirect("/home");
             return;
