@@ -9,13 +9,12 @@ use Twig\Loader\FilesystemLoader;
 class VOffice extends BaseView
 {
 
-    public function showOfficeSearch($Result, $date, $fascia1, $user, $login): void
+    public function showOfficeSearch($Result, $date, $fascia1, $user): void
     {
-
-        $this->twig->display('/uffici/uffici.html.twig', ['offices' => $Result,'date' => $date,'fascia' => $fascia1,'user' => $user,'isloggedin' => $login]);
+        $this->twig->display('/uffici/uffici.html.twig', ['offices' => $Result,'date' => $date,'fascia' => $fascia1,'user' => $user]);
     }
 
-    public function showOfficeDetails($Result, $date, $fascia, $user, $login): void
+    public function showOfficeDetails($Result, $date, $fascia, $user): void
     {
         $ufficio = $Result[0];
         $this->twig->display(
@@ -24,14 +23,13 @@ class VOffice extends BaseView
                 'date' => $date,
                 'fascia' => $fascia,
                 'user' => $user,
-                'isloggedin' => $login
             ]
         );
     }
     public function showconfirmedpage1($user, $login)
     {
 
-         $this->twig->display('/conferme/confermaprenotazione.html.twig', ['user' => $user,'isloggedin' => $login]);
+         $this->twig->display('/conferme/confermaprenotazione.html.twig', ['user' => $user]);
     }
 
     public function showAllReviews($recensione, $ufficio,)

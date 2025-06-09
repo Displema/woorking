@@ -9,26 +9,36 @@ use Model\EPrenotazione;
 use Model\EProfilo;
 use Model\ERecensione;
 use Model\EUfficio;
+use TechnicalServiceLayer\Roles\Roles;
 use TechnicalServiceLayer\Utility\USession;
 use View\VRedirect;
 use View\VReservation;
 use View\VReview;
+use View\VStatus;
 
 class CReservation extends BaseController
 {
     public function showreservation()
     {
-        $today = new DateTime();
-        $repository = $this->entity_manager->getRepository(EPrenotazione::class);
-        if (USession::isSetSessionElement('user')) {
-            $user = USession::requireUser();
 
-            $user = $this->entity_manager->getRepository(EProfilo::class)->find($user->getId());
-        } else {
+        if (!$this->auth_manager->isLoggedIn()) {
             $view = new VRedirect();
             $view->redirect('/login');
-            exit;
+            return;
         }
+
+        $today = new DateTime();
+        $repository = $this->entity_manager->getRepository(EPrenotazione::class);
+
+        $user = USession::requireUser();
+        $userId = $this->auth_manager->getUserId();
+
+        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+
         $reservations = $repository->findBy(['utente' => $user->getId()]);
         $reservationWithOffice = [];
         $oldreservationWithOffice = [];
@@ -69,14 +79,21 @@ class CReservation extends BaseController
 
     public function showReservationDetails($id)
     {
-        $reservationwithoffice = [];
-
-
-        if (USession::isSetSessionElement('user')) {
-            $user = USession::requireUser();
-
-            $user = $this->entity_manager->getRepository(EProfilo::class)->find($user->getId());
+        if (!$this->auth_manager->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            return;
         }
+
+        $userId = $this->auth_manager->getUserId();
+
+        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+
+        $reservationwithoffice = [];
         $repository = $this->entity_manager->getRepository(EPrenotazione::class);
         $reservation = $repository->find($id);
         $photoUrl = [];
@@ -98,29 +115,55 @@ class CReservation extends BaseController
         $view ->showReservationDetails($reservationwithoffice, $user);
     }
 
-    public function sendreview($idreservation)
+    public function sendreview($idreservation): void
     {
-        if (USession::isSetSessionElement('user')) {
-            $user = USession::requireUser();
-
-            $user = $this->entity_manager->getRepository(EProfilo::class)->find($user->getId());
+        if (!$this->auth_manager->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            return;
         }
+
+        $userId = $this->auth_manager->getUserId();
+
+        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+
+        $user = USession::requireUser();
+
         $view = new VReview();
         $view ->showReviewForm($idreservation, $user);
     }
 
-    public function confirmreview($idreservation,)
+    public function confirmreview($idreservation)
         // TODO: rimuovere accesso ai dati diretto dall'array POST
     {
+        if (!$this->auth_manager->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            return;
+        }
+
+        $userId = $this->auth_manager->getUserId();
+
+        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+
         $value = $_POST['voto'];           // value 1-5
         $comment = $_POST['review']; // comment of review
-
-        if (USession::isSetSessionElement('user')) {
-            $user = USession::requireUser();
-
-            $user = $this->entity_manager->getRepository(EProfilo::class)->find($user->getId());
-        }
+        $user = USession::requireUser();
         $reservation = $this->entity_manager->getRepository(EPrenotazione::class)->find($idreservation);
+
+        if (!$reservation) {
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
+        }
 
         $review= new ERecensione();
         $review->setCommento($comment);
