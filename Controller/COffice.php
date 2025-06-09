@@ -370,66 +370,79 @@ class COffice extends BaseController
     //search all bookings of the landlord's offices
     public function showPrenotazioni()
     {
-        $user = USession::requireUser();
-        $id = $user->getId();
-        $oggi = new \DateTime();
 
-        $UfficiCompletiPassati = [];
-        $UfficiCompletiPresenti = [];
-
-        // Repositories
-        $userRepo = UserRepository::getInstance();
-        $uffici = $this->entity_manager->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
-        $fotoRepo = $this->entity_manager->getRepository(Efoto::class);
-        $prenotazioniRepo = $this->entity_manager->getRepository(EPrenotazione::class);
-        $intervalliRepo = $this->entity_manager->getRepository(EIntervalloDisponibilita::class);
-        // TODO: tutti questi $fotoUrl $servijiObj andrebbero fatti dentro il template
-        try {
-            foreach ($uffici as $ufficio) {
-                $prenotazioni = $prenotazioniRepo->getPrenotazioneByUfficio($ufficio);
-                if (empty($prenotazioni)) {
-                    continue;
-                }
-
-                $intervallo = $intervalliRepo->getIntervallobyOffice($ufficio);
-                $foto = $fotoRepo->getFirstPhotoByOffice($ufficio);
-                $fotoUrl = $foto ? "/foto/" . $foto->getId() : null;
-
-                $serviziObj = $ufficio->getServiziAggiuntivi();
-                $servizi = [];
-                foreach ($serviziObj as $s) {
-                    $servizi[] = $s->getNomeServizio();
-                }
-                $serviziStringa = implode(', ', $servizi);
-
-                // Per ogni prenotazione creo un oggetto singolo da passare al template
-                foreach ($prenotazioni as $prenotazione) {
-                    $data = $prenotazione->getData();
-                    $email = $userRepo->getEmailByUserId($prenotazione->getUtente()->getUserId())[0]['email'];
-
-                    $elemento = [
-                        'ufficio' => $ufficio,
-                        'email' => $email,
-                        'foto' => $fotoUrl,
-                        'prenotazioni' => $prenotazione,
-                        'intervallo' => $intervallo,
-                        'servizio' => $serviziStringa
-                    ];
-
-                    if ($data < $oggi) {
-                        $UfficiCompletiPassati[] = $elemento;
-                    } else {
-                        $UfficiCompletiPresenti[] = $elemento;
-                    }
-                }
-            }
-        } catch (Exception $e) {
-            error_log("Errore nella gestione delle prenotazioni per ufficio: " . $e->getMessage());
+        if (!$this->auth_manager->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            return;
         }
 
-        // Call the view
-        $view = new VOffice();
-        $view->searchReservations($UfficiCompletiPassati, $UfficiCompletiPresenti);
+        $user = USession::requireUser();
+        $id = $user->getId();
+
+        if ($this->auth_manager->admin()->doesUserHaveRole($id, Roles::LANDLORD)) {
+            $oggi = new \DateTime();
+
+            $UfficiCompletiPassati = [];
+            $UfficiCompletiPresenti = [];
+
+            // Repositories
+            $userRepo = UserRepository::getInstance();
+            $uffici = $this->entity_manager->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
+            $fotoRepo = $this->entity_manager->getRepository(Efoto::class);
+            $prenotazioniRepo = $this->entity_manager->getRepository(EPrenotazione::class);
+            $intervalliRepo = $this->entity_manager->getRepository(EIntervalloDisponibilita::class);
+            // TODO: tutti questi $fotoUrl $servijiObj andrebbero fatti dentro il template
+            try {
+                foreach ($uffici as $ufficio) {
+                    $prenotazioni = $prenotazioniRepo->getPrenotazioneByUfficio($ufficio);
+                    if (empty($prenotazioni)) {
+                        continue;
+                    }
+
+                    $intervallo = $intervalliRepo->getIntervallobyOffice($ufficio);
+                    $foto = $fotoRepo->getFirstPhotoByOffice($ufficio);
+                    $fotoUrl = $foto ? '/static/img/' . $foto->getId() : null;
+
+                    $serviziObj = $ufficio->getServiziAggiuntivi();
+                    $servizi = [];
+                    foreach ($serviziObj as $s) {
+                        $servizi[] = $s->getNomeServizio();
+                    }
+                    $serviziStringa = implode(', ', $servizi);
+
+                    // Per ogni prenotazione creo un oggetto singolo da passare al template
+                    foreach ($prenotazioni as $prenotazione) {
+                        $data = $prenotazione->getData();
+                        $email = $userRepo->getEmailByUserId($prenotazione->getUtente()->getUserId())[0]['email'];
+
+                        $elemento = [
+                            'ufficio' => $ufficio,
+                            'email' => $email,
+                            'foto' => $fotoUrl,
+                            'prenotazioni' => $prenotazione,
+                            'intervallo' => $intervallo,
+                            'servizio' => $serviziStringa
+                        ];
+
+                        if ($data < $oggi) {
+                            $UfficiCompletiPassati[] = $elemento;
+                        } else {
+                            $UfficiCompletiPresenti[] = $elemento;
+                        }
+                    }
+                }
+            } catch (Exception $e) {
+                error_log("Errore nella gestione delle prenotazioni per ufficio: " . $e->getMessage());
+            }
+
+            // Call the view
+            $view = new VOffice();
+            $view->searchReservations($UfficiCompletiPassati, $UfficiCompletiPresenti);
+        } else {
+            $view = new VRedirect();
+            $view->redirect('/login');
+        }
     }
 
 
@@ -437,120 +450,166 @@ class COffice extends BaseController
     //show all lessor's offices
     public function showOfficesLocatore()
     {
-        $user = USession::requireUser();
-        $id = $user->getId();
-        $UfficiCompleti = [];
 
-        /** @var EUfficioRepository $uffici */
-        $uffici = $this->entity_manager->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
-
-        /** @var EFotoRepository $fotoRepo */
-        $fotoRepo = $this->entity_manager->getRepository(EFoto::class);
-
-        /** @var EServiziAggiuntiviRepository $serviziRepo */
-        $serviziRepo = $this->entity_manager->getRepository(EServiziAggiuntivi::class);
-
-        /** @var EIntervalloDisponibilitaRepository $intervalliRepo */
-        $intervalliRepo = $this->entity_manager->getRepository(EIntervalloDisponibilita::class);
-
-        foreach ($uffici as $ufficio) {
-            $foto = $fotoRepo->getFirstPhotoByOffice($ufficio);
-            $fotoUrl = $foto ? "/foto/" . $foto->getId() : null;
-            $servizi = $serviziRepo->getServiziAggiuntivibyOffice($ufficio);
-            $intervallo = $intervalliRepo->getIntervallobyOffice($ufficio);
-
-            $UfficiCompleti[] = [
-                'ufficio' => $ufficio,
-                'foto' => $fotoUrl,
-                'servizi' => $servizi,
-                'intervallo' => $intervallo
-            ];
+        if (!$this->auth_manager->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            return;
         }
 
-        $view = new VOffice();
-        $view->searchOfficeLocatore($UfficiCompleti);
+
+        $user = USession::requireUser();
+        $id = $user->getId();
+
+        if ($this->auth_manager->admin()->doesUserHaveRole($id, Roles::LANDLORD)) {
+
+
+            $UfficiCompleti = [];
+
+            /** @var EUfficioRepository $uffici */
+            $uffici = $this->entity_manager->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
+
+            /** @var EFotoRepository $fotoRepo */
+            $fotoRepo = $this->entity_manager->getRepository(EFoto::class);
+
+            /** @var EServiziAggiuntiviRepository $serviziRepo */
+            $serviziRepo = $this->entity_manager->getRepository(EServiziAggiuntivi::class);
+
+            /** @var EIntervalloDisponibilitaRepository $intervalliRepo */
+            $intervalliRepo = $this->entity_manager->getRepository(EIntervalloDisponibilita::class);
+
+            foreach ($uffici as $ufficio) {
+                $foto = $fotoRepo->getFirstPhotoByOffice($ufficio);
+                $fotoUrl = $foto ? '/static/img/' . $foto->getId() : null;
+                $servizi = $serviziRepo->getServiziAggiuntivibyOffice($ufficio);
+                $intervallo = $intervalliRepo->getIntervallobyOffice($ufficio);
+
+                $UfficiCompleti[] = [
+                    'ufficio' => $ufficio,
+                    'foto' => $fotoUrl,
+                    'servizi' => $servizi,
+                    'intervallo' => $intervallo
+                ];
+            }
+
+            $view = new VOffice();
+            $view->searchOfficeLocatore($UfficiCompleti);
+        } else {
+            $view = new VRedirect();
+            $view->redirect('/login');
+        }
     }
 
     public function addOffice()
     {
-        $view = new VOffice();
-        $view->addOfficeV();
+        if (!$this->auth_manager->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            return;
+        }
+
+
+        $user = USession::requireUser();
+        $id = $user->getId();
+
+        if ($this->auth_manager->admin()->doesUserHaveRole($id, Roles::LANDLORD)) {
+            $view = new VOffice();
+            $view->addOfficeV();
+        } else {
+            $view = new VRedirect();
+            $view->redirect('/login');
+        }
     }
 
     public function addOfficeInDB()
     {
-        $ufficio = new EUfficio();
-        $indirizzo = new Eindirizzo();
-        $intervallo = new EIntervalloDisponibilita();
+        if (!$this->auth_manager->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+            return;
+        }
 
-        $indirizzo->setProvincia($_POST['provincia']);
-        $indirizzo->setCitta($_POST['comune']);
-        $indirizzo->setCap($_POST['cap']);
-        $indirizzo->setNumeroCivico($_POST['civico']);
-        $indirizzo->setVia($_POST['indirizzo']);
 
-        $ufficio->setTitolo($_POST['nome-ufficio']);
-        $ufficio->setPrezzo($_POST['prezzo']);
-        $ufficio->setDescrizione($_POST['descrizione']);
-        $ufficio->setNumeroPostazioni($_POST['postazioni']);
-        $ufficio->setSuperficie($_POST['superficie']);
-        $ufficio->setDataCaricamento(new \DateTime());
-        $ufficio->setStato(StatoUfficioEnum::InAttesa);
-        $ufficio->setIndirizzo($indirizzo);
+        $user = USession::requireUser();
+        $id = $user->getId();
 
-        $intervallo->setDataInizio(new \DateTime($_POST['data_inizio']));
-        $intervallo->setDataFine(new \DateTime($_POST['data_fine']));
-        $intervallo->setFascia(FasciaOrariaEnum::from($_POST['fascia']));
-        $intervallo->setUfficio($ufficio);
+        if ($this->auth_manager->admin()->doesUserHaveRole($id, Roles::LANDLORD)) {
+            $ufficio = new EUfficio();
+            $indirizzo = new Eindirizzo();
+            $intervallo = new EIntervalloDisponibilita();
 
-        $this->entity_manager->persist($indirizzo);
-        $this->entity_manager->persist($ufficio);
-        $this->entity_manager->persist($intervallo);
-        $this->entity_manager->flush();
+            $indirizzo->setProvincia($_POST['provincia']);
+            $indirizzo->setCitta($_POST['comune']);
+            $indirizzo->setCap($_POST['cap']);
+            $indirizzo->setNumeroCivico($_POST['civico']);
+            $indirizzo->setVia($_POST['indirizzo']);
 
-        // Photos
-        if (!empty($_FILES['foto']) && isset($_FILES['foto']['tmp_name'])) {
-            foreach ($_FILES['foto']['tmp_name'] as $key => $tmpName) {
-                if (is_uploaded_file($tmpName)) {
-                    $content = file_get_contents($tmpName);
-                    $mimeType = $_FILES['foto']['type'][$key];
-                    $size = $_FILES['foto']['size'][$key];
+            $ufficio->setTitolo($_POST['nome-ufficio']);
+            $ufficio->setPrezzo($_POST['prezzo']);
+            $ufficio->setDescrizione($_POST['descrizione']);
+            $ufficio->setNumeroPostazioni($_POST['postazioni']);
+            $ufficio->setSuperficie($_POST['superficie']);
+            $ufficio->setDataCaricamento(new \DateTime());
+            $ufficio->setStato(StatoUfficioEnum::InAttesa);
+            $ufficio->setIndirizzo($indirizzo);
 
-                    $foto = new EFoto();
-                    $foto->setContent($content);
-                    $foto->setMimeType($mimeType);
-                    $foto->setSize($size);
-                    $foto->setUfficio($ufficio);
+            $intervallo->setDataInizio(new \DateTime($_POST['data_inizio']));
+            $intervallo->setDataFine(new \DateTime($_POST['data_fine']));
+            $intervallo->setFascia(FasciaOrariaEnum::from($_POST['fascia']));
+            $intervallo->setUfficio($ufficio);
 
-                    $this->entity_manager->persist($foto);
+            $this->entity_manager->persist($indirizzo);
+            $this->entity_manager->persist($ufficio);
+            $this->entity_manager->persist($intervallo);
+            $this->entity_manager->flush();
+
+            // Photos
+            if (!empty($_FILES['foto']) && isset($_FILES['foto']['tmp_name'])) {
+                foreach ($_FILES['foto']['tmp_name'] as $key => $tmpName) {
+                    if (is_uploaded_file($tmpName)) {
+                        $content = file_get_contents($tmpName);
+                        $mimeType = $_FILES['foto']['type'][$key];
+                        $size = $_FILES['foto']['size'][$key];
+
+                        $foto = new EFoto();
+                        $foto->setContent($content);
+                        $foto->setMimeType($mimeType);
+                        $foto->setSize($size);
+                        $foto->setUfficio($ufficio);
+
+                        $this->entity_manager->persist($foto);
+                    }
+                }
+                //Salva tutte le foto in una volta sola
+                $this->entity_manager->flush();
+            }
+
+            // Prendo i servizi dalle checkbox
+            var_dump($_POST['servizi']);
+            $listaServizi = $_POST['servizi'] ?? [];
+
+            // Se è stato compilato "altro", aggiungo quel servizio
+            if (!empty($_POST['altro-servizio'])) {
+                $nomeAltro = trim($_POST['altro-servizio']);
+                if ($nomeAltro !== '') {
+                    $listaServizi[] = $nomeAltro;
                 }
             }
-            //Salva tutte le foto in una volta sola
-            $this->entity_manager->flush();
-        }
 
-        // Prendo i servizi dalle checkbox
-        var_dump($_POST['servizi']);
-        $listaServizi = $_POST['servizi'] ?? [];
-
-        // Se è stato compilato "altro", aggiungo quel servizio
-        if (!empty($_POST['altro-servizio'])) {
-            $nomeAltro = trim($_POST['altro-servizio']);
-            if ($nomeAltro !== '') {
-                $listaServizi[] = $nomeAltro;
+            // Salvo i servizi nel DB
+            foreach ($listaServizi as $nomeServizio) {
+                $servizio = new EServiziAggiuntivi();
+                $servizio->setNomeServizio($nomeServizio);
+                $servizio->setUfficio($ufficio);
+                $this->entity_manager->persist($servizio);
             }
+            $this->entity_manager->flush();
+            header('Location: /uffici');
+            exit;
+        } else {
+            $view = new VRedirect();
+            $view->redirect("/login");
         }
-
-        // Salvo i servizi nel DB
-        foreach ($listaServizi as $nomeServizio) {
-            $servizio = new EServiziAggiuntivi();
-            $servizio->setNomeServizio($nomeServizio);
-            $servizio->setUfficio($ufficio);
-            $this->entity_manager->persist($servizio);
-        }
-        $this->entity_manager->flush();
-        header('Location: /uffici');
-        exit;
     }
 
     public function showAdminOfficeDetails(string $id): void
