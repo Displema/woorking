@@ -11,6 +11,7 @@ class VOffice extends BaseView
 
     public function showOfficeSearch($Result, $date, $fascia, $user, $login): void
     {
+
         $this->twig->display('/uffici/uffici.html.twig', ['offices' => $Result,'date' => $date,'fascia' => $fascia,'user' => $user,'isloggedin' => $login]);
     }
 

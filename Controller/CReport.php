@@ -37,7 +37,7 @@ class CReport
         }
         $view->showReportForm($id, $user, $login);
     }
-    public static function showConfirmOfReport($id)
+    public  function showConfirmOfReport($id)
     {
         $commento = $_POST['motivo'] ?? null;
 
@@ -55,7 +55,8 @@ class CReport
         $Report= new ESegnalazione();
         $Report->setCommento($commento);
         $Report->setUfficio($ufficio);
-        $Report->setState(ReportStateEnum::class::ACTIVE);
+        $Report->setState(ReportStateEnum::ACTIVE);
+        $Report->setUser($user);
         $this->entity_manager->persist($Report);
         $this->entity_manager->flush();
 
