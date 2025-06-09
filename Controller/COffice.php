@@ -169,6 +169,7 @@ class COffice extends BaseController
         }
 
         $user = USession::getUser();
+        $usertosave=$this->entity_manager->getRepository(EProfilo::class)->findOneBy(['id'=> $user->getId()]);
 
         $date_parsed = new DateTime($date);
         $FasciaEnum=FasciaOrariaEnum::from($fascia);
@@ -201,7 +202,7 @@ class COffice extends BaseController
             $reservation->setData(new DateTime($date));
             $reservation->setUfficio($office);
             $reservation->setFascia($FasciaEnum);
-            $reservation->setUtente($user);
+            $reservation->setUtente($usertosave);
 
             $this->entity_manager->persist($reservation);
             $this->entity_manager->flush();

@@ -13,15 +13,26 @@ use View\VRedirect;
 class CHome extends BaseController
 {
     public function index(): void
-    {
+    {$userId="";
+
+
 
         if ($this->isLoggedIn()) {
-            $user = USession::getUser();
-        } else {
+            try {
+                $user = USession::getUser();
+
+                $userId = $user->getId();
+            }catch (\TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException $e) {
+                print $e->getMessage();
+            }
+
+        }else {
             $user = null;
         }
 
-        $userId = $user->getId();
+
+
+
         if ($userId && $this->doesUserHaveRole(Roles::LANDLORD)) {
             $view = new VLocatore();
             $view->index();
