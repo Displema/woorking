@@ -17,11 +17,13 @@ class CHome extends BaseController
 
         if ($this->isLoggedIn()) {
             $user = USession::getUser();
+            $userId = $user->getId();
         } else {
             $user = null;
+            $userId = null;
         }
 
-        $userId = $user->getId();
+
         if ($userId && $this->doesUserHaveRole(Roles::LANDLORD)) {
             $view = new VLocatore();
             $view->index();
