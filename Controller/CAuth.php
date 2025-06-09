@@ -186,8 +186,8 @@ class CAuth extends BaseController
      */
     public function logoutUser(): void
     {
-        //USession::destroy();
-        $this->auth_manager->logout();
+        USession::destroy();
+        //$this->auth_manager->logout();
         $view = new VRedirect();
         $view->redirect("/home");
     }
