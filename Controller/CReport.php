@@ -22,7 +22,7 @@ class CReport extends BaseController
 {
     public function showFormReport($id)
     {
-        if (!$this->auth_manager->isLoggedIn()) {
+        if (!$this->isLoggedIn()) {
             $view = new VRedirect();
             $view->redirect('/login');
             return;

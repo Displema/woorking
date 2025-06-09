@@ -12,7 +12,7 @@ use View\VStatus;
 abstract class BaseController
 {
     protected EntityManagerInterface $entity_manager;
-    private Auth $auth_manager;
+    protected Auth $auth_manager;
 
     public function __construct()
     {

@@ -21,7 +21,7 @@ class CReservation extends BaseController
 {
     public function showreservation()
     {
-        if (!$this->auth_manager->isLoggedIn()) {
+        if (!$this->isLoggedIn()) {
             $view = new VRedirect();
             $view->redirect('/login');
             return;
