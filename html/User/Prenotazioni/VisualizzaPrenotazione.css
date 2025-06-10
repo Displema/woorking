@@ -11,28 +11,9 @@ body {
     color: #333;
 }
 
-/* NAVBAR */
-.navbar {
 
-    height: auto;
-    background-color: #000;
-}
 
-.navbar-brand img {
-    width: 50px;
-}
-
-.navbar-nav .nav-link {
-    color: white;
-    font-size: 1.1rem;
-    transition: color 0.3s;
-}
-
-.navbar-nav .nav-link:hover {
-    color: #e74c3c;
-}
-
-/* CONTENITORE DETTAGLI */
+/* container details  */
 .dettagli-container {
     display: flex;
     flex-wrap: wrap;
@@ -45,7 +26,7 @@ body {
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* GALLERIA IMMAGINI */
+/* photo gallery */
 .galleria-foto {
     display: flex;
     gap: 15px;
@@ -71,7 +52,7 @@ body {
     flex-shrink: 0;
 }
 
-/* INFO UFFICIO */
+/* info office */
 .info-ufficio {
     display: flex;
     flex-direction: column;

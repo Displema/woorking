@@ -1,4 +1,4 @@
-/* RESET BASE */
+
 * {
     margin: 0;
     padding: 0;
@@ -11,27 +11,7 @@ body {
     color: #fff;
 }
 
-/* NAVBAR */
-.navbar {
-    background-color: #000;
-    padding: 1.5rem 2rem;
-}
-
-.navbar-brand img {
-    width: 50px;
-}
-
-.nav-link {
-    color: white !important;
-    font-size: 1.1rem;
-    margin-left: 1rem;
-}
-
-.nav-link:hover {
-    color: #e74c3c !important;
-}
-
-/* RISULTATI TITOLO */
+/* title of  result after search of office */
 .risultati-wrapper h1 {
     text-align: center;
     background-color: #000;
@@ -39,13 +19,13 @@ body {
     padding: 40px 0;
 }
 
-/* UFFICIO CONTAINER */
+/* office container */
 .ufficio-container {
     padding: 40px 15px;
     background-color: #222;
 }
 
-/* CARD UFFICIO */
+/* office card */
 .ufficio-card {
     background: #fff;
     border-radius: 12px;
