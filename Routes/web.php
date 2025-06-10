@@ -96,6 +96,8 @@ $router->get('/user/report/{idoffice}', 'CReport@show');            //  show rep
 $router->get('/reservations/{id}/review', 'CReview@reviewForm');     //show review form
 $router->post('/reservations/{id}/review', 'CReview@storeReview');  //confirm review
 
+// route to resetpassword
+$router->get('/resetPassword', 'CAuth@ResetPassword');
 
 
 return $router;

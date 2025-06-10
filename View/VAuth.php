@@ -22,4 +22,7 @@ class VAuth extends BaseView
     public function showRegisterError(): void
     {
     }
+    public function redirectResetPassword(){
+        $this->twig->display('errori/infoResetPassword.html.twig');
+    }
 }

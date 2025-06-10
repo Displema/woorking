@@ -252,4 +252,8 @@ class CAuth extends BaseController
         $view = new VRedirect();
         $view->redirect("/admin/home");
     }
+    public function ResetPassword(): void {
+        $view = new VAuth();
+        $view->redirectResetPassword();
+    }
 }
