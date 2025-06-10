@@ -33,13 +33,13 @@ class CHome extends BaseController
         }
 
 
-        if ($userId && $this->doesUserHaveRole(Roles::LANDLORD)) {
+        if ($userId && $this->doesLoggedUserHaveRole(Roles::LANDLORD)) {
             $view = new VLocatore();
             $view->index();
             return;
         }
 
-        if ($userId && $this->doesUserHaveRole(Roles::ADMIN)) {
+        if ($userId && $this->doesLoggedUserHaveRole(Roles::ADMIN)) {
             $view = new VRedirect();
             $view->redirect('/admin/home');
             return;
@@ -64,7 +64,7 @@ class CHome extends BaseController
          //take the email from a method
          $email = UserRepository::getInstance()->getEmailByUserId($user->getUserId())[0]['email'];
 
-        if ($this->doesUserHaveRole(Roles::LANDLORD)) {
+        if ($this->doesLoggedUserHaveRole(Roles::LANDLORD)) {
             $view = new VLocatore();
             $view->goProfile($user);
             return;

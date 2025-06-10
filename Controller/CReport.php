@@ -34,7 +34,7 @@ class CReport extends BaseController
 
         $userId = $this->auth_manager->getUserId();
 
-        if (!($this->doesUserHaveRole(Roles::BASIC_USER))) {
+        if (!($this->doesLoggedUserHaveRole(Roles::BASIC_USER))) {
             $view = new VRedirect();
             $view->redirect('/home');
             return;
@@ -95,5 +95,22 @@ class CReport extends BaseController
 
         $view = new VReport();
         $view->$targetView($activeReports, $closedReports);
+    }
+
+    public function show($idoffice)
+    {
+        $this->requireLogin();
+        if (!($this->doesLoggedUserHaveRole(Roles::BASIC_USER))) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+        $user = USession::getUser();
+        $office =$this->entity_manager->getRepository(EUfficio::class)->findoneby(["id" =>$idoffice]);
+        $reportsRepo = $this->entity_manager->getRepository(ESegnalazione::class);
+        $Report = $reportsRepo->findBy(["user"=>$user,"ufficio"=>$office]);
+
+        $view = new VReport();
+        $view->showReport($Report, $office, $user);
     }
 }

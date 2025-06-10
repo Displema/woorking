@@ -198,7 +198,7 @@ class COffice extends BaseController
             return;
         }
 
-        if ($this->doesUserHaveRole(Roles::LANDLORD)) {
+        if ($this->doesLoggedUserHaveRole(Roles::LANDLORD)) {
             $user = USession::getUser();
             if ($office->getLocatore()->getId() !== $user->getId()) {
                 $view = new VStatus();
@@ -483,7 +483,7 @@ class COffice extends BaseController
         }
 
 
-        if ($this->doesUserHaveRole(Roles::ADMIN)) {
+        if ($this->doesLoggedUserHaveRole(Roles::ADMIN)) {
             $targetView = "showPendingAdmin";
         } else {
             $targetView = "showPendingLandlord";

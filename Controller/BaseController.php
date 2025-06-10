@@ -82,7 +82,7 @@ abstract class BaseController
         }
     }
 
-    public function doesUserHaveRole(int $role): bool
+    public function doesLoggedUserHaveRole(int $role): bool
     {
         $validRoles = (new \ReflectionClass(Roles::class))->getConstants();
 

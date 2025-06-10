@@ -22,7 +22,7 @@ class CReservation extends BaseController
     public function showreservation()
     {
         $this->requireLogin();
-        if (!($this->doesUserHaveRole(Roles::BASIC_USER))) {
+        if (!($this->doesLoggedUserHaveRole(Roles::BASIC_USER))) {
             $view = new VRedirect();
             $view->redirect('/home');
             return;
