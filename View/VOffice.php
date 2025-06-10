@@ -9,19 +9,19 @@ use Twig\Loader\FilesystemLoader;
 class VOffice extends BaseView
 {
 
-    public function showOfficeSearch($Result, $date, $fascia1, $user): void
+    public function showOfficeSearch($offices, $date, $fascia1, $user): void
     {
-        $this->twig->display('/uffici/uffici.html.twig', ['offices' => $Result,'date' => $date,'fascia' => $fascia1,'user' => $user]);
+        $this->twig->display('/User/uffici/uffici.html.twig', ['offices' => $offices,'date' => $date,'fascia' => $fascia1,'user' => $user]);
     }
 
-    public function showOfficeDetails($Result, $date, $fascia, $user): void
+    public function showOfficeDetails($office, $date, $slot, $user): void
     {
-        $ufficio = $Result[0];
+
         $this->twig->display(
-            '/DettaglioOffice/DettaglioOffice.html.twig',
-            ['ufficio' => $ufficio,
+            '/User/DettaglioOffice/DettaglioOffice.html.twig',
+            ['office' => $office,
                 'date' => $date,
-                'fascia' => $fascia,
+                'slot' => $slot,
                 'user' => $user,
             ]
         );
@@ -29,7 +29,7 @@ class VOffice extends BaseView
     public function showconfirmedpage1($user)
     {
 
-         $this->twig->display('/conferme/confermaprenotazione.html.twig', ['user' => $user]);
+         $this->twig->display('/User/conferme/confermaprenotazione.html.twig', ['user' => $user]);
     }
 
     public function showAllReviews($recensione, $ufficio,)

@@ -13,8 +13,8 @@ body {
 
 /* NAVBAR */
 .navbar {
-    padding: 30px 40px;
-    height: 120px;
+
+    height: auto;
     background-color: #000;
 }
 

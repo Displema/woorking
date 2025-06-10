@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Risultati ricerca uffici</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- link to bootstrap to take the parts of template-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- the link to refer to awesome to use some beatiful effect -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- the link to refer to css -->
+    <link rel="stylesheet" href="/html/User/uffici/uffici.css">
+</head>
+
+<body>
+
+<!-- include the navbar  -->
+
+{% include 'navbar/navbar.html.twig' %}
+
+<!-- results of the research -->
+<div class="container-fluid text-center py-5 bg-black text-white">
+    <h1>Risultati della ricerca</h1>
+</div>
+
+<!-- this is the chekc for the offices that can be empty -->
+{% if offices is empty %}
+
+<!-- container is shown when the offices is empty-->
+<div class="container my-5">
+    <div class="alert alert-warning text-center py-5">
+        <h2 class="mb-3"><i class="fa-solid fa-triangle-exclamation text-warning me-2"></i> Nessun ufficio trovato</h2>
+        <p>Prova a cambiare i parametri di ricerca .</p>
+        <a href="/home" class="btn btn-primary mt-3"><i class="fa-solid fa-house"></i> Torna alla Home</a>
+    </div>
+</div>
+{% else %}
+<div class="container py-5 ufficio-container">
+<div class="container py-5 ufficio-container">
+    <div class="row g-4">
+        <!-- analyzing of the offices and for everyone show the information -->
+        {%for office in offices %}
+        <div class="col-12">
+            <div class="ufficio-card d-flex flex-column flex-md-row mx-auto">
+                <img src="/static/img/{{ office.foto[0].id }}" alt="Foto Ufficio" class="ufficio-img">
+                <div class="ufficio-info">
+                    <a href="/offices/{{office.id}}/availability/{{date}}/{{fascia}}" class="btn-prenota"><i class="fas fa-calendar-check"></i> Prenota</a>
+                    <h2>{{ office.titolo }}</h2>
+                    <p><strong>Indirizzo: </strong>{{office.indirizzo}}</p>
+                    <p><strong>Posti disponibili: </strong>{{office.numeroPostazioni }} </p>
+                    <div class="prezzo"> Prezzo : {{ office.prezzo }} euro al giorno</div>
+                </div>
+            </div>
+        </div>
+{% endfor %}
+    </div>
+</div>
+    {% endif %}
+</div>
+
+<!-- include footer -->
+        {% include 'Footer/footer.html.twig' %}
+
+
+</body>
+</html>

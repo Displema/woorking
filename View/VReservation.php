@@ -16,9 +16,9 @@ class VReservation extends BaseView
     public function showReservation($activeReservations, $pastReservations,$user)
     {
         $this->twig->display(
-            '/Prenotazioni/Prenotazione.html.twig',
-            ['reservations' => $activeReservations,
-            'oldreservations'=>$pastReservations,
+            '/User/Prenotazioni/Prenotazione.html.twig',
+            ['activereservations' => $activeReservations,
+            'pastreservations'=>$pastReservations,
             'user'=>$user,
         ]
         );
@@ -26,11 +26,11 @@ class VReservation extends BaseView
 
     public function showReservationDetails( $reservation,$user): void
     {
-        $this->twig->display('Prenotazioni/VisualizzaPrenotazioni.html.twig', ['reservations' => $reservation,'user'=>$user],);
+        $this->twig->display('/User/Prenotazioni/VisualizzaPrenotazioni.html.twig', ['reservation' => $reservation,'user'=>$user],);
     }
 
     public function showAlreadyBookedPage($user): void
     {
-        $this->twig->display('/conferme/Postinondisponibili.html.twig',['user'=>$user]);
+        $this->twig->display('/User/conferme/Postinondisponibili.html.twig',['user'=>$user]);
     }
 }

@@ -41,178 +41,78 @@ use View\VStatus;
 
 class COffice extends BaseController
 {
-    public function show(string $id, string $fascia, string $date): void
+    public function availability(string $id, string $slot, string $date): void
     {
+        //check that the User is logged
         if ($this->isLoggedIn()) {
             $user = USession::getUser();
         } else {
             $user = null;
         }
-
+        // take the repository of office with the entitymanager to have the access on DB
         $office = $this->entity_manager->getRepository(EUfficio::class)->find($id);
+
+        //check if the office exist
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
             return;
         }
-
-        $officeDetails=[];
-        $photoUrls=[];
-
-        $photosRepo = $this->entity_manager->getRepository(EFoto::class);
-        $photos = $photosRepo->findBy(['ufficio' => $office->getId()]);
-        foreach ($photos as $photo) {
-            if ($photo) {
-                $photoUrls[] = '/static/img/' . $photo->getId();
-            }
-        }
-
-        $officeDetails[]= [
-            'ufficio' => $office,
-            'foto' => $photoUrls
-        ];
+        // call to the view to show the details of office
         $view = new VOffice();
-        $view->showOfficeDetails($officeDetails, $date, $fascia, $user);
+        $view->showOfficeDetails($office, $date, $slot, $user);
     }
 
-
-
-    public function ShowReview($id)
+    public function searchResults(string $query, string $date, string $slot): void
     {
+        // control on the login
         if ($this->isLoggedIn()) {
             $user = USession::getUser();
         } else {
             $user = null;
         }
-
-        $office = $this->entity_manager->getRepository(EUfficio::class)->find($id);
-        if (!$office) {
-            $view = new VStatus();
-            $view->showStatus(404);
-            return;
-        }
-
-        /** @var ERecensioneRepository $repo */
-        $repo=$this->entity_manager->getRepository(ERecensione::class);
-        $review = $repo->getRecensioneByUfficio($id);
-
-        $view = new VReview();
-        $view->showAllReviews($review, $office, $user);
-    }
-
-    public function search(string $query, string $date, string $slot): void
-    {
-        if ($this->isLoggedIn()) {
-            $user = USession::getUser();
-        } else {
-            $user = null;
-        }
-
+        // this give the repo of Eufficio to use the methods to use db
         /** @var EUfficioRepository $repo */
         $repo=$this->entity_manager->getRepository(EUfficio::class);
 
-        $place = $query;
+        // conversion of date from string to datetime the we use in the method findbythree
         try {
             $date_parsed = new DateTime($date);
         } catch (Exception) {
+            //if this not is possible there is an exception
             $view = new VStatus();
             $view->showStatus(400);
             return;
         }
+        // to take the offices that had this 3 parameter (query,date,slot)
+        $offices= $repo->findbythree($query, $date_parsed, $slot);
 
-        $fascia = $slot;
-        $offices= $repo->findbythree($place, $date_parsed, $fascia);
-
-        $officewithphoto=[];
-
+        //take the repository of Eprenotazione
         $reservationRepo=$this->entity_manager->getRepository(EPrenotazione::class);
 
-
-        $photoEntity = [];
+        //is a foreach to access all offices
         foreach ($offices as $office) {
+
+            //conversion from string to FasciaOrariaEnum
+            $slotEnum = FasciaOrariaEnum::tryFrom($slot);
+
+            // with this we can take the number of reservation by office date e slot
+            $reservationcount=$reservationRepo->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $slotEnum);
+
+            //place avaible for office
+            $placeavaible= $office->getNumeroPostazioni();
+
+            //check if the number of reservation for the office are minors than the place avaible
+            if ($reservationcount>=$placeavaible) {
+                continue;  // if the office is full we can pass to check another office
+            }
+            //it's a way to control that the office is hidden
             if ($office->isHidden()) {
                 continue;
             }
-            $fasciaEnum = FasciaOrariaEnum::tryFrom($fascia);
-            $reservationcount=$reservationRepo->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $fasciaEnum);
-            $placeavaible= $office->getNumeroPostazioni();
-            if ($reservationcount<$placeavaible) {
-                $photoEntity = $this->entity_manager->getRepository(\Model\EFoto::class)->findOneBy(['ufficio' => $office->getId()]);
-
-                if ($photoEntity) {
-                    $idPhoto = $photoEntity->getId();
-
-                    $photoUrl = $photoEntity ? "/static/img/" . $idPhoto : null;
-                } else {
-                    $photoUrl = "https://cdn.pixabay.com/photo/2024/07/20/17/12/warning-8908707_1280.png";
-                }
-            } else {
-                continue;
-            }
-            $officewithphoto[] = [
-                'office' => $office,
-                'photo' => $photoUrl,
-
-            ];
         }
-
         $view= new VOffice();
-        $view->showOfficeSearch($officewithphoto, $date, $slot, $user);
-    }
-    public function confirmReservation($date, $idOffice, $fascia)
-    {
-        $this->requireLogin();
-        if ($this->doesUserHaveRole(Roles::LANDLORD)) {
-            $view = new VRedirect();
-            $view->redirect('/home');
-            return;
-        }
-
-        $user = USession::getUser();
-
-        $date_parsed = new DateTime($date);
-        $FasciaEnum=FasciaOrariaEnum::from($fascia);
-
-        $this->entity_manager->beginTransaction();
-        try {
-            // With PessimisticWrite the first one that gets access to the office locks it until it's finished
-            //$office = $this->entity_manager->getRepository(EUfficio::class)->find($idOffice, LockMode::PESSIMISTIC_WRITE);
-
-            $office = $this->entity_manager->find(EUfficio::class, $idOffice, LockMode::PESSIMISTIC_WRITE);
-
-            if (!$office) {
-                $this->entity_manager->rollback();
-                $view = new VStatus();
-                $view->showStatus(404);
-                return;
-            }
-
-            $reservationCount = $this->entity_manager->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $FasciaEnum);
-            $placesAvaible = $office->getNumeroPostazioni();
-
-
-
-            if ($reservationCount >= $placesAvaible) {
-                $view  = new VReservation();
-                $view ->showAlreadyBookedPage($user);
-                exit;
-            }
-            $reservation = new EPrenotazione();
-            $reservation->setData(new DateTime($date));
-            $reservation->setUfficio($office);
-            $reservation->setFascia($FasciaEnum);
-            $reservation->setUtente($user);
-
-            $this->entity_manager->persist($reservation);
-            $this->entity_manager->flush();
-            $this->entity_manager->commit();
-
-            $view = new VOffice();
-            $view->showconfirmedpage1($user);
-        } catch (Exception $e) {
-            $this->entity_manager->rollback();
-            echo $e->getMessage();
-        }
+        $view->showOfficeSearch($offices, $date, $slot, $user);
     }
 
 
@@ -228,13 +128,13 @@ class COffice extends BaseController
             return;
         }
 
-        if (!($office->getStato()->value === StatoUfficioEnum::InAttesa->value)) {
+        if (!(StatoUfficioEnum::tryFrom(!$office->getStato()) === StatoUfficioEnum::InAttesa)) {
             $view = new VStatus();
             $view->showStatus(400);
             return;
         }
 
-        $office->setMotivoRifiuto($reason);
+        $office->setReason($reason);
         $office->setStato(StatoUfficioEnum::NonApprovato);
 
         try {
@@ -263,7 +163,7 @@ class COffice extends BaseController
             return;
         }
 
-        if (!($office->getStato()->value === StatoUfficioEnum::InAttesa->value)) {
+        if (!(StatoUfficioEnum::tryFrom(!$office->getStato()) === StatoUfficioEnum::InAttesa)) {
             $view = new VStatus();
             $view->showStatus(400);
             return;
@@ -417,7 +317,7 @@ class COffice extends BaseController
     }
 
     //show all lessor's offices
-    public function showOfficesLocatore(): void
+    public function showOfficesLocatore()
     {
         $this->requireRole(Roles::LANDLORD);
 
@@ -540,8 +440,7 @@ class COffice extends BaseController
             $this->entity_manager->persist($servizio);
         }
         $this->entity_manager->flush();
-        $view = new VRedirect();
-        $view->redirect('/uffici');
+        header('Location: /uffici');
         exit;
     }
 
@@ -571,20 +470,18 @@ class COffice extends BaseController
         $office  = $this->entity_manager->find(EUfficio::class, $id);
 
         $user = USession::getUser();
-
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
             return;
         }
 
-        if ($this->doesUserHaveRole(Roles::LANDLORD)) {
-            if ($user->getId() !== $office->getLocatore()->getId()) {
-                $view = new VStatus();
-                $view->showStatus(403);
-                return;
-            }
+        if ($user->getId() !== $office->getLocatore()->getId()) {
+            $view = new VStatus();
+            $view->showStatus(403);
+            return;
         }
+
 
         if ($this->doesUserHaveRole(Roles::ADMIN)) {
             $targetView = "showPendingAdmin";
@@ -594,28 +491,5 @@ class COffice extends BaseController
 
         $view = new VOffice();
         $view->$targetView($office);
-    }
-
-    public function showRejectedDetails(string $id): void
-    {
-        $this->requireRoles([Roles::ADMIN]);
-        $office  = $this->entity_manager->find(EUfficio::class, $id);
-
-        if (!$office) {
-            $view = new VStatus();
-            $view->showStatus(404);
-            return;
-        }
-
-        $user = USession::getUser();
-        
-//        if ($this->doesUserHaveRole(Roles::LANDLORD) && $user->getId() !== $office->getLocatore()->getUserId()) {
-//            $view = new VStatus();
-//            $view->showStatus(403);
-//            return;
-//        }
-
-        $view = new VOffice();
-        $view->showRejectedDetails($office);
     }
 }
