@@ -26,8 +26,11 @@ class EProfilo
     #[ORM\Column(name: 'user_id', type: 'string', length: 255)]
     private string $user_id;
 
-    #[ORM\OneToMany(targetEntity:ESegnalazione::class, mappedBy:"user", cascade:["persist", "remove"])]
+    #[ORM\OneToMany(targetEntity:ESegnalazione::class, mappedBy:"user")]
     private Collection $reports;
+
+    #[ORM\OneToMany(targetEntity:EPrenotazione::class, mappedBy:"utente")]
+    private Collection $reservations;
 
     #[ORM\Column(type: 'string', length: 40)]
     private string $name;

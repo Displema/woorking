@@ -23,7 +23,7 @@ class ESegnalazione
     //#[ORM\JoinColumn(name:"idUfficio", referencedColumnName:"id", nullable: false)]
     private EUfficio $ufficio;
 
-    #[ORM\ManyToOne(targetEntity:EProfilo::class, cascade: ["persist",], inversedBy: "reports")]
+    #[ORM\ManyToOne(targetEntity:EProfilo::class, inversedBy: "reports")]
     private EProfilo $user;
 
     #[ORM\Column]
