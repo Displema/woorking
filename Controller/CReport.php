@@ -73,18 +73,16 @@ class CReport extends BaseController
     {
         $this->requireLogin();
 
-        $userId = $this->auth_manager->getUserId();
-
         $user = $this->getUser();
         $reportsRepo = $this->entity_manager->getRepository(ESegnalazione::class);
 
-        if ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
+        if ($this->doesLoggedUserHaveRole(Roles::ADMIN)) {
             $reports = $reportsRepo->findAll();
             $targetView = "showAdminReports";
-        } elseif ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER)) {
+        } elseif ($this->doesLoggedUserHaveRole(Roles::BASIC_USER)) {
             $reports = $reportsRepo->findAllByUser($user);
             $targetView = "showUserReports";
-        } elseif ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::LANDLORD)) {
+        } elseif ($this->doesLoggedUserHaveRole(Roles::LANDLORD)) {
             $view = new VRedirect();
             $view->redirect('/home');
             return;
