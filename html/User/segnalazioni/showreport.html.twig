@@ -40,10 +40,10 @@
                 <div>
                     <i class="fas fa-comment-dots me-2"></i>{{ report.commento }}
                 </div>
-                {% if report.state == 'Active' %}
+                {% if report.state.value == "active" %}
                     <span class="badge badge-active">Active</span>
                 {% else %}
-                    <span class="badge badge-solved">Solved</span>
+                    <span class="badge badge-solved">solved</span>
                 {% endif %}
             </div>
         {% endfor %}
