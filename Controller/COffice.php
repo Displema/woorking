@@ -45,7 +45,7 @@ class COffice extends BaseController
     {
         //check that the User is logged
         if ($this->isLoggedIn()) {
-            $user = $this->getUser();
+            $user = USession::getUser();
         } else {
             $user = null;
         }
@@ -67,7 +67,7 @@ class COffice extends BaseController
     {
         // control on the login
         if ($this->isLoggedIn()) {
-            $user = $this->getUser();
+            $user = USession::getUser();
         } else {
             $user = null;
         }
@@ -198,8 +198,8 @@ class COffice extends BaseController
             return;
         }
 
-        if ($this->doesLoggedUserHaveRole(Roles::LANDLORD)) {
-            $user = $this->getUser();
+        if ($this->doesUserHaveRole(Roles::LANDLORD)) {
+            $user = USession::getUser();
             if ($office->getLocatore()->getId() !== $user->getId()) {
                 $view = new VStatus();
                 $view->showStatus(403);
@@ -254,7 +254,7 @@ class COffice extends BaseController
     {
         $this->requireLogin();
 
-        $user = $this->getUser();
+        $user = USession::getUser();
         $id = $user->getId();
         $oggi = new \DateTime();
 
@@ -321,7 +321,7 @@ class COffice extends BaseController
     {
         $this->requireRole(Roles::LANDLORD);
 
-        $user = $this->getUser();
+        $user = USession::getUser();
         $id = $user->getId();
         $UfficiCompleti = [];
         $em = getEntityManager();
@@ -469,7 +469,7 @@ class COffice extends BaseController
         $this->requireRoles([Roles::ADMIN, Roles::LANDLORD]);
         $office  = $this->entity_manager->find(EUfficio::class, $id);
 
-        $user = $this->getUser();
+        $user = USession::getUser();
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
@@ -483,7 +483,7 @@ class COffice extends BaseController
         }
 
 
-        if ($this->doesLoggedUserHaveRole(Roles::ADMIN)) {
+        if ($this->doesUserHaveRole(Roles::ADMIN)) {
             $targetView = "showPendingAdmin";
         } else {
             $targetView = "showPendingLandlord";
