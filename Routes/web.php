@@ -68,7 +68,7 @@ $router->post('/admin/offices/pending/{id}/approve', 'COffice@confirmPending');
 $router->post('/admin/offices/pending/{id}/reject', 'COffice@rejectPending');
 
 // Debug endpoints
-$router->get('/api/user', 'CAuth@getUser');
+$router->get('/api/user', 'CAuth@printUser');
 $router->get('/admin/register', 'CAuth@registerAdmin');
 
 // Office routes

@@ -27,7 +27,7 @@ class CReservation extends BaseController
         //check if the user is logged
         $this->requireLogin();
         //check the role of user
-        if (!($this->doesUserHaveRole(Roles::BASIC_USER))) {
+        if (!($this->doesLoggedUserHaveRole(Roles::BASIC_USER))) {
             $view = new VRedirect();
             $view->redirect('/home');
             return;
@@ -39,16 +39,18 @@ class CReservation extends BaseController
         $repository = $this->entity_manager->getRepository(EPrenotazione::class);
 
         //take the user from session
-        $user = USession::getUser();
+        $user = $this->getUser();
 
         //take the reservation by the user
         $reservations = $repository->findBy(['utente' => $user->getId()]);
+        foreach ($reservations as $reservation) {
+            error_log($reservation->getId());
+        }
 
         $activereservation=[];
         $pastreservation=[];
 
         foreach ($reservations as $reservation) {
-
             //take the date from reservation to check what reservation are old
             // and what are active
             $Date = $reservation->getData();
@@ -70,7 +72,8 @@ class CReservation extends BaseController
 
 
     public function show($id)
-    {   //check if the user is logged
+    {
+   //check if the user is logged
         if (!$this->auth_manager->isLoggedIn()) {
             //redirect to the login to take access
             $view = new VRedirect();
@@ -78,11 +81,10 @@ class CReservation extends BaseController
             return;
         }
         //take the user form the session
-        $user = USession::getUser();
-        //take the userid from the authmanger
-        $userId = $this->auth_manager->getUserId();
+        $user = $this->getUser();
+        //take the userid from the authmanager
         //check the role of the user
-        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+        if (!($this->doesLoggedUserHaveRole(Roles::BASIC_USER))) {
             $view = new VRedirect();
             $view->redirect('/home');
             return;
@@ -95,19 +97,19 @@ class CReservation extends BaseController
         $view = new VReservation();
         $view ->showReservationDetails($reservation, $user);
     }
-    public function confirmReservation($idOffice,$slot,$date )
+    public function confirmReservation($idOffice, $slot, $date)
     {
         //check if the user is logged
         $this->requireLogin();
 
         //check the role of user
-        if ($this->doesUserHaveRole(Roles::LANDLORD)) {
+        if ($this->doesLoggedUserHaveRole(Roles::LANDLORD)) {
             $view = new VRedirect();
             $view->redirect('/home');
             return;
         }
         // take the user from the session
-        $user = USession::getUser();
+        $user = $this->getUser();
 
         // take from the DB the user usgin the repository of EProfilo and method of entitymanager
         // but with the id of the user of session
@@ -143,7 +145,6 @@ class CReservation extends BaseController
 
             //check if the office not is full
             if ($reservationCount >= $placesAvaible) {
-
                 //if the office is full , show the page placenotavaible
                 $view  = new VReservation();
                 $view ->showAlreadyBookedPage($user);
@@ -167,15 +168,9 @@ class CReservation extends BaseController
             $view = new VOffice();
             $view->showconfirmedpage1($user);
         } catch (Exception $e) {
-
             // if the saving have problem rollback cancel everything
             $this->entity_manager->rollback();
             echo $e->getMessage();
-
         }
     }
-
-
-
-
 }

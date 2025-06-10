@@ -21,31 +21,114 @@ use View\VStatus;
 class CReport extends BaseController
 {
     public function showForm($id)
-    {  //check if the user is logged
-        if (!$this->isLoggedIn()) {
+    {
+  //check if the user is logged
+        $this->requireLogin();
+        if (!$this->doesLoggedUserHaveRole(Roles::BASIC_USER)) {
             $view = new VRedirect();
-            $view->redirect('/login');
+            $view->redirect('/home');
             return;
-
         }
         //take the user from the session
-        $user = USession::getUser();
+        $user = $this->getUser();
         $view = new VReport();
         $view->showReportForm($id, $user);
     }
-    public function Store($id,$reportMotivation,$Text)
-    {   // check if the user is logged
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
-        $user = USession::getUser();
-        //take the user from the session
+    public function showConfirmOfReport($id)
+        // TODO: rimuovere accesso a post
+    {
+        $this->requireLogin();
+
         $userId = $this->auth_manager->getUserId();
 
+        if (!($this->doesLoggedUserHaveRole(Roles::BASIC_USER))) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+
+        $office=$this->entity_manager->getRepository(EUfficio::class)->find($id);
+
+        if (!$office) {
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
+        }
+
+        $commento = $_POST['motivo'] ?? null;
+
+        if ($commento === 'Altro') {
+            $commento = $_POST['altroTesto'] ?? null;
+        }
+
+        $Report= new ESegnalazione();
+        $Report->setCommento($commento);
+        $Report->setUfficio($office);
+        $Report->setState(ReportStateEnum::class::ACTIVE);
+        $this->entity_manager->persist($Report);
+        $this->entity_manager->flush();
+        $user = $this->getUser();
+        $view = new VReport();
+        $view->showReportConfirmation($user);
+    }
+
+    public function index(): void
+    {
+        $this->requireLogin();
+
+        $userId = $this->auth_manager->getUserId();
+
+        $user = $this->getUser();
+        $reportsRepo = $this->entity_manager->getRepository(ESegnalazione::class);
+
+        if ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
+            $reports = $reportsRepo->findAll();
+            $targetView = "showAdminReports";
+        } elseif ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER)) {
+            $reports = $reportsRepo->findAllByUser($user);
+            $targetView = "showUserReports";
+        } elseif ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::LANDLORD)) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+
+        $activeReports = array_values(array_filter($reports, function ($report) {
+            return $report->getState() === ReportStateEnum::ACTIVE;
+        }));
+        $closedReports = array_values(array_filter($reports, function ($report) {
+            return $report->getState() === ReportStateEnum::SOLVED;
+        }));
+
+        $view = new VReport();
+        $view->$targetView($activeReports, $closedReports);
+    }
+
+    public function show($idoffice)
+    {
+        $this->requireLogin();
+        if (!($this->doesLoggedUserHaveRole(Roles::BASIC_USER))) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+        $user = $this->getUser();
+        $office =$this->entity_manager->getRepository(EUfficio::class)->findoneby(["id" =>$idoffice]);
+        $reportsRepo = $this->entity_manager->getRepository(ESegnalazione::class);
+        $Report = $reportsRepo->findBy(["user"=>$user,"ufficio"=>$office]);
+
+        $view = new VReport();
+        $view->showReport($Report, $office, $user);
+    }
+
+    public function Store($id, $reportMotivation, $Text)
+    {
+   // check if the user is logged
+        $this->requireLogin();
+        $user = $this->getUser();
+
         //check the role of the User want to use the page
-        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+        if (!($this->doesLoggedUserHaveRole(Roles::BASIC_USER))) {
             $view = new VRedirect();
             $view->redirect('/home');
             return;
@@ -77,67 +160,5 @@ class CReport extends BaseController
 
         $view = new VReport();
         $view->showReportConfirmation($user);
-    }
-
-    public function index(): void
-    {
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-        }
-
-        $userId = $this->auth_manager->getUserId();
-
-        $user = USession::getUser();
-        $reportsRepo = $this->entity_manager->getRepository(ESegnalazione::class);
-
-        if ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
-            $reports = $reportsRepo->findAll();
-            $targetView = "showAdminReports";
-        } elseif ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER)) {
-            $reports = $reportsRepo->findAllByUser($user);
-            $targetView = "showUserReports";
-        } elseif ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::LANDLORD)) {
-            $view = new VRedirect();
-            $view->redirect('/home');
-            return;
-        } else {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
-
-        $activeReports = array_values(array_filter($reports, function ($report) {
-            return $report->getState() === ReportStateEnum::ACTIVE;
-        }));
-        $closedReports = array_values(array_filter($reports, function ($report) {
-            return $report->getState() === ReportStateEnum::SOLVED;
-        }));
-
-        $view = new VReport();
-        $view->$targetView($activeReports, $closedReports);
-    }
-
-    public function show($idoffice){
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-        }
-        $userId = $this->auth_manager->getUserId();
-        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
-            $view = new VRedirect();
-            $view->redirect('/home');
-            return;
-        }
-        $user = USession::getUser();
-        $office =$this->entity_manager->getRepository(EUfficio::class)->findoneby(["id" =>$idoffice]);
-        $reportsRepo = $this->entity_manager->getRepository(ESegnalazione::class);
-        $Report = $reportsRepo->findBy(["user"=>$user,"ufficio"=>$office]);
-
-        $view = new VReport();
-        $view->showReport($Report,$office,$user);
-
-
-
     }
 }

@@ -121,7 +121,7 @@ class CAuth extends BaseController
             die('Unknown id');
         }
 
-        $this->auth_manager->admin()->logInAsUserById($userId);
+        $this->loginUser($email, $password, "0");
 
         $view = new VRedirect();
         $view->redirect("/home");
@@ -169,7 +169,7 @@ class CAuth extends BaseController
         }
     }
 
-    public function getUser(): void
+    public function printUser(): void
     {
         if (!$this->auth_manager->isLoggedIn()) {
             $view = new VRedirect();
@@ -177,7 +177,7 @@ class CAuth extends BaseController
             return;
         }
 
-        $user = USession::getUser();
+        $user = $this->getUser();
 
         $view = new VResource();
         $view->printJson($user);
@@ -198,7 +198,7 @@ class CAuth extends BaseController
     public function modifyUser(): void
     {
         try {
-            $sessionUser = USession::getUser();
+            $sessionUser = $this->getUser();
             // Forza il reattacco all'EntityManager (managed entity)
             $user = $this->entity_manager->getRepository(get_class($sessionUser))->find($sessionUser->getId());
         } catch (UserNotAuthenticatedException $e) {

@@ -82,7 +82,7 @@ abstract class BaseController
         }
     }
 
-    public function doesUserHaveRole(int $role): bool
+    public function doesLoggedUserHaveRole(int $role): bool
     {
         $validRoles = (new \ReflectionClass(Roles::class))->getConstants();
 
@@ -108,5 +108,10 @@ abstract class BaseController
     public function getUserId(): int
     {
         return $this->auth_manager->getUserId();
+    }
+
+    public function getUser(): EProfilo | ELocatore
+    {
+        return $this->entity_manager->getRepository(get_class($_SESSION['user']))->find($_SESSION['user']->getId());
     }
 }

@@ -46,7 +46,6 @@ class COffice extends BaseController
         //check that the User is logged
         if ($this->isLoggedIn()) {
             $user = USession::getUser();
-
         } else {
             $user = null;
         }
