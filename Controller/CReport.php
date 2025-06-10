@@ -34,40 +34,7 @@ class CReport extends BaseController
         $view = new VReport();
         $view->showReportForm($id, $user);
     }
-    public function showConfirmOfReport(string $id, string $motivo, string $altroTesto)
-    {
-        $this->requireLogin();
 
-        $userId = $this->auth_manager->getUserId();
-
-        if (!($this->doesLoggedUserHaveRole(Roles::BASIC_USER))) {
-            $view = new VRedirect();
-            $view->redirect('/home');
-            return;
-        }
-
-        $office=$this->entity_manager->getRepository(EUfficio::class)->find($id);
-
-        if (!$office) {
-            $view = new VStatus();
-            $view->showStatus(404);
-            return;
-        }
-
-        if ($motivo === 'Altro') {
-            $motivo = $altroTesto;
-        }
-
-        $Report= new ESegnalazione();
-        $Report->setCommento($motivo);
-        $Report->setUfficio($office);
-        $Report->setState(ReportStateEnum::class::ACTIVE);
-        $this->entity_manager->persist($Report);
-        $this->entity_manager->flush();
-        $user = $this->getUser();
-        $view = new VReport();
-        $view->showReportConfirmation($user);
-    }
 
     public function index(): void
     {
