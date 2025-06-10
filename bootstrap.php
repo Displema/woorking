@@ -48,7 +48,8 @@ function getEntityManager(): EntityManager
 function getAuth(): Auth
 {
     $db = getAuthDb();
-    return new Auth($db, throttling: false);
+    $throttling = (bool) $_ENV['AUTH_ENDPOINTS_THROTTLING'];
+    return new Auth($db, throttling: $throttling);
 }
 
 function getAuthDb(): PdoDatabase
@@ -60,7 +61,7 @@ function getAuthDb(): PdoDatabase
     $host = $_ENV['DB_HOST'];
 
     return PdoDatabase::fromDsn(new PdoDsn(
-        "mysql:dbname=$dbName;host=$host;charset=utf8mb4",
+        "mysql:dbname=$dbName;host=$host,$port;charset=utf8mb4",
         $user,
         $password
     ));

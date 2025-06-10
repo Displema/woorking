@@ -15,7 +15,7 @@ class CStats extends BaseController
 {
     public function entrateMensili(): void
     {
-        $user = USession::getUser();
+        $user = $this->getUser();
         /** @var EPrenotazioneRepository $repo */
         $repo = $this->entity_manager->getRepository(EPrenotazione::class);
 
@@ -29,7 +29,7 @@ class CStats extends BaseController
     public function utilizzoUffici(): void
     {
         $dati = [];
-        $user = USession::getUser();
+        $user = $this->getUser();
         $id = $user->getId();
         /** @var EUfficioRepository $uffici */
         $uffici = $this->entity_manager->getRepository(EUfficio::class)->getAllOfficeByLocatore(['id' => $id]);
@@ -48,7 +48,7 @@ class CStats extends BaseController
 
     public function recensioniCasualiPerLocatore(): void
     {
-        $user = USession::getUser();
+        $user = $this->getUser();
         /** @var ERecensioneRepository $repo */
         $repo = $this->entity_manager->getRepository(ERecensione::class);
         $recensioni = $repo->getRandomReviewbyLandlord($user->getId());

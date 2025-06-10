@@ -2,9 +2,11 @@
 namespace Controller;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
 use DateTime;
 use Model\EFoto;
+use Model\Enum\FasciaOrariaEnum;
 use Model\EPrenotazione;
 
 use Model\EProfilo;
@@ -12,6 +14,7 @@ use Model\ERecensione;
 use Model\EUfficio;
 use TechnicalServiceLayer\Roles\Roles;
 use TechnicalServiceLayer\Utility\USession;
+use View\VOffice;
 use View\VRedirect;
 use View\VReservation;
 use View\VReview;
@@ -19,162 +22,156 @@ use View\VStatus;
 
 class CReservation extends BaseController
 {
-    public function showreservation()
+    public function index()
     {
+        //check if the user is logged
         $this->requireLogin();
-        if (!($this->doesUserHaveRole(Roles::BASIC_USER))) {
+        //check the role of user
+        if (!($this->doesLoggedUserHaveRole(Roles::BASIC_USER))) {
             $view = new VRedirect();
             $view->redirect('/home');
             return;
         }
-
+        //take the datetime of today
         $today = new DateTime();
-        $today->setTime(0, 0, 0);
 
+        //take the repository of EPrenotazione
         $repository = $this->entity_manager->getRepository(EPrenotazione::class);
-        $user = USession::getUser();
 
-        $userId = $this->auth_manager->getUserId();
+        //take the user from session
+        $user = $this->getUser();
 
+        //take the reservation by the user
         $reservations = $repository->findBy(['utente' => $user->getId()]);
+        foreach ($reservations as $reservation) {
+            error_log($reservation->getId());
+        }
 
-        $reservationWithOffice = [];
-        $oldreservationWithOffice = [];
+        $activereservation=[];
+        $pastreservation=[];
 
         foreach ($reservations as $reservation) {
+            //take the date from reservation to check what reservation are old
+            // and what are active
+            $Date = $reservation->getData();
 
-            $idOffice = $reservation->getUfficio();
-            $photo = $this->entity_manager->getRepository(EFoto::class)->findOneBy(['ufficio' => $idOffice]);
-            $office = $this->entity_manager->getRepository(EUfficio::class)->find($idOffice);
 
-            $photoUrl = null;
-            if ($photo) {
-                $photoUrl = "/static/img/" . $photo->getId();
-            }
-
-            $resDate = $reservation->getData();
-            if ($resDate instanceof \DateTimeInterface) {
-                $resDate->setTime(0, 0, 0);
-            }
-
-            if ($resDate >= $today) {
-                $reservationWithOffice[] = [
+            if ($Date >= $today) {
+                $activereservation[] = [
                     'reservation' => $reservation,
-                    'office' => $office,
-                    'photo' => $photoUrl
                 ];
             } else {
-                $oldreservationWithOffice[] = [
+                $pastreservation[] = [
                     'reservation' => $reservation,
-                    'office' => $office,
-                    'photo' => $photoUrl
                 ];
             }
         }
-
-
         $view = new VReservation();
-        $view->showReservation($reservationWithOffice, $oldreservationWithOffice, $user);
+        $view->showReservation($activereservation, $pastreservation, $user);
     }
 
 
-    public function showReservationDetails($id)
+    public function show($id)
     {
+   //check if the user is logged
         if (!$this->auth_manager->isLoggedIn()) {
+            //redirect to the login to take access
             $view = new VRedirect();
             $view->redirect('/login');
             return;
         }
-        $user = USession::getUser();
-        $userId = $this->auth_manager->getUserId();
-
-        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+        //take the user form the session
+        $user = $this->getUser();
+        //take the userid from the authmanager
+        //check the role of the user
+        if (!($this->doesLoggedUserHaveRole(Roles::BASIC_USER))) {
             $view = new VRedirect();
             $view->redirect('/home');
             return;
         }
 
-        $reservationwithoffice = [];
+        //from the repository take the reservation to show information
         $repository = $this->entity_manager->getRepository(EPrenotazione::class);
         $reservation = $repository->find($id);
-        $photoUrl = [];
-        $office= $this->entity_manager->getRepository(EUfficio::class)->find($reservation->getUfficio());
-        $photoOffice = $this->entity_manager->getRepository(\Model\EFoto::class)->findBy(['ufficio' => $office->getId()]);
-        foreach ($photoOffice as $photo) {
-            if ($photo) {
-                $idPhoto = $photo->getId();
-                $photoUrl[] = "/static/img/" . $idPhoto;
-            }
-        }
-        $reservationwithoffice[] = [
-            'office' => $office,
-            'photo' => $photoUrl,
-            'reservation'=>$reservation
-        ];
 
         $view = new VReservation();
-        $view ->showReservationDetails($reservationwithoffice, $user);
+        $view ->showReservationDetails($reservation, $user);
     }
-
-    public function sendreview($idreservation): void
+    public function confirmReservation($idOffice, $slot, $date)
     {
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
+        //check if the user is logged
+        $this->requireLogin();
 
-        $userId = $this->auth_manager->getUserId();
-
-        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+        //check the role of user
+        if ($this->doesLoggedUserHaveRole(Roles::LANDLORD)) {
             $view = new VRedirect();
             $view->redirect('/home');
             return;
         }
+        // take the user from the session
+        $user = $this->getUser();
 
-        $user = USession::getUser();
+        // take from the DB the user usgin the repository of EProfilo and method of entitymanager
+        // but with the id of the user of session
+        $usertosave=$this->entity_manager->getRepository(EProfilo::class)->findOneBy(['id'=> $user->getId()]);
 
-        $view = new VReview();
-        $view ->showReviewForm($idreservation, $user);
-    }
+        //conversion of date from String to datetime
+        $date_parsed = new DateTime($date);
 
-    public function confirmreview($idreservation)
-        // TODO: rimuovere accesso ai dati diretto dall'array POST
-    {
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
+        //conversion of slot from string to FasciaOrariaEnum
+        $slotEnum=FasciaOrariaEnum::from($slot);
+
+        //start of transaction to prepare the possibility save of new  reservation
+        $this->entity_manager->beginTransaction();
+        try {
+            // With PessimisticWrite the first one that gets access to the office locks it until it's finished
+            //$office = $this->entity_manager->getRepository(EUfficio::class)->find($idOffice, LockMode::PESSIMISTIC_WRITE);
+            $office = $this->entity_manager->find(EUfficio::class, $idOffice, LockMode::PESSIMISTIC_WRITE);
+
+
+            //check if office exist
+            if (!$office) {
+                $this->entity_manager->rollback();
+                $view = new VStatus();
+                $view->showStatus(404);
+                return;
+            }
+
+            //take the number of reservation for this office in a specific date and slot
+            $reservationCount = $this->entity_manager->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $slotEnum);
+
+            //take the number of place for office
+            $placesAvaible = $office->getNumeroPostazioni();
+
+            //check if the office not is full
+            if ($reservationCount >= $placesAvaible) {
+                //if the office is full , show the page placenotavaible
+                $view  = new VReservation();
+                $view ->showAlreadyBookedPage($user);
+                exit; //to don't save the reservation
+            }
+            //else creation of reservation and setting of parameters
+            $reservation = new EPrenotazione();
+            $reservation->setData(new DateTime($date));
+            $reservation->setUfficio($office);
+            $reservation->setFascia($slotEnum);
+            $reservation->setUtente($usertosave);
+
+            //method of entitymanager to prepare and save the reseration
+            $this->entity_manager->persist($reservation); //prepare the reservation to be save
+            $this->entity_manager->flush(); //set the information of reservation
+
+            // commit don't is used in directly way but to user PESSIMISTIC WRITE is very important
+            // because allow to book an office only after a commit
+            $this->entity_manager->commit();
+
+            $view = new VOffice();
+            $view->showconfirmedpage1($user);
+        } catch (Exception $e) {
+            // if the saving have problem rollback cancel everything
+            $this->entity_manager->rollback();
+            echo $e->getMessage();
+
         }
-
-        $userId = $this->auth_manager->getUserId();
-
-        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
-            $view = new VRedirect();
-            $view->redirect('/home');
-            return;
-        }
-
-        $value = $_POST['voto'];           // value 1-5
-        $comment = $_POST['review']; // comment of review
-        $user = USession::getUser();
-        $reservation = $this->entity_manager->getRepository(EPrenotazione::class)->find($idreservation);
-
-        if (!$reservation) {
-            $view = new VStatus();
-            $view->showStatus(404);
-            return;
-        }
-
-        $review= new ERecensione();
-        $review->setCommento($comment);
-        $review->setValutazione((int)$value);
-        $review->setPrenotazione($reservation);
-
-        $this->entity_manager->persist($review);
-        $this->entity_manager->flush();
-
-        $view = new VReview();
-        $view->showReviewConfirmation($user);
     }
 }

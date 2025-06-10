@@ -1,0 +1,97 @@
+
+html, body {
+    background-color: #222;
+    color: #eee;
+    min-height: 100vh;
+}
+
+
+.container {
+    max-width: 720px;
+}
+
+
+h2.text-center {
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+}
+
+
+.report-card {
+    background: #2a2a2a;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.4);
+    padding: 1.5rem 2rem;
+    transition: background-color 0.3s ease;
+}
+.report-card:hover {
+    background-color: #3c3c3c;
+}
+
+
+.report-card i.fas.fa-comment-dots {
+    color: #f03e3e;
+    font-size: 1.25rem;
+}
+
+/* Badge stato */
+.badge-active {
+    background-color: #ffc107;
+    color: #212529;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.4em 0.9em;
+    border-radius: 20px;
+}
+.badge-solved {
+    background-color: #198754;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.4em 0.9em;
+    border-radius: 20px;
+}
+
+
+.alert-warning {
+    background-color: #333 !important;
+    color: #ffc107 !important;
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 0 20px #ffc107aa;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.alert-warning h2 {
+    font-size: 2rem;
+}
+
+
+.btn-primary {
+    background: #0d6efd;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgb(13 110 253 / 0.4);
+    transition: background-color 0.3s ease;
+}
+.btn-primary:hover {
+    background-color: #084298;
+    box-shadow: 0 8px 20px rgb(8 66 152 / 0.6);
+}
+
+
+.form-container h2 {
+    font-weight: 700;
+    color: #0dcaf0;
+}
+.form-container p {
+    color: #bbb;
+    font-size: 1rem;
+    max-width: 540px;
+    margin: 0 auto;
+}

@@ -7,4 +7,7 @@ class VRedirect extends BaseView
     {
         header('Location: ' . $path);
     }
+
+
+
 }

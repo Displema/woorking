@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dettagli Ufficio</title>
+    <!-- link to bootstrap to have a parts of template that are responsive -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- link to the css -->
+    <link rel="stylesheet" href="/html/User/DettaglioOffice/DettaglioOffice.css">
+    <!-- link to awesome to have a few more details -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+</head>
+<body>
+<!-- include navbar -->
+
+{% include 'navbar/navbar.html.twig' %}
+
+<!-- main part of template -->
+<div class="container my-5 dettagli-container">
+    <div class="row g-4">
+        <!-- photo gallery -->
+        <div class="col-lg-6">
+            <div class="galleria-foto d-flex flex-wrap gap-3">
+                {% for photo in office.foto %}
+
+                    <img src="/static/img/{{ photo.id }}" alt="image">
+
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- office information-->
+        <div class="col-lg-6">
+            <div class="info-ufficio">
+                <h1 class="mb-3">{{office.titolo }}</h1>
+                <p><strong>Indirizzo: </strong> {{ office.indirizzo }}</p>
+                <p><strong>Posti disponibili: </strong> {{ office.numeroPostazioni }}</p>
+                <p><strong>Contatti: </strong>{{ office.locatore.phone }}</p>
+                <p><strong>Descrizione: </strong> {{ office.descrizione }}</p>
+                <p><strong>Superficie: </strong> {{ office.superficie }} m^2</p>
+                <p><strong>Servizi Aggiuntivi:</strong></p>
+                <ul>
+                    {% for servizio in office.serviziAggiuntivi %}
+                    <li>{{ servizio.nomeServizio }}</li>
+                    {% endfor %}
+                </ul>
+
+                <div class="prezzo h4 text-danger text-end">Prezzo: {{office.prezzo}} euro al giorno</div>
+                <a href="/offices/{{office.id}}/availability/{{date}}/{{slot}}/confirm" class="btn btn-danger mt-3"><i class="fas fa-credit-card"></i> Vai al pagamento</a>
+            </div>
+            <div class="row mt-3">
+                <div class="col-6">
+                    <a href="/offices/{{office.id}}/reviews" class="btn btn-danger w-100">
+                        <i class="fas fa-star"></i> Recensioni
+                    </a>
+                </div>
+                <div class="col-6">
+                    <a href="/offices/{{office.id}}/report" class="btn btn-danger w-100">
+                        <i class="fas fa-flag"></i> Segnala
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- include footer -->
+{% include 'Footer/footer.html.twig' %}
+
+
+
+</body>
+</html>

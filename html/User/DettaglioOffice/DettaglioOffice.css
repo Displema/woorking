@@ -1,4 +1,4 @@
-/* RESET */
+
 * {
     margin: 0;
     padding: 0;
@@ -11,11 +11,13 @@ body {
     color: #333;
 }
 
-/* NAVBAR */
 .navbar {
-    padding: 30px 40px;
-    height: 120px;
+
     background-color: #000;
+    position: relative;
+    z-index: 1050;
+    height: auto;
+
 }
 
 .navbar-brand img {
@@ -36,7 +38,7 @@ body {
     margin-right: 6px;
 }
 
-/* CONTENITORE DETTAGLI */
+/* container for details */
 .dettagli-container {
     display: flex;
     flex-wrap: wrap;
@@ -49,7 +51,7 @@ body {
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* GALLERIA IMMAGINI */
+/* photo gallery*/
 .galleria-foto {
     display: flex;
     gap: 15px;
@@ -75,7 +77,7 @@ body {
     flex-shrink: 0;
 }
 
-/* INFO UFFICIO */
+/* office information */
 .info-ufficio {
     display: flex;
     flex-direction: column;
@@ -118,7 +120,7 @@ body {
     background: linear-gradient(135deg, #ff6f61, #e74c3c);
 }
 
-/* FOOTER (caricato dinamicamente) */
+/* footer that was included*/
 .site-footer {
     background-color: #000;
     color: #fff;

@@ -3,7 +3,9 @@ namespace Controller;
 
 use Delight\Auth\Auth;
 use Doctrine\ORM\EntityManager;
+use Model\EProfilo;
 use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
+use TechnicalServiceLayer\Repository\UserRepository;
 use TechnicalServiceLayer\Roles\Roles;
 use TechnicalServiceLayer\Utility\USession;
 use View\VHome;
@@ -14,9 +16,8 @@ class CHome extends BaseController
 {
     public function index(): void
     {
-
         if ($this->isLoggedIn()) {
-            $user = USession::getUser();
+            $user = $this->getUser();
             $userId = $user->getId();
         } else {
             $user = null;
@@ -24,9 +25,15 @@ class CHome extends BaseController
         }
 
 
-        if ($userId && $this->doesUserHaveRole(Roles::LANDLORD)) {
+        if ($userId && $this->doesLoggedUserHaveRole(Roles::LANDLORD)) {
             $view = new VLocatore();
             $view->index();
+            return;
+        }
+
+        if ($userId && $this->doesLoggedUserHaveRole(Roles::ADMIN)) {
+            $view = new VRedirect();
+            $view->redirect('/admin/home');
             return;
         }
 
@@ -42,17 +49,21 @@ class CHome extends BaseController
 
     public function profile(): void
     {
+   //check is the user is logged
         $this->requireLogin();
+        //take the user from the session
+        $user = $this->getUser();
 
-        $user = USession::getUser();
+         //take the email from a method
+         $email = UserRepository::getInstance()->getEmailByUserId($user->getUserId())[0]['email'];
 
-        if ($this->doesUserHaveRole(Roles::LANDLORD)) {
+        if ($this->doesLoggedUserHaveRole(Roles::LANDLORD)) {
             $view = new VLocatore();
             $view->goProfile($user);
             return;
         }
 
         $view = new VHome();
-        $view->profile($user);
+        $view->profile($user, $email);
     }
 }

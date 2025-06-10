@@ -12,8 +12,8 @@ class VHome extends BaseView
         $this->twig->display('./home/homeaccess.html.twig', ['user'=>$user]);
     }
 
-    public function profile($user): void
+    public function profile($user,$email): void
     {
-        $this->twig->display('./login/profile.html.twig', ['user'=>$user]);
+        $this->twig->display('./login/profile.html.twig', ['user'=>$user,'email'=>$email]);
     }
 }

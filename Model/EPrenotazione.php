@@ -31,7 +31,7 @@ class EPrenotazione
      //#[ORM\JoinColumn(name:"idUtente", referencedColumnName:"id")]
     private EUfficio $ufficio;
     
-     #[ORM\ManyToOne(targetEntity:EProfilo::class, cascade: ['persist'])]
+     #[ORM\ManyToOne(targetEntity:EProfilo::class, inversedBy: "reservations")]
     //#[ORM\JoinColumn(name:"idUtente", referencedColumnName:"id")]
     private EProfilo $utente;
     

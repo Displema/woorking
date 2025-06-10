@@ -6,6 +6,7 @@ use Delight\Auth\Auth;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Model\ELocatore;
+use Model\EProfilo;
 use TechnicalServiceLayer\Roles\Roles;
 use View\VRedirect;
 use View\VStatus;
@@ -23,12 +24,12 @@ abstract class BaseController
 
     public function requireLogin(): void
     {
-//        $this->auth_manager->admin()->logInAsUserByEmail("moraema@outlook.it");
+//        $this->auth_manager->admin()->logInAsUserByEmail("amessina@mazza.it");
 //        $userId = $this->auth_manager->getUserId();
-//        $_SESSION['user'] = $this->entity_manager->getRepository(ELocatore::class)->findOneBy(
+//        $user = $this->entity_manager->getRepository(EProfilo::class)->findOneBy(
 //            ["user_id" => $userId]
 //        );
-//        echo $_SESSION['user'];
+//        $_SESSION['user'] = $user;
 
         if (!$this->auth_manager->isLoggedIn()) {
             $view = new VRedirect();
@@ -81,7 +82,7 @@ abstract class BaseController
         }
     }
 
-    public function doesUserHaveRole(int $role): bool
+    public function doesLoggedUserHaveRole(int $role): bool
     {
         $validRoles = (new \ReflectionClass(Roles::class))->getConstants();
 
@@ -107,5 +108,10 @@ abstract class BaseController
     public function getUserId(): int
     {
         return $this->auth_manager->getUserId();
+    }
+
+    public function getUser(): EProfilo | ELocatore
+    {
+        return $this->entity_manager->getRepository(get_class($_SESSION['user']))->find($_SESSION['user']->getId());
     }
 }

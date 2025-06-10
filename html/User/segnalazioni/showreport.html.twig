@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8" />
+    <title>Le tue segnalazioni per questo ufficio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- link to bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- link to awesome for the details of template -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+    <!-- link to css -->
+    <link href="/html/User/segnalazioni/showreport.css" rel="stylesheet" />
+
+
+</head>
+<body>
+
+<!-- include the navbar -->
+{% include 'navbar/navbar.html.twig' %}
+
+<div class="container mt-5 mb-5">
+    <!-- title of the page-->
+    <h2 class="text-center mb-4">
+        <i class="fas fa-exclamation-triangle me-2"></i> Le tue segnalazioni per questo ufficio
+    </h2>
+
+    <div class="form-container mb-5 text-center">
+        <h2>{{ office.titolo }}</h2>
+        <p>
+            Benvenuto nella sezione dedicata alle segnalazioni fatte da te per questo ufficio. Qui puoi leggere le segnalazioni lasciate da te.
+        </p>
+    </div>
+
+    <!-- report array -->
+    {% if reports|length > 0 %}
+        {% for report in reports %}
+            <div class="report-card mb-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-comment-dots me-2"></i>{{ report.commento }}
+                </div>
+                {% if report.state.value == "active" %}
+                    <span class="badge badge-active">Active</span>
+                {% else %}
+                    <span class="badge badge-solved">solved</span>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-warning text-center py-5">
+            <h2 class="mb-3">
+                <i class="fas fa-exclamation-triangle me-2"></i> Nessuna segnalazione trovata
+            </h2>
+            <p>Non hai ancora effettuato segnalazioni per questo ufficio.</p>
+            <a href="/offices/{{office.id}}/report" class="btn btn-primary mt-3">
+                <i class="fas fa-flag me-1"></i> Compila la tua prima segnalazione
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- include footer-->
+{% include 'Footer/footer.html.twig' %}
+
+</body>
+</html>
