@@ -22,10 +22,9 @@ class CHome extends BaseController
 
         if ($this->isLoggedIn()) {
             try {
-
                 $user = USession::getUser();
                 $userId = $user->getId();
-            }catch(UserNotAuthenticatedException $e){
+            } catch (UserNotAuthenticatedException $e) {
                 print $e->getMessage();
             }
         } else {
@@ -56,7 +55,8 @@ class CHome extends BaseController
     }
 
     public function profile(): void
-    {   //check is the user is logged
+    {
+   //check is the user is logged
         $this->requireLogin();
         //take the user from the session
         $user = USession::getUser();
@@ -71,6 +71,6 @@ class CHome extends BaseController
         }
 
         $view = new VHome();
-        $view->profile($user,$email);
+        $view->profile($user, $email);
     }
 }

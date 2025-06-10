@@ -64,39 +64,7 @@ class USession
      */
     public static function getSessionElement($id)
     {
-        if (isset($_SESSION[$id])) {
-            return $_SESSION[$id];
-        }
-        return null;
-    }
-
-
-    /**
-     * @throws UserNotAuthenticatedException if the session doesn't contain a valid user
-     */
-    public static function getUser(): EProfilo
-    {
-        if (!self::isSetSessionElement('user')) {
-            throw new UserNotAuthenticatedException();
-        }
-
-        return self::getSessionElement('user');
-    }
-
-    /**
-     * @throws UserNotAuthenticatedException
-     */
-    public static function requireAdmin(): EProfilo
-    {
-        if (!self::isSetSessionElement('user')) {
-            throw new UserNotAuthenticatedException();
-        }
-
-        $user = self::getSessionElement('user');
-        if (!$user->isAdmin()) {
-            throw new UserNotAuthenticatedException();
-        }
-        return $user;
+        return $_SESSION[$id] ?? null;
     }
 
     /**

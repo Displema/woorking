@@ -20,9 +20,16 @@ use View\VStatus;
 
 class CReport extends BaseController
 {
-    public function showFormReport($id)
+    public function showForm($id)
     {
+  //check if the user is logged
         $this->requireLogin();
+        if (!$this->doesLoggedUserHaveRole(Roles::BASIC_USER)) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+        //take the user from the session
         $user = USession::getUser();
         $view = new VReport();
         $view->showReportForm($id, $user);
@@ -112,5 +119,46 @@ class CReport extends BaseController
 
         $view = new VReport();
         $view->showReport($Report, $office, $user);
+    }
+
+    public function Store($id, $reportMotivation, $Text)
+    {
+   // check if the user is logged
+        $this->requireLogin();
+        $user = $this->getUser();
+
+        //check the role of the User want to use the page
+        if (!($this->doesLoggedUserHaveRole(Roles::BASIC_USER))) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+        //take the office from DB with entitymanager using repository
+        $office=$this->entity_manager->getRepository(EUfficio::class)->find($id);
+
+        //check if the office exist
+        if (!$office) {
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
+        }
+
+        //check if the user write on the textarea so click "altro"
+        if ($reportMotivation === 'Altro') {
+            $reportMotivation = $Text?? null;
+        }
+        //creation of a new report
+        $Report= new ESegnalazione();
+        //setting of report information
+        $Report->setCommento($reportMotivation);
+        $Report->setUfficio($office);
+        $Report->setUser($user);
+        $Report->setState(ReportStateEnum::ACTIVE);
+        //save report
+        $this->entity_manager->persist($Report);
+        $this->entity_manager->flush();
+
+        $view = new VReport();
+        $view->showReportConfirmation($user);
     }
 }

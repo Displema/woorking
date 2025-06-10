@@ -121,7 +121,7 @@ class CAuth extends BaseController
             die('Unknown id');
         }
 
-        $this->auth_manager->admin()->logInAsUserById($userId);
+        $this->loginUser($email, $password, "0");
 
         $view = new VRedirect();
         $view->redirect("/home");
@@ -169,7 +169,7 @@ class CAuth extends BaseController
         }
     }
 
-    public function getUser(): void
+    public function printUser(): void
     {
         if (!$this->auth_manager->isLoggedIn()) {
             $view = new VRedirect();

@@ -109,4 +109,9 @@ abstract class BaseController
     {
         return $this->auth_manager->getUserId();
     }
+
+    public function getUser(): EProfilo | ELocatore
+    {
+        return $this->entity_manager->getRepository(get_class($_SESSION['user']))->find($_SESSION['user']->getId());
+    }
 }
