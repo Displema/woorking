@@ -7,6 +7,9 @@ use Model\ESegnalazione;
 
 class VReport extends BaseView
 {
+    public function showReport($Report,$office,$user){
+        $this->twig->display('/User/segnalazioni/showreport.html.twig',['reports'=>$Report,'office'=>$office,'user'=>$user]);
+    }
     public function showReportForm($id, $user): void
     {
         $this->twig->display('/User/segnalazioni/segnalazioni.html.twig', ['idoffice' => $id,'user'=>$user]);
@@ -40,5 +43,7 @@ class VReport extends BaseView
             '/admin/reports/reports.html.twig',
             ['activeReports' => $activeReports, 'closedReports' => $closedReports]
         );
+
+
     }
 }

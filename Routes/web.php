@@ -2,6 +2,7 @@
 
 namespace Routes;
 
+use Controller\CReport;
 use Core\Router;
 
 $router = new Router();
@@ -88,7 +89,8 @@ $router->post('/offices/{id}/report', 'CReport@store');          // send report
 //
 //// reservations of user
 $router->get('/reservations', 'CReservation@index');             // show reservation
-$router->get('/reservations/{id}', 'CReservation@show');        // mostra dettagli prenotazione
+$router->get('/reservations/{id}', 'CReservation@show');        // show reservation details
+$router->get('/user/report/{idoffice}', 'CReport@show');            //  show report for a specific office
 //
 //// review on reservation
 $router->get('/reservations/{id}/review', 'CReview@reviewForm');     //show review form

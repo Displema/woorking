@@ -17,6 +17,7 @@ class CHome extends BaseController
     public function index(): void
     {
         $userId="";
+        $user = "";
 
 
         if ($this->isLoggedIn()) {

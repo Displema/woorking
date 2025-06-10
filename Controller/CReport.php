@@ -40,6 +40,7 @@ class CReport extends BaseController
             $view->redirect('/login');
             return;
         }
+        $user = USession::getUser();
         //take the user from the session
         $userId = $this->auth_manager->getUserId();
 
@@ -68,11 +69,12 @@ class CReport extends BaseController
         //setting of report information
         $Report->setCommento($reportMotivation);
         $Report->setUfficio($office);
-        $Report->setState(ReportStateEnum::class::ACTIVE);
+        $Report->setUser($user);
+        $Report->setState(ReportStateEnum::ACTIVE);
         //save report
         $this->entity_manager->persist($Report);
         $this->entity_manager->flush();
-        $user = USession::getUser();
+
         $view = new VReport();
         $view->showReportConfirmation($user);
     }
@@ -114,5 +116,28 @@ class CReport extends BaseController
 
         $view = new VReport();
         $view->$targetView($activeReports, $closedReports);
+    }
+
+    public function show($idoffice){
+        if (!$this->auth_manager->isLoggedIn()) {
+            $view = new VRedirect();
+            $view->redirect('/login');
+        }
+        $userId = $this->auth_manager->getUserId();
+        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+            $view = new VRedirect();
+            $view->redirect('/home');
+            return;
+        }
+        $user = USession::getUser();
+        $office =$this->entity_manager->getRepository(EUfficio::class)->findoneby(["id" =>$idoffice]);
+        $reportsRepo = $this->entity_manager->getRepository(ESegnalazione::class);
+        $Report = $reportsRepo->findBy(["user"=>$user,"ufficio"=>$office]);
+
+        $view = new VReport();
+        $view->showReport($Report,$office,$user);
+
+
+
     }
 }
