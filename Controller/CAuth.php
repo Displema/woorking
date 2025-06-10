@@ -247,7 +247,7 @@ class CAuth extends BaseController
         $this->auth_manager->admin()->addRoleForUserById($userId, Roles::ADMIN);
         $this->entity_manager->persist($user);
         $this->entity_manager->flush();
-        $this->loginUser("admin@admin.it", "admin");
+        $this->loginUser("admin@admin.it", "admin", 1);
 
         $view = new VRedirect();
         $view->redirect("/admin/home");
