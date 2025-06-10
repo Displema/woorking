@@ -9,6 +9,7 @@ use Doctrine\ORM\Exception\ORMException;
 use Model\EFoto;
 use Model\EIndirizzo;
 use Model\EIntervalloDisponibilita;
+use Model\ELocatore;
 use Model\Enum\FasciaOrariaEnum;
 use Model\Enum\ReportStateEnum;
 use Model\Enum\StatoUfficioEnum;
@@ -18,6 +19,7 @@ use Exception;
 use Model\EServiziAggiuntivi;
 use TechnicalServiceLayer\Repository\EFotoRepository;
 use TechnicalServiceLayer\Repository\EIntervalloDisponibilitaRepository;
+use TechnicalServiceLayer\Repository\ELocatoreRepository;
 use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
 use TechnicalServiceLayer\Repository\ERecensioneRepository;
 use TechnicalServiceLayer\Repository\EServiziAggiuntiviRepository;
@@ -286,6 +288,8 @@ class COffice extends BaseController
         /** @var EUfficio $office */
         $office = $officeRepo->findOneBy(['id'=>$id]);
 
+
+
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
@@ -308,6 +312,7 @@ class COffice extends BaseController
         }
 
         $office->setIsHidden(true);
+
 
         $reservations = $officeRepo->getActiveReservations($office);
         if ($shouldRefund && !$reservations->isEmpty()) {
@@ -332,6 +337,7 @@ class COffice extends BaseController
                 }
 
                 $this->entity_manager->commit();
+                $this->entity_manager->clear();
             }
         }
 
@@ -340,9 +346,13 @@ class COffice extends BaseController
             $this->entity_manager->persist($office);
             $this->entity_manager->flush();
             $this->entity_manager->commit();
-        } catch (ORMException) {
+            $this->entity_manager->clear();
+        } catch (\Exception $e) {
+            $this->entity_manager->rollback();
+            error_log("Errore durante il salvataggio di isHidden: " . $e->getMessage());
             $view = new VStatus();
             $view->showStatus(500);
+            return;
         }
 
         $view = new VRedirect();
@@ -363,7 +373,7 @@ class COffice extends BaseController
 
         // Repositories
         $userRepo = UserRepository::getInstance();
-        $uffici = $this->entity_manager->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
+        $uffici = $this->entity_manager->getRepository(EUfficio::class)->getAllOfficeByLocatore(['id' => $id]);
         $fotoRepo = $this->entity_manager->getRepository(EFoto::class);
         $prenotazioniRepo = $this->entity_manager->getRepository(EPrenotazione::class);
         $intervalliRepo = $this->entity_manager->getRepository(EIntervalloDisponibilita::class);
@@ -464,37 +474,57 @@ class COffice extends BaseController
         $view->addOfficeV();
     }
 
-    public function addOfficeInDB()
+    public function addOfficeInDB(
+        $nome_ufficio,
+        $provincia,
+        $comune,
+        $indirizzo,
+        $civico,
+        $cap,
+        $prezzo,
+        $superficie,
+        $postazioni,
+        $descrizione,
+        $data_inizio,
+        $data_fine,
+        $fascia,
+    )
         // TODO: aggiungere parametri e non accesso diretto a POST
     {
         $this->requireRole(Roles::LANDLORD);
 
 
+
+        $user = USession::getUser();
+        /** @var ELocatoreRepository $locatore */
+        $locatorerepo = getEntityManager()->getRepository(ELocatore::class);
+        $locatore = $locatorerepo->getLocatoreByUser($user->getId());
         $ufficio = new EUfficio();
-        $indirizzo = new Eindirizzo();
+        $indirizzov = new Eindirizzo();
         $intervallo = new EIntervalloDisponibilita();
 
-        $indirizzo->setProvincia($_POST['provincia']);
-        $indirizzo->setCitta($_POST['comune']);
-        $indirizzo->setCap($_POST['cap']);
-        $indirizzo->setNumeroCivico($_POST['civico']);
-        $indirizzo->setVia($_POST['indirizzo']);
+        $indirizzov->setProvincia($provincia);
+        $indirizzov->setCitta($comune);
+        $indirizzov->setCap($cap);
+        $indirizzov->setNumeroCivico($civico);
+        $indirizzov->setVia($indirizzo);
 
-        $ufficio->setTitolo($_POST['nome-ufficio']);
-        $ufficio->setPrezzo($_POST['prezzo']);
-        $ufficio->setDescrizione($_POST['descrizione']);
-        $ufficio->setNumeroPostazioni($_POST['postazioni']);
-        $ufficio->setSuperficie($_POST['superficie']);
+        $ufficio->setTitolo($nome_ufficio);
+        $ufficio->setPrezzo($prezzo);
+        $ufficio->setDescrizione($descrizione);
+        $ufficio->setNumeroPostazioni($postazioni);
+        $ufficio->setSuperficie($superficie);
         $ufficio->setDataCaricamento(new \DateTime());
         $ufficio->setStato(StatoUfficioEnum::InAttesa);
-        $ufficio->setIndirizzo($indirizzo);
+        $ufficio->setIndirizzo($indirizzov);
+        $ufficio->setLocatore($locatore);
 
-        $intervallo->setDataInizio(new \DateTime($_POST['data_inizio']));
-        $intervallo->setDataFine(new \DateTime($_POST['data_fine']));
-        $intervallo->setFascia(FasciaOrariaEnum::from($_POST['fascia']));
+        $intervallo->setDataInizio(new \DateTime($data_inizio));
+        $intervallo->setDataFine(new \DateTime($data_fine));
+        $intervallo->setFascia(FasciaOrariaEnum::from($fascia));
         $intervallo->setUfficio($ufficio);
 
-        $this->entity_manager->persist($indirizzo);
+        $this->entity_manager->persist($indirizzov);
         $this->entity_manager->persist($ufficio);
         $this->entity_manager->persist($intervallo);
         $this->entity_manager->flush();
@@ -521,7 +551,6 @@ class COffice extends BaseController
         }
 
         // Prendo i servizi dalle checkbox
-        var_dump($_POST['servizi']);
         $listaServizi = $_POST['servizi'] ?? [];
 
         // Se è stato compilato "altro", aggiungo quel servizio

@@ -6,7 +6,7 @@ body {
   margin: 0;
 }
 
-#navbar-container {
+#sidebar {
   width: 15rem;
   flex-shrink: 0;
 }
@@ -112,23 +112,32 @@ body {
   color: white;
 }
 
+/* Responsive */
 @media (max-width: 992px) {
   body {
     flex-direction: column;
   }
 
-  #navbar-container {
+  #sidebar {
     width: 100%;
     position: relative;
     z-index: 1000;
   }
 
   .page-wrapper {
-    
+
     padding: 1rem;
   }
 
-  
+  .welcome-title {
+    font-size: 2.5rem;
+    padding-top: 2rem;
+  }
 
-  
+  .dropdown {
+    position: absolute;
+    top: 0rem;
+    right: 0.5rem;
+    font-size: 1rem;
+  }
 }

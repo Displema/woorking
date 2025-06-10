@@ -32,7 +32,7 @@ class CStats extends BaseController
         $user = USession::getUser();
         $id = $user->getId();
         /** @var EUfficioRepository $uffici */
-        $uffici = $this->entity_manager->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
+        $uffici = $this->entity_manager->getRepository(EUfficio::class)->getAllOfficeByLocatore(['id' => $id]);
 
 
         foreach ($uffici as $ufficio) {

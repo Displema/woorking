@@ -37,7 +37,7 @@ body {
   height: 22px;
 }
 
-#navbar-container {
+#sidebar {
   width: 15rem;
   flex-shrink: 0;
 }
@@ -58,7 +58,7 @@ body {
     flex-direction: column;
   }
 
-  #navbar-container {
+  #sidebar {
     width: 100%;
     position: relative;
     z-index: 1000;

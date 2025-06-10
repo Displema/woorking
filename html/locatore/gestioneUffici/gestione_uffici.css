@@ -6,7 +6,7 @@ body {
 }
 
 /* Navbar container */
-#navbar-container {
+#sidebar {
   width: 15rem;
   flex-shrink: 0;
 }
@@ -29,16 +29,19 @@ body {
     flex-direction: column;
   }
 
-  #navbar-container {
+  #sidebar {
     width: 100%;
     position: relative;
-    z-index: 1000;
+
+    z-index: 1000;        /* Superiore al contenuto */
+
   }
 
   .page-wrapper {
-    
+
     padding: 1rem;
   }
+
 }
 .card-img-top {
   width: 100%;

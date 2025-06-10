@@ -6,9 +6,9 @@
   <title>Gestione Uffici - Coworking</title>
 
   <!-- Tabler Core CSS -->
-  <link href="https://unpkg.com/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet"/>
-  <!-- Bootstrap 5 Bundle (include Modal, Tooltip, ecc.) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/css/tabler.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <!-- CSS personalizzato -->
@@ -52,7 +52,11 @@
                   <i class="fa fa-eye me-1"></i> Dettagli
                 </button>
 
-                <button class="btn btn-danger btn-sm btn-cancella" data-bs-toggle="modal" data-bs-target="#modal-conferma-cancella" data-id="1">
+                <button class="btn btn-danger btn-sm btn-cancella"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modal-conferma-cancella"
+                        data-office-id="{{ ufficio.ufficio.id }}"
+                {{ ufficio.ufficio.id }}>
                   <i class="fa fa-trash me-1"></i> Cancella
                 </button>
               </div>
@@ -75,6 +79,47 @@
 
 <!-- script per il modale -->
 <script src="/js/gestione_uffici.js"></script>
+
+  <!-- altri contenuti -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+      let officeIdToDelete = null;
+
+
+
+      document.querySelectorAll('.btn-cancella').forEach(button => {
+        button.addEventListener('click', function () {
+          officeIdToDelete = this.dataset.officeId;
+        });
+      });
+
+
+      document.getElementById('conferma-cancella-btn').addEventListener('click', function () {
+        console.log('Cliccato il bottone cancella');  // <-- log per debug
+        if (!officeIdToDelete) return;
+
+        fetch(`/offices/${officeIdToDelete}/delete`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: 'shouldRefund=1'
+        })
+                .then(response => response.text())  // qui prendi il testo grezzo della risposta
+                .then(text => {
+                  console.log('Risposta fetch (testo grezzo):', text);
+                })
+                .catch(error => {
+                  console.error('Errore fetch:', error);
+                });
+
+
+      });
+    });
+
+  </script>
+
 
 </body>
 </html>

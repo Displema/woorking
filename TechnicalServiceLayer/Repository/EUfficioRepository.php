@@ -103,6 +103,21 @@ class EUfficioRepository extends EntityRepository
             $this->createQueryBuilder('u')
                 ->where('u.locatore = :id')
                 ->andWhere('u.stato = :stato')
+                ->andWhere('u.isHidden = :Hidden')
+                ->setParameter('id', $id)
+                ->setParameter('stato', 'Approvato')
+                ->setParameter('Hidden', false)
+                ->getQuery()
+                ->getResult()
+        );
+    }
+
+    public function getallOfficeByLocatore( $id): Collection
+    {
+        return new \Doctrine\Common\Collections\ArrayCollection(
+            $this->createQueryBuilder('u')
+                ->where('u.locatore = :id')
+                ->andWhere('u.stato = :stato')
                 ->setParameter('id', $id)
                 ->setParameter('stato', 'Approvato')
                 ->getQuery()

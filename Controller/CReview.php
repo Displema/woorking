@@ -27,7 +27,7 @@ class CReview extends BaseController
         $userId = $user->getId();
         /** @var EUfficioRepository $officeRepo */
         $officeRepo = $this->entity_manager->getRepository(EUfficio::class);
-        $uffici = $officeRepo->getOfficeByLocatore($userId);
+        $uffici = $officeRepo->getAllOfficeByLocatore($userId);
         $arrayReviews = [];
         foreach ($uffici as $ufficio) {
             $reviews = $repo->getRecensioneByUfficio($ufficio->getId());

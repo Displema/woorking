@@ -36,7 +36,7 @@ class EUfficio
         return $this->isHidden;
     }
 
-    public function setIsHidden(bool $isHidden): EUfficio
+    public function setIsHidden(bool $isHidden): self
     {
         $this->isHidden = $isHidden;
         return $this;
