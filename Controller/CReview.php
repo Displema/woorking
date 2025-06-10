@@ -25,7 +25,7 @@ class CReview extends BaseController
 
         /** @var ERecensioneRepository $repo */
         $repo = $this->entity_manager->getRepository(ERecensione::class);
-        $user = USession::getUser();
+        $user = $this->getUser();
         $userId = $user->getId();
         /** @var EUfficioRepository $officeRepo */
         $officeRepo = $this->entity_manager->getRepository(EUfficio::class);
@@ -47,7 +47,7 @@ class CReview extends BaseController
         if ($this->isLoggedIn()) {
 
             //take the user from the session
-            $user = USession::getUser();
+            $user = $this->getUser();
         } else {
             $user = null;
         }
@@ -87,7 +87,7 @@ class CReview extends BaseController
             return;
         }
         //take the user from the session
-        $user = USession::getUser();
+        $user = $this->getUser();
         //show form for review
         $view = new VReview();
         $view ->showReviewForm($idreservation, $user);
@@ -111,7 +111,7 @@ class CReview extends BaseController
 
         //$value = $_POST['voto'];           // value 1-5
         //$comment = $_POST['review']; // comment of review
-        $user = USession::getUser();
+        $user = $this->getUser();
         $reservation = $this->entity_manager->getRepository(EPrenotazione::class)->find($idreservation);
 
         if (!$reservation) {

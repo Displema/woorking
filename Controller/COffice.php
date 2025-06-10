@@ -45,7 +45,7 @@ class COffice extends BaseController
     {
         //check that the User is logged
         if ($this->isLoggedIn()) {
-            $user = USession::getUser();
+            $user = $this->getUser();
         } else {
             $user = null;
         }
@@ -67,7 +67,7 @@ class COffice extends BaseController
     {
         // control on the login
         if ($this->isLoggedIn()) {
-            $user = USession::getUser();
+            $user = $this->getUser();
         } else {
             $user = null;
         }
@@ -199,7 +199,7 @@ class COffice extends BaseController
         }
 
         if ($this->doesLoggedUserHaveRole(Roles::LANDLORD)) {
-            $user = USession::getUser();
+            $user = $this->getUser();
             if ($office->getLocatore()->getId() !== $user->getId()) {
                 $view = new VStatus();
                 $view->showStatus(403);
@@ -254,7 +254,7 @@ class COffice extends BaseController
     {
         $this->requireLogin();
 
-        $user = USession::getUser();
+        $user = $this->getUser();
         $id = $user->getId();
         $oggi = new \DateTime();
 
@@ -321,7 +321,7 @@ class COffice extends BaseController
     {
         $this->requireRole(Roles::LANDLORD);
 
-        $user = USession::getUser();
+        $user = $this->getUser();
         $id = $user->getId();
         $UfficiCompleti = [];
         $em = getEntityManager();
@@ -469,7 +469,7 @@ class COffice extends BaseController
         $this->requireRoles([Roles::ADMIN, Roles::LANDLORD]);
         $office  = $this->entity_manager->find(EUfficio::class, $id);
 
-        $user = USession::getUser();
+        $user = $this->getUser();
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);

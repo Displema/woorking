@@ -39,10 +39,9 @@ class CReservation extends BaseController
         $repository = $this->entity_manager->getRepository(EPrenotazione::class);
 
         //take the user from session
-        $user = USession::getUser();
+        $user = $this->getUser();
 
         //take the reservation by the user
-        error_log($user);
         $reservations = $repository->findBy(['utente' => $user->getId()]);
         foreach ($reservations as $reservation) {
             error_log($reservation->getId());
@@ -82,7 +81,7 @@ class CReservation extends BaseController
             return;
         }
         //take the user form the session
-        $user = USession::getUser();
+        $user = $this->getUser();
         //take the userid from the authmanager
         //check the role of the user
         if (!($this->doesLoggedUserHaveRole(Roles::BASIC_USER))) {
@@ -110,7 +109,7 @@ class CReservation extends BaseController
             return;
         }
         // take the user from the session
-        $user = USession::getUser();
+        $user = $this->getUser();
 
         // take from the DB the user usgin the repository of EProfilo and method of entitymanager
         // but with the id of the user of session

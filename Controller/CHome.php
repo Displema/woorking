@@ -16,19 +16,12 @@ class CHome extends BaseController
 {
     public function index(): void
     {
-        $userId="";
-        $user = "";
-
-
         if ($this->isLoggedIn()) {
-            try {
-                $user = USession::getUser();
-                $userId = $user->getId();
-            } catch (UserNotAuthenticatedException $e) {
-                print $e->getMessage();
-            }
+            $user = $this->getUser();
+            $userId = $user->getId();
         } else {
             $user = null;
+            $userId = null;
         }
 
 
@@ -59,7 +52,7 @@ class CHome extends BaseController
    //check is the user is logged
         $this->requireLogin();
         //take the user from the session
-        $user = USession::getUser();
+        $user = $this->getUser();
 
          //take the email from a method
          $email = UserRepository::getInstance()->getEmailByUserId($user->getUserId())[0]['email'];
