@@ -89,10 +89,13 @@ class COffice extends BaseController
 
         //take the repository of Eprenotazione
         $reservationRepo=$this->entity_manager->getRepository(EPrenotazione::class);
-
+        $validOffices=[];
         //is a foreach to access all offices
         foreach ($offices as $office) {
 
+            if(($office->getStato()->value)!= "Approvato"){
+                continue;
+            }
             //conversion from string to FasciaOrariaEnum
             $slotEnum = FasciaOrariaEnum::tryFrom($slot);
 
@@ -110,9 +113,10 @@ class COffice extends BaseController
             if ($office->isHidden()) {
                 continue;
             }
+            $validOffices[] = $office;
         }
         $view= new VOffice();
-        $view->showOfficeSearch($offices, $date, $slot, $user);
+        $view->showOfficeSearch($validOffices, $date, $slot, $user);
     }
 
 
