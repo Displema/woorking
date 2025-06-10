@@ -9,17 +9,6 @@ require_once __DIR__ . "/../vendor/autoload.php";
 require_once __DIR__ . "/../bootstrap.php";
 
 $loader = new Loader();
-//$loader->addFixture(new EProfiloFixture());
-//$loader->addFixture(new ELocatoreFixture());
-//$loader->addFixture(new EIndirizzoFixture());
-//$loader->addFixture(new EIntervalliDisponibilitaFixture());
-//$loader->addFixture(new EUfficioFixture());
-//$loader->addFixture(new EServiziAggiuntiviFixture());
-//$loader->addFixture(new EPagamentoFixture());
-//$loader->addFixture(new EPrenotazioneFixture());
-//$loader->addFixture(new ERecensioneFixture());
-//$loader->addFixture(new ESegnalazioneFixture());
-//$loader->addFixture(new ERimborsoFixture());
 $loader->loadFromDirectory(__DIR__ . '\Fixtures');
 
 $entityManager = getEntityManager();
@@ -28,6 +17,19 @@ $purger = new ORMPurger();
 $executor = new ORMExecutor($entityManager, $purger);
 
 // ESEGUIRE SE SI VUOLE PULIRE IL DB
-$executor->purge();
+while (true) {
+    try {
+        error_log("Running fixtures...");
+        $executor->purge();
+        $executor->execute($loader->getFixtures());
+        error_log("Finished executing fixtures.");
+        exit;
+    } catch (\Exception $e) {
+        error_log($e->getMessage());
+        error_log("Exception while running fixtures... Retrying in 5 seconds");
+        sleep(5);
+    }
+}
+
 //
-$executor->execute($loader->getFixtures());
+
