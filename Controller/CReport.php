@@ -34,8 +34,7 @@ class CReport extends BaseController
         $view = new VReport();
         $view->showReportForm($id, $user);
     }
-    public function showConfirmOfReport($id)
-        // TODO: rimuovere accesso a post
+    public function showConfirmOfReport(string $id, string $motivo, string $altroTesto)
     {
         $this->requireLogin();
 
@@ -55,14 +54,12 @@ class CReport extends BaseController
             return;
         }
 
-        $commento = $_POST['motivo'] ?? null;
-
-        if ($commento === 'Altro') {
-            $commento = $_POST['altroTesto'] ?? null;
+        if ($motivo === 'Altro') {
+            $motivo = $altroTesto;
         }
 
         $Report= new ESegnalazione();
-        $Report->setCommento($commento);
+        $Report->setCommento($motivo);
         $Report->setUfficio($office);
         $Report->setState(ReportStateEnum::class::ACTIVE);
         $this->entity_manager->persist($Report);
