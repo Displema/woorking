@@ -80,19 +80,10 @@ class CReservation extends BaseController
 
     public function showReservationDetails($id)
     {
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
-        $user = USession::getUser();
-        $userId = $this->auth_manager->getUserId();
+        $this->requireLogin();
+        $this->requireRole(Roles::BASIC_USER);
 
-        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
-            $view = new VRedirect();
-            $view->redirect('/home');
-            return;
-        }
+        $user = USession::getUser();
 
         $reservationwithoffice = [];
         $repository = $this->entity_manager->getRepository(EPrenotazione::class);
@@ -118,19 +109,11 @@ class CReservation extends BaseController
 
     public function sendreview($idreservation): void
     {
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
+        $this->requireLogin();
+        $this->requireRole(Roles::BASIC_USER);
 
         $userId = $this->auth_manager->getUserId();
 
-        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
-            $view = new VRedirect();
-            $view->redirect('/home');
-            return;
-        }
 
         $user = USession::getUser();
 

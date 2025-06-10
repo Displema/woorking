@@ -22,26 +22,19 @@ class CReport extends BaseController
 {
     public function showFormReport($id)
     {
-        if (!$this->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
+        $this->requireLogin();
         $user = USession::getUser();
         $view = new VReport();
         $view->showReportForm($id, $user);
     }
     public function showConfirmOfReport($id)
+        // TODO: rimuovere accesso a post
     {
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
+        $this->requireLogin();
 
         $userId = $this->auth_manager->getUserId();
 
-        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+        if (!($this->doesUserHaveRole(Roles::BASIC_USER))) {
             $view = new VRedirect();
             $view->redirect('/home');
             return;
@@ -74,10 +67,7 @@ class CReport extends BaseController
 
     public function index(): void
     {
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-        }
+        $this->requireLogin();
 
         $userId = $this->auth_manager->getUserId();
 
@@ -93,10 +83,6 @@ class CReport extends BaseController
         } elseif ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::LANDLORD)) {
             $view = new VRedirect();
             $view->redirect('/home');
-            return;
-        } else {
-            $view = new VRedirect();
-            $view->redirect('/login');
             return;
         }
 
