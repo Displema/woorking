@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Recensioni - Coworking</title>
 
     <!-- Tabler Core CSS -->
     <link href="https://unpkg.com/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet"/>
     <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
     <!-- CSS personalizzato -->
-    <link rel="stylesheet" href="/html/locatore/recensioni/recensioni.css" />
+    <link rel="stylesheet" href="/html/locatore/recensioni/recensioni.css"/>
 </head>
 
 <body>
@@ -23,34 +23,69 @@
         <h1 class="mb-3">Recensioni Ricevute</h1>
         <p class="text-muted mb-4">Consulta le recensioni lasciate dai tuoi utenti per migliorare i servizi offerti.</p>
 
-        <div class="recensioni-list">
+        <!-- Filtro per nome ufficio -->
+        <div class="mb-4">
+            <label for="nome-ufficio" class="form-label">Filtra per nome ufficio</label>
+            <input type="text" id="nome-ufficio" class="form-control" placeholder="Es. Ufficio Milano"/>
+        </div>
+        <div class="mb-4">
+            <button id="filtra-btn" class="btn btn-primary">Cerca</button>
+        </div>
 
-            {% for recensione in recensioni %}
-                <div class="card mb-4 shadow-sm rounded-3 p-3">
-                    <h5 class="text-primary">
-                        {{ recensione.prenotazione.utente.name }} {{ recensione.prenotazione.utente.surname }}
-                    </h5>
-                    <p class="mb-2">
-                        {% for i in 1..5 %}
-                            {% if i <= recensione.valutazione %}
-                                <i class="fas fa-star text-warning"></i>
-                            {% else %}
-                                <i class="far fa-star text-warning"></i>
-                            {% endif %}
-                        {% endfor %}
-                    </p>
-                    <p>{{ recensione.commento }}</p>
-                </div>
-            {% else %}
-                <p class="text-center text-muted">Nessuna recensione disponibile.</p>
-            {% endfor %}
-
+        <!-- Lista recensioni -->
+        <div class="recensioni-list" id="recensioni-container">
+            <p class="text-muted">Inserisci il nome di un ufficio e clicca su "Cerca" per visualizzare le
+                recensioni.</p>
         </div>
     </div>
 </div>
 
 <!-- Tabler Core JS -->
 <script src="https://unpkg.com/@tabler/core@latest/dist/js/tabler.min.js"></script>
+
+
+<!-- Script JS per filtrare le recensioni -->
+<script>
+    document.getElementById('filtra-btn').addEventListener('click', () => {
+        const nomeUfficio = document.getElementById('nome-ufficio').value.trim();
+        const container = document.getElementById('recensioni-container');
+        container.innerHTML = ''; // Pulisce la lista
+
+        if (!nomeUfficio) {
+            container.innerHTML = '<p class="text-danger">Inserisci il nome di un ufficio.</p>';
+            return;
+        }
+
+        fetch(`/api/recensioni/per-ufficio?ufficio=${encodeURIComponent(nomeUfficio)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (!Array.isArray(data) || data.length === 0) {
+                    container.innerHTML = '<p class="text-center text-muted">Nessuna recensione trovata per questo ufficio.</p>';
+                    return;
+                }
+
+                data.forEach(recensione => {
+                    const div = document.createElement('div');
+                    div.classList.add('card', 'mb-4', 'shadow-sm', 'rounded-3', 'p-3');
+                    div.innerHTML = `
+<h5 class="text-primary">${recensione.utente}</h5>
+<p class="mb-2">${'★'.repeat(recensione.valutazione)}${'☆'.repeat(5 - recensione.valutazione)}</p>
+<p>${recensione.commento}</p>
+`;
+                    container.appendChild(div);
+                });
+            })
+            .catch(err => {
+                console.error('Errore:', err);
+                container.innerHTML = `
+<div class="alert alert-danger">
+    Errore nel caricamento delle recensioni.
+</div>
+`;
+            });
+    });
+</script>
+
 
 </body>
 </html>

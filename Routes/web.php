@@ -55,6 +55,7 @@ $router->get('/recensioni', 'CReview@getReviews');
 $router->get('/api/grafici/entrate-mensili', 'CStats@entrateMensili');
 $router->get('/api/grafici/utilizzo-uffici', 'CStats@utilizzoUffici');
 $router->get('/api/recensioni/casuali', 'CStats@recensioniCasualiPerLocatore');
+$router->get('/api/recensioni/per-ufficio', 'CStats@recensioniPerUfficio');
 
 
 $router->post(

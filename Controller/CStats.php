@@ -7,6 +7,7 @@ use Model\EUfficio;
 use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
 use TechnicalServiceLayer\Repository\ERecensioneRepository;
 use TechnicalServiceLayer\Repository\EUfficioRepository;
+use TechnicalServiceLayer\Roles\Roles;
 use TechnicalServiceLayer\Utility\USession;
 use View\VHome;
 use View\VResource;
@@ -15,6 +16,7 @@ class CStats extends BaseController
 {
     public function entrateMensili(): void
     {
+        $this->requireRole(Roles::LANDLORD);
         $user = $this->getUser();
         /** @var EPrenotazioneRepository $repo */
         $repo = $this->entity_manager->getRepository(EPrenotazione::class);
@@ -28,6 +30,7 @@ class CStats extends BaseController
 
     public function utilizzoUffici(): void
     {
+        $this->requireRole(Roles::LANDLORD);
         $dati = [];
         $user = $this->getUser();
         $id = $user->getId();
@@ -48,21 +51,56 @@ class CStats extends BaseController
 
     public function recensioniCasualiPerLocatore(): void
     {
+        $this->requireRole(Roles::LANDLORD);
         $user = $this->getUser();
         /** @var ERecensioneRepository $repo */
         $repo = $this->entity_manager->getRepository(ERecensione::class);
         $recensioni = $repo->getRandomReviewbyLandlord($user->getId());
 
-        $response = array_map(function ($r) {
-            // TODO: si potrebbe fare l'accesso al nome e cognome direttamente nel template per tutte le entità
-            return [
-                'utente' => $r->getPrenotazione()->getUtente()->getName() . ' ' . $r->getPrenotazione()->getUtente()->getSurname(),
-                'commento' => $r->getCommento(),
-                'valutazione' => $r->getValutazione()
+        $response = null;
+        if ($recensioni != null) {
+            $response =  [
+                'utente' => $recensioni->getPrenotazione()->getUtente()->getName() . ' ' . $recensioni->getPrenotazione()->getUtente()->getSurname(),
+                'commento' => $recensioni->getCommento(),
+                'valutazione' => $recensioni->getValutazione()
             ];
-        }, $recensioni);
+        }
 
         $view = new VResource();
         $view ->printJson($response);
+    }
+
+    public function recensioniPerUfficio(): void
+    {
+        $this->requireRole(Roles::LANDLORD);
+
+        $user = $this->getUser();
+
+
+        $nomeUfficio = $_GET['ufficio'] ?? null;
+
+
+        if (!$nomeUfficio) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Parametro "ufficio" mancante']);
+            return;
+        }
+
+        /** @var ERecensioneRepository $repo */
+        $repo = $this->entity_manager->getRepository(ERecensione::class);
+
+
+        $recensioni = $repo->getReviewByOfficeNameAndLandlord($nomeUfficio, $user->getId());
+
+        $response = array_map(function ($r) {
+            return [
+                'utente' => $r->getPrenotazione()->getUtente()->getName() . ' ' . $r->getPrenotazione()->getUtente()->getSurname(),
+                'commento' => $r->getCommento(),
+                'valutazione' => $r->getValutazione(),
+            ];
+        }, $recensioni);
+
+        header('Content-Type: application/json');
+        echo json_encode($response);
     }
 }

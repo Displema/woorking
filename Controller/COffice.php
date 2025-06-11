@@ -186,17 +186,22 @@ class COffice extends BaseController
     public function deleteOffice(string $id, string $shouldRefund = '0'): void
     {
         $this->requireRoles([Roles::ADMIN, Roles::LANDLORD]);
+        $this->entity_manager->beginTransaction();
 
         /** @var EUfficioRepository $officeRepo */
         $officeRepo = $this->entity_manager->getRepository(EUfficio::class);
         /** @var EUfficio $office */
-        $office = $officeRepo->findOneBy(['id'=>$id]);
+        $office = $officeRepo->findOneBy(['id'=>$id] );
 
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
             return;
         }
+
+        $this->entity_manager->lock($office, LockMode::PESSIMISTIC_WRITE);
+
+
 
         if ($office->isHidden()) {
             $view = new VStatus();
@@ -214,6 +219,7 @@ class COffice extends BaseController
         }
 
         $office->setIsHidden(true);
+
 
         $reservations = $officeRepo->getActiveReservations($office);
         if ($shouldRefund && !$reservations->isEmpty()) {
@@ -389,11 +395,9 @@ class COffice extends BaseController
         $data_fine,
         $fascia,
     )
-        // TODO: aggiungere parametri e non accesso diretto a POST
+
     {
         $this->requireRole(Roles::LANDLORD);
-
-
 
         $user = $this->getUser();
         /** @var ELocatoreRepository $locatore */
@@ -446,15 +450,14 @@ class COffice extends BaseController
                     $this->entity_manager->persist($foto);
                 }
             }
-            //Salva tutte le foto in una volta sola
+            //Saves all photos at once
             $this->entity_manager->flush();
         }
 
-        // Prendo i servizi dalle checkbox
-        var_dump($_POST['servizi']);
+        // take the services from the checkbox
         $listaServizi = $_POST['servizi'] ?? [];
 
-        // Se è stato compilato "altro", aggiungo quel servizio
+        // if there's the section "altro" I add it
         if (!empty($_POST['altro-servizio'])) {
             $nomeAltro = trim($_POST['altro-servizio']);
             if ($nomeAltro !== '') {
@@ -462,7 +465,7 @@ class COffice extends BaseController
             }
         }
 
-        // Salvo i servizi nel DB
+        // Save on db
         foreach ($listaServizi as $nomeServizio) {
             $servizio = new EServiziAggiuntivi();
             $servizio->setNomeServizio($nomeServizio);
