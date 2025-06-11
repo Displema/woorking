@@ -62,7 +62,7 @@ class VOffice extends BaseView
         $this->twig->display('/admin/offices/pending_details_page.html.twig', ['office' => $office]);
     }
 
-    public function showRejectedDetails(EUfficio $office): void
+    public function showRejectedAdmin(EUfficio $office): void
     {
         $this->twig->display('/admin/offices/rejected_details.html.twig', ['office' => $office]);
     }

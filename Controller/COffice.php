@@ -94,8 +94,7 @@ class COffice extends BaseController
         $validOffices=[];
         //is a foreach to access all offices
         foreach ($offices as $office) {
-
-            if(($office->getStato()->value)!= "Approvato"){
+            if (($office->getStato()->value)!= "Approvato") {
                 continue;
             }
             //conversion from string to FasciaOrariaEnum
@@ -134,13 +133,13 @@ class COffice extends BaseController
             return;
         }
 
-        if (!(StatoUfficioEnum::tryFrom(!$office->getStato()) === StatoUfficioEnum::InAttesa)) {
+        if ($office->getStato()->value !== StatoUfficioEnum::InAttesa->value) {
             $view = new VStatus();
             $view->showStatus(400);
             return;
         }
 
-        $office->setReason($reason);
+        $office->setMotivoRifiuto($reason);
         $office->setStato(StatoUfficioEnum::NonApprovato);
 
         try {
@@ -169,7 +168,7 @@ class COffice extends BaseController
             return;
         }
 
-        if (!(StatoUfficioEnum::tryFrom(!$office->getStato()) === StatoUfficioEnum::InAttesa)) {
+        if ($office->getStato()->value !== StatoUfficioEnum::InAttesa->value) {
             $view = new VStatus();
             $view->showStatus(400);
             return;
@@ -191,7 +190,7 @@ class COffice extends BaseController
         /** @var EUfficioRepository $officeRepo */
         $officeRepo = $this->entity_manager->getRepository(EUfficio::class);
         /** @var EUfficio $office */
-        $office = $officeRepo->findOneBy(['id'=>$id] );
+        $office = $officeRepo->findOneBy(['id'=>$id]);
 
         if (!$office) {
             $view = new VStatus();
@@ -394,9 +393,8 @@ class COffice extends BaseController
         $data_inizio,
         $data_fine,
         $fascia,
-    )
+    ) {
 
-    {
         $this->requireRole(Roles::LANDLORD);
 
         $user = $this->getUser();
@@ -509,7 +507,7 @@ class COffice extends BaseController
             return;
         }
 
-        if ($this->doesLoggedUserHaveRole(Roles::LANDLORD ) && $user->getId() !== $office->getLocatore()->getId()) {
+        if ($this->doesLoggedUserHaveRole(Roles::LANDLORD) && $user->getId() !== $office->getLocatore()->getId()) {
             $view = new VStatus();
             $view->showStatus(403);
             return;
@@ -520,6 +518,34 @@ class COffice extends BaseController
             $targetView = "showPendingAdmin";
         } else {
             $targetView = "showPendingLandlord";
+        }
+
+        $view = new VOffice();
+        $view->$targetView($office);
+    }
+
+    public function showRejectedDetails(string $id): void
+    {
+        $this->requireRoles([Roles::ADMIN, Roles::LANDLORD]);
+        $office  = $this->entity_manager->find(EUfficio::class, $id);
+        if (!$office) {
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
+        }
+
+        $user = $this->getUser();
+
+        if ($this->doesLoggedUserHaveRole(Roles::LANDLORD) && !($user->getId() === $office->getLocatore()->getUserId())) {
+            $view = new VStatus();
+            $view->showStatus(403);
+            return;
+        }
+
+        if ($this->doesLoggedUserHaveRole(Roles::ADMIN)) {
+            $targetView = "showRejectedAdmin";
+        } else {
+            $targetView = "showRejectedLandlord";
         }
 
         $view = new VOffice();
