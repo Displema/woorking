@@ -91,10 +91,13 @@ class COffice extends BaseController
 
         //take the repository of Eprenotazione
         $reservationRepo=$this->entity_manager->getRepository(EPrenotazione::class);
-
+        $validOffices=[];
         //is a foreach to access all offices
         foreach ($offices as $office) {
 
+            if(($office->getStato()->value)!= "Approvato"){
+                continue;
+            }
             //conversion from string to FasciaOrariaEnum
             $slotEnum = FasciaOrariaEnum::tryFrom($slot);
 
@@ -112,9 +115,10 @@ class COffice extends BaseController
             if ($office->isHidden()) {
                 continue;
             }
+            $validOffices[] = $office;
         }
         $view= new VOffice();
-        $view->showOfficeSearch($offices, $date, $slot, $user);
+        $view->showOfficeSearch($validOffices, $date, $slot, $user);
     }
 
 
@@ -188,8 +192,6 @@ class COffice extends BaseController
         /** @var EUfficio $office */
         $office = $officeRepo->findOneBy(['id'=>$id]);
 
-
-
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
@@ -212,7 +214,6 @@ class COffice extends BaseController
         }
 
         $office->setIsHidden(true);
-
 
         $reservations = $officeRepo->getActiveReservations($office);
         if ($shouldRefund && !$reservations->isEmpty()) {
@@ -252,7 +253,6 @@ class COffice extends BaseController
             error_log("Errore durante il salvataggio di isHidden: " . $e->getMessage());
             $view = new VStatus();
             $view->showStatus(500);
-            return;
         }
 
         $view = new VRedirect();
@@ -451,6 +451,7 @@ class COffice extends BaseController
         }
 
         // Prendo i servizi dalle checkbox
+        var_dump($_POST['servizi']);
         $listaServizi = $_POST['servizi'] ?? [];
 
         // Se è stato compilato "altro", aggiungo quel servizio
@@ -505,14 +506,14 @@ class COffice extends BaseController
             return;
         }
 
-        if ($user->getId() !== $office->getLocatore()->getId()) {
+        if ($this->doesLoggedUserHaveRole(Roles::LANDLORD ) && $user->getId() !== $office->getLocatore()->getId()) {
             $view = new VStatus();
             $view->showStatus(403);
             return;
         }
 
 
-        if ($this->doesLoggedUserHaveRole(Roles::LANDLORD)) {
+        if ($this->doesLoggedUserHaveRole(Roles::ADMIN)) {
             $targetView = "showPendingAdmin";
         } else {
             $targetView = "showPendingLandlord";
