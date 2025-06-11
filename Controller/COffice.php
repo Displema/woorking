@@ -202,8 +202,8 @@ class COffice extends BaseController
             return;
         }
 
-        if ($this->doesUserHaveRole(Roles::LANDLORD)) {
-            $user = USession::getUser();
+        if ($this->doesLoggedUserHaveRole(Roles::LANDLORD)) {
+            $user = $this->getUser();
             if ($office->getLocatore()->getId() !== $user->getId()) {
                 $view = new VStatus();
                 $view->showStatus(403);
@@ -264,7 +264,7 @@ class COffice extends BaseController
     {
         $this->requireLogin();
 
-        $user = USession::getUser();
+        $user = $this->getUser();
         $id = $user->getId();
         $oggi = new \DateTime();
 
@@ -331,7 +331,7 @@ class COffice extends BaseController
     {
         $this->requireRole(Roles::LANDLORD);
 
-        $user = USession::getUser();
+        $user = $this->getUser();
         $id = $user->getId();
         $UfficiCompleti = [];
         $em = getEntityManager();
@@ -395,7 +395,7 @@ class COffice extends BaseController
 
 
 
-        $user = USession::getUser();
+        $user = $this->getUser();
         /** @var ELocatoreRepository $locatore */
         $locatorerepo = getEntityManager()->getRepository(ELocatore::class);
         $locatore = $locatorerepo->getLocatoreByUser($user->getId());
@@ -498,7 +498,7 @@ class COffice extends BaseController
         $this->requireRoles([Roles::ADMIN, Roles::LANDLORD]);
         $office  = $this->entity_manager->find(EUfficio::class, $id);
 
-        $user = USession::getUser();
+        $user = $this->getUser();
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
@@ -512,7 +512,7 @@ class COffice extends BaseController
         }
 
 
-        if ($this->doesUserHaveRole(Roles::ADMIN)) {
+        if ($this->doesLoggedUserHaveRole(Roles::LANDLORD)) {
             $targetView = "showPendingAdmin";
         } else {
             $targetView = "showPendingLandlord";
