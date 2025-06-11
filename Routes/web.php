@@ -18,7 +18,9 @@ $router->get('/logout', 'CAuth@logoutUser');
 $router->post('/salvaProfilo', 'CAuth@modifyUser');
 
 // Static content routes
-$router->get('/static/img/{id}', 'CPhoto@view');
+$router->get('/static/img/{id}', 'CResource@serveImg');
+$router->get('/static/css/{key}', 'CResource@serveCss');
+$router->get('/static/js/{key}', 'CResource@serveJs');
 
 // Admin routes
 $router->get('/admin/home', 'CAdmin@index');
@@ -34,7 +36,7 @@ $router->get('/profile', 'CHome@profile');
 $router->get('/uffici', 'COffice@showOfficesLocatore');
 
 //route to print photos
-//$router->get('/foto/{id}', 'CPhoto@serveImage');
+//$router->get('/foto/{id}', 'CResource@serveImage');
 
 //route to manage reservations
 $router->get('/prenotazioni', 'COffice@showPrenotazioni');

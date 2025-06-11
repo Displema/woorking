@@ -6,25 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Gestione Segnalazioni</title>
     <link href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet" />
-    <style>
-        .card-description {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 0.5rem;
-        }
-
-        .card-footer {
-            font-size: 0.85rem;
-            color: #999;
-            display: flex;
-            justify-content: space-between;
-            font-style: italic;
-        }
-
-        .nav-link.active {
-            font-weight: 600;
-        }
-    </style>
+    <link href="/static/css/reports.css" rel="stylesheet">
 </head>
 
 <body>
@@ -95,33 +77,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
-<script>
-    // Gestione cambio tab Attive / Chiuse
-    const tabAttiveBtn = document.getElementById('tabAttiveBtn');
-    const tabChiuseBtn = document.getElementById('tabChiuseBtn');
-    const tabAttive = document.getElementById('tabAttive');
-    const tabChiuse = document.getElementById('tabChiuse');
-
-    tabAttiveBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        tabAttive.classList.remove('d-none');
-        tabAttive.classList.add('active');
-        tabChiuse.classList.add('d-none');
-        tabChiuse.classList.remove('active');
-        tabAttiveBtn.classList.add('active');
-        tabChiuseBtn.classList.remove('active');
-    });
-
-    tabChiuseBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        tabChiuse.classList.remove('d-none');
-        tabChiuse.classList.add('active');
-        tabAttive.classList.add('d-none');
-        tabAttive.classList.remove('active');
-        tabChiuseBtn.classList.add('active');
-        tabAttiveBtn.classList.remove('active');
-    });
-</script>
+<script src="/static/js/handle_reports_tabs.js"></script>
 </body>
 
 </html>
