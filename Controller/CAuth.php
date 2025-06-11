@@ -151,7 +151,7 @@ class CAuth extends BaseController
             USession::setSessionElement("user", $profile);
 
             $view = new VRedirect();
-            if ($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::ADMIN)) {
+            if ($this->doesLoggedUserHaveRole(Roles::ADMIN)) {
                 $view->redirect("/admin/home");
             } else {
                 $view->redirect("/home");

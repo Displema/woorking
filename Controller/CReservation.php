@@ -74,12 +74,7 @@ class CReservation extends BaseController
     public function show($id)
     {
    //check if the user is logged
-        if (!$this->auth_manager->isLoggedIn()) {
-            //redirect to the login to take access
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
+        $this->requireLogin();
         //take the user form the session
         $user = $this->getUser();
         //take the userid from the authmanager

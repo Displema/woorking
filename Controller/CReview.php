@@ -45,7 +45,6 @@ class CReview extends BaseController
     {
         //check if the user is looged
         if ($this->isLoggedIn()) {
-
             //take the user from the session
             $user = $this->getUser();
         } else {
@@ -71,17 +70,12 @@ class CReview extends BaseController
         $view->showAllReviews($review, $office, $user);
     }
     public function reviewForm($idreservation): void
-    {    //chekc if the user is logged
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            //redirect to login
-            $view->redirect('/login');
-            return;
-        }
-        //take the user id from the auth manager
-        $userId = $this->auth_manager->getUserId();
+    {
+    //chekc if the user is logged
+        $this->requireLogin();
+
         //check the role of user
-        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+        if (!($this->doesLoggedUserHaveRole(Roles::BASIC_USER))) {
             $view = new VRedirect();
             $view->redirect('/home');
             return;
@@ -92,18 +86,13 @@ class CReview extends BaseController
         $view = new VReview();
         $view ->showReviewForm($idreservation, $user);
     }
-    public function storeReview($idreservation,$voto,$comment)
-
+    public function storeReview($idreservation, $voto, $comment)
     {
-        if (!$this->auth_manager->isLoggedIn()) {
-            $view = new VRedirect();
-            $view->redirect('/login');
-            return;
-        }
+        $this->requireLogin();
 
         $userId = $this->auth_manager->getUserId();
 
-        if (!($this->auth_manager->admin()->doesUserHaveRole($userId, Roles::BASIC_USER))) {
+        if (!($this->doesLoggedUserHaveRole(Roles::BASIC_USER))) {
             $view = new VRedirect();
             $view->redirect('/home');
             return;
