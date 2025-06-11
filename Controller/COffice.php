@@ -473,21 +473,21 @@ class COffice extends BaseController
         $this->requireRoles([Roles::ADMIN, Roles::LANDLORD]);
         $office  = $this->entity_manager->find(EUfficio::class, $id);
 
-        $user = USession::getUser();
+        $user = $this->getUser();
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
             return;
         }
 
-        if ($user->getId() !== $office->getLocatore()->getId()) {
+        if ($this->doesLoggedUserHaveRole(Roles::LANDLORD ) && $user->getId() !== $office->getLocatore()->getId()) {
             $view = new VStatus();
             $view->showStatus(403);
             return;
         }
 
 
-        if ($this->doesUserHaveRole(Roles::ADMIN)) {
+        if ($this->doesLoggedUserHaveRole(Roles::ADMIN)) {
             $targetView = "showPendingAdmin";
         } else {
             $targetView = "showPendingLandlord";
