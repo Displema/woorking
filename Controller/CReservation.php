@@ -137,6 +137,13 @@ class CReservation extends BaseController
                 return;
             }
 
+            if ($office->isHidden()) {
+                $this->entity_manager->rollback();
+                $view = new VStatus();
+                $view->showStatus(400);
+                return;
+            }
+
             //take the number of reservation for this office in a specific date and slot
             $reservationCount = $this->entity_manager->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $slotEnum);
 
@@ -167,6 +174,7 @@ class CReservation extends BaseController
 
             $view = new VOffice();
             $view->showconfirmedpage1($user);
+
         } catch (Exception $e) {
             // if the saving have problem rollback cancel everything
             $this->entity_manager->rollback();
