@@ -540,7 +540,9 @@ class COffice extends BaseController
             return;
         }
 
+        error_log(print_r($_SESSION, true));
         $user = $this->getUser();
+
 
         if ($this->doesLoggedUserHaveRole(Roles::LANDLORD) && !($user->getId() === $office->getLocatore()->getUserId())) {
             $view = new VStatus();

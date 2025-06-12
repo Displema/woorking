@@ -8,21 +8,15 @@ class VAuth extends BaseView
 {
     public function showLoginForm(): void
     {
-        $this->twig->display('login/login.html.twig');
+        $this->twig->display('User/login/login.html.twig');
     }
 
     public function showRegisterForm(): void
     {
-        $this->twig->display('login/login.html.twig');
+        $this->twig->display('User/login/login.html.twig');
     }
-
-    public function showLoginError(): void
+    public function redirectResetPassword()
     {
-    }
-    public function showRegisterError(): void
-    {
-    }
-    public function redirectResetPassword(){
         $this->twig->display('errori/infoResetPassword.html.twig');
     }
 }
