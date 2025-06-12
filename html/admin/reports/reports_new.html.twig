@@ -88,7 +88,7 @@
                                     Inviata da {{ report.user.name }} {{ report.user.surname }} <br>
                                     Ufficio: {{ report.ufficio.titolo }}
                                 </p>
-                                <small class="text-muted">Data segnalazione: {{ report.data|date('d/m/Y H:i') }}</small>
+                                <small class="text-muted">Data segnalazione: {{ report.createdAt|date('d/m/Y H:i') }}</small>
                             </div>
                         </div>
                     </div>
@@ -103,14 +103,16 @@
                     <div class="card mb-3">
                         <div class="card-body segnalazione-card">
                             <img src="/static/img/{{ closedReport.ufficio.foto[0].id }}" alt="Foto ufficio {{ closedReport.ufficio.titolo }}">
-                            <div>
+                            <div class="flex row">
                                 <h5 class="mb-1">{{ closedReport.commento }}</h5>
                                 <p class="mb-1 text-muted">
                                     Inviata da {{ closedReport.user.name }} {{ closedReport.user.surname }} <br>
                                     Ufficio: {{ closedReport.ufficio.titolo }}
                                 </p>
-                                <small class="text-muted">Data segnalazione: {{ closedReport.data|date('d/m/Y H:i') }}</small>
+                                <small class="text-muted">Data segnalazione: {{ closedReport.createdAt|date('d/m/Y H:i') }}</small>
+                                <small class="text-muted">Data chiusura: {{ closedReport.updatedAt|date('d/m/Y H:i') }}</small>
                             </div>
+
                         </div>
                     </div>
                 {% else %}

@@ -17,6 +17,10 @@ $router->post('/register', 'CAuth@registerUser');
 $router->get('/logout', 'CAuth@logoutUser');
 $router->post('/salvaProfilo', 'CAuth@modifyUser');
 
+//route to the layout to add an office
+$router->get('/offices/new', 'COffice@addOffice');
+$router->post('/offices/new', 'COffice@addOfficeInDB');
+
 // Static content routes
 $router->get('/static/img/{id}', 'CResource@serveImg');
 $router->get('/static/css/{key}', 'CResource@serveCss');
@@ -34,17 +38,15 @@ $router->get('/admin/reports/{id}', 'CReport@show');
 $router->get('/profile', 'CHome@profile');
 
 //route to manage the offices
-$router->get('/uffici', 'COffice@showOfficesLocatore');
+$router->get('/landlord/offices', 'COffice@showOfficesLocatore');
 
 
 //route to manage reservations
-$router->get('/prenotazioni', 'COffice@showPrenotazioni');
+$router->get('/reservations', 'COffice@showPrenotazioni');
 
-//route to the layout to add an office
-$router->get('/aggiunta', 'COffice@addOffice');
 
 //route to add office
-$router->post('/aggiuntaUfficio', 'COffice@addOfficeInDB');
+
 
 
 //route to reviews

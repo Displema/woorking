@@ -37,6 +37,7 @@ use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
 use TechnicalServiceLayer\Repository\EUfficioRepository;
 use TechnicalServiceLayer\Utility\USession;
 use View\VReservation;
+use View\VResource;
 use View\VReview;
 use View\VRedirect;
 use View\VStatus;
@@ -389,7 +390,13 @@ class COffice extends BaseController
 
     public function addOffice(): void
     {
-        $this->requireRole(Roles::LANDLORD);
+        $this->requireRoles([Roles::LANDLORD, Roles::ADMIN]);
+
+        if ($this->doesLoggedUserHaveRole(Roles::ADMIN)) {
+            $view = new VRedirect();
+            $view->redirect('/admin/home');
+            return;
+        }
 
         $view = new VOffice();
         $view->addOfficeV();
@@ -487,7 +494,8 @@ class COffice extends BaseController
             $this->entity_manager->persist($servizio);
         }
         $this->entity_manager->flush();
-        header('Location: /uffici');
+        $view = new VRedirect();
+        $view->redirect('/landlord/offices');
         exit;
     }
 
