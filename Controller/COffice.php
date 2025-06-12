@@ -139,8 +139,10 @@ class COffice extends BaseController
             return;
         }
 
-        $office->setMotivoRifiuto($reason);
-        $office->setStato(StatoUfficioEnum::NonApprovato);
+        $office
+            ->setMotivoRifiuto($reason)
+            ->setStato(StatoUfficioEnum::InAttesa)
+            ->setDataRifiuto(new DateTime());
 
         try {
             $this->entity_manager->persist($office);
@@ -174,7 +176,9 @@ class COffice extends BaseController
             return;
         }
 
-        $office->setStato(StatoUfficioEnum::Approvato);
+        $office
+            ->setStato(StatoUfficioEnum::Approvato)
+            ->setDataApprovazione(new DateTime());
         $this->entity_manager->persist($office);
         $this->entity_manager->flush();
 
