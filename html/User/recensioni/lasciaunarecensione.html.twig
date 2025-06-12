@@ -9,14 +9,14 @@
     <!-- link to awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <!-- link to css for style -->
-    <link rel="stylesheet" href="/html/User/recensioni/recensioni.css">
+    <link rel="stylesheet" href="/static/css/recensioni.css">
 
 </head>
 <body class=" text-white">
 <!-- include navbar-->
 
 
-    {% include 'navbar/navbar.html.twig' %}
+    {% include 'User/navbar/navbar.html.twig' %}
 
 
 
@@ -49,28 +49,8 @@
     </form>
 </div>
 <!-- include footer -->
-{% include "Footer/footer.html.twig" %}
-<script>
-    // clickable star
-    const stars = document.querySelectorAll('.fa-star');
-    const votoInput = document.getElementById('voto');
-
-    stars.forEach(star => {
-        star.addEventListener('click', () => {
-            const value = star.getAttribute('data-val');
-            votoInput.value = value;
-
-            // Aggiungi classe "checked" fino alla stella selezionata
-            stars.forEach(s => {
-                if (s.getAttribute('data-val') <= value) {
-                    s.classList.add('checked');
-                } else {
-                    s.classList.remove('checked');
-                }
-            });
-        });
-    });
-</script>
+{% include "User/Footer/footer.html.twig" %}
+<script src="/static/js/review.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
