@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard Amministratore</title>
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet" />
+</head>
+
+<body>
+<div class="page">
+    <!-- Sidebar -->
+    {% include "base/sidebar.html.twig" %}
+
+    <!-- Page wrapper -->
+    <div class="page-wrapper">
+        <!-- Page body -->
+        <div class="page-body d-flex align-items-center justify-content-center" style="min-height: 80vh;">
+            <div class="text-center">
+                <h1 class="mb-3">Benvenuto nella dashboard</h1>
+                <p class="lead text-muted">Questa è l'area amministrativa per la gestione di uffici, prenotazioni e segnalazioni.</p>
+                <div class="mt-4">
+                    <a href="/admin/offices" class="btn btn-primary">Gestisci Uffici</a>
+                    <a href="/reservations" class="btn btn-primary">Visualizza Prenotazioni</a>
+                    <a href="/admin/reports" class="btn btn-primary">Controlla Segnalazioni</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
+</body>
+</html>

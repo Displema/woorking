@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="page">
+    {% include 'base/sidebar.html.twig' %}
+
+    <div class="page-wrapper">
+        <div class="page-body container py-4">
+            <h2 class="mb-4">Dashboard Amministrativa</h2>
+
+            <div class="row row-cards">
+                <!-- Prenotazioni per mese -->
+                <div class="col-md-6 col-lg-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Prenotazioni per mese</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartPrenotazioni"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guadagno per mese -->
+                <div class="col-md-6 col-lg-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Guadagno per mese</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartGuadagni"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Iscrizioni utenti -->
+                <div class="col-md-6 col-lg-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Iscrizioni utenti per mese</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartIscrizioniUtenti"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Iscrizioni locatori -->
+                <div class="col-md-6 col-lg-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Iscrizioni locatori per mese</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartIscrizioniLocatori"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js rendering -->
+<script>
+    //const labels = {{ labels|json_encode|raw }}; // ad esempio: ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu"]
+    const labels = ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"]
+    const chartData = {
+        prenotazioni: [{{ reservationsStats }}],
+        guadagni: [{{ grossStats }}],
+        utenti: [{{ userSignupStats }}],
+        locatori: [{{ landlordSignupStats }}]
+    };
+
+    new Chart(document.getElementById("chartPrenotazioni"), {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Prenotazioni",
+                data: chartData.prenotazioni,
+                borderColor: "#206bc4",
+                backgroundColor: "rgba(32,107,196,0.1)",
+                fill: true
+            }]
+        }
+    });
+
+    new Chart(document.getElementById("chartGuadagni"), {
+        type: "bar",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "€ Guadagnati",
+                data: chartData.guadagni,
+                backgroundColor: "#2fb344"
+            }]
+        }
+    });
+
+    new Chart(document.getElementById("chartIscrizioniUtenti"), {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Utenti iscritti",
+                data: chartData.utenti,
+                borderColor: "#f76707",
+                backgroundColor: "rgba(247,103,7,0.1)",
+                fill: true
+            }]
+        }
+    });
+
+    new Chart(document.getElementById("chartIscrizioniLocatori"), {
+        type: "bar",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Locatori iscritti",
+                data: chartData.locatori,
+                backgroundColor: "#d63939"
+            }]
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
+</body>
+</html>

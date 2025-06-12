@@ -15,9 +15,10 @@ $router->get('/register', 'CAuth@showRegisterForm');
 $router->post('/login', 'CAuth@loginUser');
 $router->post('/register', 'CAuth@registerUser');
 $router->get('/logout', 'CAuth@logoutUser');
-$router->post('/salvaProfilo', 'CAuth@modifyUser');
+$router->post('/profile/save', 'CAuth@modifyUser');
+$router->get('/auth/reset', 'CAuth@ResetPassword');
 
-//route to the layout to add an office
+//route to add an office
 $router->get('/offices/new', 'COffice@addOffice');
 $router->post('/offices/new', 'COffice@addOfficeInDB');
 
@@ -29,12 +30,14 @@ $router->get('/static/asset/{key}', 'CResource@serveAsset');
 
 // Admin routes
 $router->get('/admin/home', 'CAdmin@index');
+$router->get('/admin/offices', 'COffice@adminIndex');
 $router->get('/admin/offices/{id}', 'COffice@showAdminOfficeDetails');
 $router->get('/admin/offices/pending/{id}', 'COffice@showPendingDetails');
 $router->get('/admin/offices/rejected/{id}', 'COffice@showRejectedDetails');
 $router->get('/admin/reports', 'CReport@index');
-$router->get('/admin/reports/{id}', 'CReport@show');
-
+$router->get('/admin/reports/{id}', 'CReport@handleReportDetails');
+$router->post('/admin/reports/resolve/{id}', 'CReport@submitReportResolution');
+$router->get('/admin/stats', 'CAdmin@statsIndex');
 $router->get('/profile', 'CHome@profile');
 
 //route to manage the offices
@@ -42,15 +45,11 @@ $router->get('/landlord/offices', 'COffice@showOfficesLocatore');
 
 
 //route to manage reservations
-$router->get('/reservations', 'COffice@showPrenotazioni');
-
-
-//route to add office
-
+$router->get('/reservations', 'CReservation@index');
 
 
 //route to reviews
-$router->get('/recensioni', 'CReview@getReviews');
+$router->get('/reviews', 'CReview@getReviews');
 
 //stats
 $router->get('/api/grafici/entrate-mensili', 'CStats@entrateMensili');
@@ -97,9 +96,6 @@ $router->get('/user/report/{idoffice}', 'CReport@show');            //  show rep
 //// review on reservation
 $router->get('/reservations/{id}/review', 'CReview@reviewForm');     //show review form
 $router->post('/reservations/{id}/review', 'CReview@storeReview');  //confirm review
-
-// route to resetpassword
-$router->get('/auth/reset', 'CAuth@ResetPassword');
 
 
 return $router;

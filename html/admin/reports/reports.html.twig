@@ -6,78 +6,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Gestione Segnalazioni</title>
     <link href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet" />
-    <link href="/static/css/reports.css" rel="stylesheet">
+    <link href="/static/css/reports.css" rel="stylesheet" />
 </head>
 
 <body>
 <div class="page">
-    <!-- Sidebar -->
     {% include "base/sidebar.html.twig" %}
-
     <div class="page-wrapper">
-        <!-- Navbar top -->
-        <header class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-            <div class="container-xl d-flex justify-content-between align-items-center">
-                <a href="#" class="navbar-brand">Gestione Segnalazioni</a>
-            </div>
-        </header>
-
-        <!-- Page body -->
         <div class="page-body container py-4">
-            <!-- Tabs per Attive / Chiuse -->
-            <div class="mb-4">
-                <ul class="nav nav-pills">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#" id="tabAttiveBtn">Attive <span
-                                    class="badge bg-primary ms-1" id="countAttive">3</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" id="tabChiuseBtn">Chiuse <span class="badge bg-secondary ms-1"
-                                                                                    id="countChiuse">5</span></a>
-                    </li>
-                </ul>
-            </div>
+            <!-- Tabs -->
+            <nav class="tabs" role="tablist" aria-label="Seleziona sezione segnalazioni">
+                <div class="tab active" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-attive"
+                     id="tab-btn-attive" data-target="attive">
+                    Attive <span class="badge bg-white">{{ activeReports|length }}</span>
+                </div>
+                <div class="tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-chiuse"
+                     id="tab-btn-chiuse" data-target="chiuse">
+                    Chiuse <span class="badge bg-white">{{ closedReports|length }}</span>
+                </div>
+            </nav>
 
-            <!-- Contenuto -->
-            <div id="tabAttive" class="tab-content active">
-                <div class="list-group">
-                    {% for report in activeReports %}
+            <!-- Sezione Segnalazioni Attive -->
+            <section id="attive" class="section-tab active" role="tabpanel" aria-labelledby="tab-btn-attive">
+                {% for report in activeReports %}
+                    <a href="/admin/reports/{{ report.id }}">
                     <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ report.commento|slice(0, 30) }}</h5>
-                            <p class="card-description">{{ report.commento }}</p>
-                            <div class="card-footer">
-                                <span>Segnalato da: {{ report.user.name }} {{ report.user.surname }}</span>
-                                <span>Ufficio: {{ report.ufficio.titolo }}</span>
+                        <div class="card-body segnalazione-card">
+                            <img src="/static/img/{{ report.ufficio.foto[0].id }}" alt="Foto ufficio {{ report.ufficio.titolo }}">
+                            <div>
+                                <h5 class="mb-1">{{ report.commento }}</h5>
+                                <p class="mb-1 text-muted">
+                                    Inviata da: {{ report.user.name }} {{ report.user.surname }} <br>
+                                    Ufficio: {{ report.ufficio.titolo }}
+                                </p>
+                                <small class="text-muted">Data segnalazione: {{ report.createdAt|date('d/m/Y H:i') }}</small>
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
-                </div>
-            </div>
+                    </a>
+                {% else %}
+                    <p class="text-muted">Nessuna segnalazione attiva.</p>
+                {% endfor %}
+            </section>
 
-            <div id="tabChiuse" class="tab-content d-none">
-                <div class="list-group">
-                    {% for report in closedReports %}
+            <!-- Sezione Segnalazioni Chiuse -->
+            <section id="chiuse" class="section-tab" role="tabpanel" aria-labelledby="tab-btn-chiuse" hidden>
+                {% for closedReport in closedReports %}
+                    <a href="/admin/reports/{{ closedReport.id }}">
                     <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ report.commento|slice(0,30) }}</h5>
-                            <p class="card-description">{{ report.commento }}</p>
-                            <div class="card-footer">
-                                <span>Segnalato da: {{ report.user.name }} {{ report.user.surname }}</span>
-                                <span>Ufficio: {{ report.ufficio.titolo }}</span>
+                        <div class="card-body segnalazione-card">
+                            <img src="/static/img/{{ closedReport.ufficio.foto[0].id }}" alt="Foto ufficio {{ closedReport.ufficio.titolo }}">
+                            <div class="flex row">
+                                <h5 class="mb-1">{{ closedReport.commento }}</h5>
+                                <p class="mb-1 text-muted">
+                                    Inviata da: {{ closedReport.user.name }} {{ closedReport.user.surname }} <br>
+                                    Ufficio: {{ closedReport.ufficio.titolo }}
+                                </p>
+                                <small class="text-muted">Data segnalazione: {{ closedReport.createdAt|date('d/m/Y H:i') }}</small>
+                                <small class="text-muted">Data chiusura: {{ closedReport.updatedAt|date('d/m/Y H:i') }}</small>
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
-                </div>
-            </div>
+                    </a>
+                {% else %}
+                    <p class="text-muted">Nessuna segnalazione chiusa.</p>
+                {% endfor %}
+            </section>
         </div>
     </div>
 </div>
 
+<script src="/static/js/reports_index.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
-<script src="/static/js/handle_reports_tabs.js"></script>
 </body>
 
 </html>

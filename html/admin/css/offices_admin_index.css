@@ -1,16 +1,17 @@
-.segnalazione-card {
+.office-card {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 1rem;
 }
 
-.segnalazione-card img {
+.office-card img {
     width: 80px;
     height: 80px;
     object-fit: cover;
     border-radius: 8px;
 }
 
+/* Nasconde le sezioni non attive */
 .section-tab {
     display: none;
 }
@@ -19,6 +20,7 @@
     display: block;
 }
 
+/* Stile tabs */
 .tabs {
     display: flex;
     gap: 1rem;

@@ -9,7 +9,6 @@ use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use TechnicalServiceLayer\Repository\EPagamentoRepository;
-use TechnicalServiceLayer\Repository\EUtenteRepository;
 
 #[ORM\Entity(repositoryClass: EPagamentoRepository::class)]
 #[ORM\Table(name: "Pagamenti")]

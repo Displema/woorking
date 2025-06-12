@@ -139,16 +139,20 @@ class COffice extends BaseController
             $view->showStatus(400);
             return;
         }
-
+        $this->entity_manager->beginTransaction();
         $office
             ->setMotivoRifiuto($reason)
-            ->setStato(StatoUfficioEnum::InAttesa)
+            ->setStato(StatoUfficioEnum::NonApprovato)
             ->setDataRifiuto(new DateTime());
 
         try {
             $this->entity_manager->persist($office);
             $this->entity_manager->flush();
+            $this->entity_manager->commit();
         } catch (ORMException) {
+            if ($this->entity_manager->getConnection()->isTransactionActive()) {
+                $this->entity_manager->rollback();
+            }
             $view = new VStatus();
             $view->showStatus(500);
         }
@@ -270,72 +274,7 @@ class COffice extends BaseController
         $view->redirect('/home');
     }
 
-    //search all bookings of the landlord's offices
-    public function showPrenotazioni(): void
-    {
-        $this->requireLogin();
 
-        $user = $this->getUser();
-        $id = $user->getId();
-        $oggi = new \DateTime();
-
-        $UfficiCompletiPassati = [];
-        $UfficiCompletiPresenti = [];
-
-        // Repositories
-        $userRepo = UserRepository::getInstance();
-        $uffici = $this->entity_manager->getRepository(EUfficio::class)->getAllOfficeByLocatore(['id' => $id]);
-        $fotoRepo = $this->entity_manager->getRepository(EFoto::class);
-        $prenotazioniRepo = $this->entity_manager->getRepository(EPrenotazione::class);
-        $intervalliRepo = $this->entity_manager->getRepository(EIntervalloDisponibilita::class);
-
-        try {
-            foreach ($uffici as $ufficio) {
-                $prenotazioni = $prenotazioniRepo->getPrenotazioneByUfficio($ufficio);
-                if (empty($prenotazioni)) {
-                    continue;
-                }
-
-                $intervallo = $intervalliRepo->getIntervallobyOffice($ufficio);
-                $foto = $fotoRepo->getFirstPhotoByOffice($ufficio);
-                $fotoUrl = $foto ? "/static/img/"  . $foto->getId() : null;
-
-                $serviziObj = $ufficio->getServiziAggiuntivi();
-                $servizi = [];
-                foreach ($serviziObj as $s) {
-                    $servizi[] = $s->getNomeServizio();
-                }
-                $serviziStringa = implode(', ', $servizi);
-
-                // Per ogni prenotazione creo un oggetto singolo da passare al template
-                foreach ($prenotazioni as $prenotazione) {
-                    $data = $prenotazione->getData();
-                    $email = $userRepo->getEmailByUserId($prenotazione->getUtente()->getUserId())[0]['email'];
-
-                    $elemento = [
-                        'ufficio' => $ufficio,
-                        'email' => $email,
-                        'foto' => $fotoUrl,
-                        'prenotazioni' => $prenotazione,
-                        'intervallo' => $intervallo,
-                        'servizio' => $serviziStringa
-                    ];
-
-                    if ($data < $oggi) {
-                        $UfficiCompletiPassati[] = $elemento;
-                    } else {
-                        $UfficiCompletiPresenti[] = $elemento;
-                    }
-                }
-            }
-        } catch (Exception $e) {
-            error_log("Errore nella gestione delle prenotazioni per ufficio: " . $e->getMessage());
-        }
-
-        // Call the view
-        $view = new VOffice();
-        $view->searchReservations($UfficiCompletiPassati, $UfficiCompletiPresenti);
-    }
 
     //show all lessor's offices
     public function showOfficesLocatore()
@@ -512,16 +451,32 @@ class COffice extends BaseController
 
         $view = new VAdmin();
         $userRepo = UserRepository::getInstance();
-        $email = $userRepo->getEmailByUserId($office->getLocatore()->getUserId())[0]['email'];
+        $email = $userRepo->getEmailByUserId($office->getLocatore()->getUserId());
         /** @var EUfficioRepository $officeRepo */
         $officeRepo = $this->entity_manager->getRepository(EUfficio::class);
         $reservations = $officeRepo->getActiveReservations($office);
 
 
         $reservationsArray = $officeRepo->getReservationsByMonths($office);
+        $grossStats = array_map(static function ($item) use ($office) {
+            return $item * $office->getPrezzo();
+        }, $reservationsArray);
 
+        $view->showOfficeDetails($office, $email, count($reservations), $reservationsArray, $grossStats);
+    }
 
-        $view->showOfficeDetails($office, $email, count($reservations), $reservationsArray);
+    public function adminIndex(): void
+    {
+        $this->requireRole(Roles::ADMIN);
+        $view = new VAdmin();
+
+        /** @var EUfficioRepository $officeRepo */
+        $officeRepo = $this->entity_manager->getRepository(EUfficio::class);
+        $activeOffices = $officeRepo->getOfficesByState(StatoUfficioEnum::Approvato);
+        $pendingOffices = $officeRepo->getOfficesByState(StatoUfficioEnum::InAttesa);
+        $rejectedOffices = $officeRepo->getOfficesByState(StatoUfficioEnum::NonApprovato);
+        $hiddenOffices = $officeRepo->getOfficesByState(StatoUfficioEnum::Nascosto);
+        $view->showOfficesIndex($activeOffices, $pendingOffices, $rejectedOffices, $hiddenOffices);
     }
 
     public function showPendingDetails(string $id): void
@@ -555,11 +510,31 @@ class COffice extends BaseController
 
     public function showRejectedDetails(string $id): void
     {
-        $this->requireRoles([Roles::ADMIN, Roles::LANDLORD]);
+        //$this->requireRoles([Roles::ADMIN, Roles::LANDLORD]);
+        $this->requireRole(Roles::ADMIN);
+
         $office  = $this->entity_manager->find(EUfficio::class, $id);
         if (!$office) {
             $view = new VStatus();
             $view->showStatus(404);
+            return;
+        }
+
+        if ($office->getStato() !== StatoUfficioEnum::NonApprovato) {
+            switch ($office->getStato()) {
+                case StatoUfficioEnum::Approvato:
+                    $view = new VRedirect();
+                    $view->redirect("/admin/offices/$id");
+                    break;
+                case StatoUfficioEnum::InAttesa:
+                    $view = new VRedirect();
+                    $view->redirect("/admin/offices/pending/$id");
+                    break;
+                case StatoUfficioEnum::Nascosto:
+                    $view = new VRedirect();
+                    $view->redirect('/admin/home');
+                    break;
+            }
             return;
         }
 

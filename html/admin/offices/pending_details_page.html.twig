@@ -6,60 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Dettaglio Ufficio In Attesa</title>
     <link href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet" />
-    <style>
-        .office-main-photo {
-            width: 100%;
-            max-height: 350px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .services-list {
-            display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-            font-size: 1.2rem;
-            margin-top: 1rem;
-        }
-
-        .service-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-approve {
-            background-color: var(--tblr-success);
-            color: white;
-        }
-
-        .btn-reject {
-            background-color: var(--tblr-danger);
-            color: white;
-        }
-
-        /* Stile carosello Tabler */
-        .carousel {
-            max-width: 100%;
-            max-height: 220px;
-            border-radius: 6px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .carousel img {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            border-radius: 6px;
-        }
-
-        /* Container carosello */
-        .carousel-inner {
-            display: flex;
-            transition: transform 0.3s ease;
-        }
-    </style>
+    <link href="/static/css/pending_details_admin.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -97,31 +44,47 @@
                     <p><strong>Postazioni disponibili: </strong>{{ office.numeroPostazioni }}</p>
 
                     <!-- Carosello immagini secondarie -->
-                    <div class="carousel" id="tablerCarousel">
-                        <div class="carousel-inner">
+                    <div id="carousel-sample" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-indicators">
+                            <button
+                                    type="button"
+                                    data-bs-target="#carousel-sample"
+                                    data-bs-slide-to="0"
+                                    class="active"
+                            ></button>
                             {% for photo in office.foto %}
-                            <img src="/static/img/{{ photo.id }}" alt="Foto {{ loop.index }} dell'ufficio"
-                                 class="carousel-item {% if loop.index == 1 %} active{% endif %}" />
+                                <button type="button" data-bs-target="#carousel-sample" data-bs-slide-to="{{ loop.index }}"></button>
                             {% endfor %}
                         </div>
-                        <button class="carousel-control carousel-control-prev" type="button"
-                                aria-label="Previous Slide" id="prevBtn">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                 stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" />
-                                <polyline points="15 6 9 12 15 18" />
-                            </svg>
-                        </button>
-                        <button class="carousel-control carousel-control-next" type="button" aria-label="Next Slide"
-                                id="nextBtn">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                 stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" />
-                                <polyline points="9 6 15 12 9 18" />
-                            </svg>
-                        </button>
+                        <div class="carousel-inner">
+                            {% for photo in office.foto %}
+                                <div class="carousel-item {% if loop.index == 1 %} active {% endif %}">
+                                    <img
+                                            class="d-block w-100"
+                                            alt="Ufficio {{ office.title|e }} foto {{ loop.index }}"
+                                            src="/static/img/{{ photo.id }}"
+                                    />
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <a
+                                class="carousel-control-prev"
+                                data-bs-target="#carousel-sample"
+                                role="button"
+                                data-bs-slide="prev"
+                        >
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Precedente</span>
+                        </a>
+                        <a
+                                class="carousel-control-next"
+                                data-bs-target="#carousel-sample"
+                                role="button"
+                                data-bs-slide="next"
+                        >
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Successiva</span>
+                        </a>
                     </div>
 
                     <!-- Servizi aggiuntivi -->
@@ -179,80 +142,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
-<script>
-    // Carosello Tabler
-    const carousel = document.getElementById('tablerCarousel');
-    const inner = carousel.querySelector('.carousel-inner');
-    const items = Array.from(inner.querySelectorAll('img'));
-    let currentIndex = 0;
-
-    function updateCarousel() {
-        const width = carousel.clientWidth;
-        inner.style.transform = `translateX(${-currentIndex * width}px)`;
-        items.forEach((img, i) => {
-            img.classList.toggle('active', i === currentIndex);
-        });
-    }
-
-    document.getElementById('prevBtn').addEventListener('click', () => {
-        currentIndex = (currentIndex - 1 + items.length) % items.length;
-        updateCarousel();
-    });
-
-    document.getElementById('nextBtn').addEventListener('click', () => {
-        currentIndex = (currentIndex + 1) % items.length;
-        updateCarousel();
-    });
-
-    window.addEventListener('resize', updateCarousel);
-    updateCarousel();
-
-    // Modal Tabler (usa Tabler JS per gestire i modal)
-    const modalApproveEl = document.getElementById('modalApprove');
-    const modalRejectEl = document.getElementById('modalReject');
-
-    const modalApprove = new tabler.Modal(modalApproveEl);
-    const modalReject = new tabler.Modal(modalRejectEl);
-
-    document.getElementById('btnApprove').addEventListener('click', () => {
-        modalApprove.show();
-    });
-
-    document.getElementById('btnReject').addEventListener('click', () => {
-        modalReject.show();
-    });
-
-    document.getElementById('confirmApprove').addEventListener('click', () => {
-        modalApprove.hide();
-        const approveForm = document.createElement("form")
-        approveForm.setAttribute("action", "/admin/offices/pending/{{ office.id }}/approve")
-        approveForm.setAttribute("method", "POST")
-        document.body.appendChild(approveForm);
-        approveForm.submit()
-    });
-
-    document.getElementById('rejectForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const reason = document.getElementById('rejectReason').value.trim();
-        if (!reason) {
-            alert('Inserisci una motivazione valida.');
-            return;
-        }
-        modalReject.hide();
-        const rejectForm = document.createElement("form")
-        const reasonInput = document.createElement("input")
-        reasonInput.setAttribute("type", "text")
-        reasonInput.setAttribute("name", "reason")
-        reasonInput.setAttribute("value", reason)
-        rejectForm.append(reasonInput)
-        rejectForm.setAttribute("action", "/admin/offices/pending/{{ office.id }}/reject")
-        rejectForm.setAttribute("method", "POST")
-        document.body.appendChild(rejectForm);
-        rejectForm.submit()
-
-        // Qui inserisci invio dati via AJAX o form submit
-    });
-</script>
+<script src="/static/js/pending_details_modals.js"></script>
 </body>
 
 </html>

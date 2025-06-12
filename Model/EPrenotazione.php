@@ -14,8 +14,6 @@ use Ramsey\Uuid\UuidInterface;
 
 use DateTime;
 use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
-use TechnicalServiceLayer\Repository\EProfiloRepository;
-use TechnicalServiceLayer\Repository\EUtenteRepository;
 
 #[ORM\Entity(repositoryClass: EPrenotazioneRepository::class)]
  #[ORM\Table(name: "Prenotazioni")]

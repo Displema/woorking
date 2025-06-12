@@ -8,7 +8,6 @@ use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use TechnicalServiceLayer\Repository\EProfiloRepository;
-use TechnicalServiceLayer\Repository\EUtenteRepository;
 
 #[ORM\Entity(repositoryClass: EProfiloRepository::class)]
 #[ORM\InheritanceType("JOINED")]

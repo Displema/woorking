@@ -4,6 +4,7 @@ namespace View;
 use Doctrine\Common\Collections\Collection;
 use Model\Enum\ReportStateEnum;
 use Model\ESegnalazione;
+use Model\EUfficio;
 
 class VReport extends BaseView
 {
@@ -34,8 +35,19 @@ class VReport extends BaseView
     public function showAdminReports($activeReports, $closedReports): void
     {
         $this->twig->display(
-            '/admin/reports/reports_new.html.twig',
+            '/admin/reports/reports.html.twig',
             ['activeReports' => $activeReports, 'closedReports' => $closedReports]
+        );
+    }
+
+    public function showReportDetails(ESegnalazione $report, string $email): void
+    {
+        $this->twig->display(
+            '/admin/reports/details.html.twig',
+            [
+                'report' => $report,
+                'email' => $email
+            ]
         );
     }
 }

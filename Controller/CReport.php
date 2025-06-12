@@ -13,6 +13,7 @@ use PHP_CodeSniffer\Reports\Report;
 use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
 use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
 use TechnicalServiceLayer\Repository\ESegnalazioneRepository;
+use TechnicalServiceLayer\Repository\UserRepository;
 use TechnicalServiceLayer\Roles\Roles;
 use TechnicalServiceLayer\Utility\USession;
 use View\VRedirect;
@@ -127,5 +128,66 @@ class CReport extends BaseController
 
         $view = new VReport();
         $view->showReportConfirmation($user);
+    }
+
+    public function handleReportDetails(string $id): void
+    {
+        $this->requireRole(Roles::ADMIN);
+
+        $report = $this->entity_manager->getRepository(ESegnalazione::class)->find($id);
+
+        if (!$report) {
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
+        }
+
+        $email = UserRepository::getInstance()->getEmailByUserId($report->getUser()->getUserId());
+        $view = new VReport();
+        $view->showReportDetails($report, $email);
+    }
+
+    public function submitReportResolution(string $id, string $resolutionMessage): void
+    {
+        $this->requireRole(Roles::ADMIN);
+
+        $report = $this->entity_manager->getRepository(ESegnalazione::class)->find($id);
+
+        error_log($id);
+        error_log($resolutionMessage);
+
+        if (!$report) {
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
+        }
+
+        if (!$resolutionMessage || $report->getState() === ReportStateEnum::SOLVED) {
+            $view = new VStatus();
+            $view->showStatus(400);
+            return;
+        }
+
+        $this->entity_manager->beginTransaction();
+
+
+        try {
+            $report->setState(ReportStateEnum::SOLVED)
+                ->setUpdatedAt(new DateTime())
+                ->setCommentoAdmin($resolutionMessage);
+            $this->entity_manager->persist($report);
+            $this->entity_manager->flush();
+            $this->entity_manager->commit();
+        } catch (\Exception $e) {
+            if ($this->entity_manager->getConnection()->isTransactionActive()) {
+                $this->entity_manager->rollback();
+            }
+            $view = new VStatus();
+            $view->showStatus(500);
+            return;
+        }
+
+        $view = new VRedirect();
+        $view->redirect("/admin/reports/$id");
     }
 }

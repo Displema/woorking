@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dettaglio Segnalazione</title>
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet" />
+</head>
+
+<body>
+<div class="page">
+    {% include "base/sidebar.html.twig" %}
+    <div class="page-wrapper">
+        <div class="page-header px-4 py-3">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <h2 class="page-title mb-0">Dettaglio Segnalazione</h2>
+                <button {% if not report.state.value is same as("active") %}disabled {% endif %} class="btn btn-success {% if not report.state.value is same as("active") %}disabled {% endif %}" data-bs-toggle="modal" data-bs-target="#resolveModal">Risolvi</button>
+            </div>
+        </div>
+
+        <div class="page-body container py-4">
+            <div class="card">
+                <div class="card-body segnalazione-card">
+                    <div>
+                        <h4 class="mb-2">{{ report.commento }}</h4>
+                        <p class="text-muted mb-1">
+                            Inviata da: <strong>{{ report.user.name }} {{ report.user.surname }}</strong><br>
+                            Email: <a href="mailto:{{ email }}">{{ email }}</a><br>
+                            Data segnalazione: {{ report.createdAt|date('d/m/Y H:i') }}<br>
+                        </p>
+                        <hr>
+                        <p class="mb-0">
+                            <strong>Ufficio:</strong> {{ report.ufficio.titolo }}<br>
+                            <small class="text-muted">ID: {{ report.ufficio.id }}</small>
+                        </p>
+                        {% if not report.state.value is same as("active") %}
+                        <hr>
+                        <p class="mb-0">
+                            <strong>Data risoluzione:</strong> {{ report.updatedAt|date("d-m-Y H:i") }}<br>
+                            <small class="text-muted">Commento: {{ report.commentoAdmin }}</small>
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% if report.state.value is same as("active") %}
+<!-- Modal Risolvi -->
+<div class="modal modal-blur fade" id="resolveModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Risolvi Segnalazione</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <form id="resolveForm" method="POST" action="/admin/reports/resolve/{{ report.id }}">
+                        <label class="form-label">Messaggio per l'utente</label>
+                        <textarea class="form-control" name="resolutionMessage" rows="4" required
+                                  placeholder="Descrivi come è stata risolta la segnalazione..."></textarea>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-bs-dismiss="modal">Annulla</button>
+                    <button type="submit" class="btn btn-success">Conferma Risoluzione</button>
+                </div>
+            </div>
+    </div>
+</div>
+<script src="/static/js/reports.js"></script>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
+
+</body>
+
+</html>

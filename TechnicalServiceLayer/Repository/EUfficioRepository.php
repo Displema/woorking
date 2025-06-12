@@ -168,4 +168,13 @@ class EUfficioRepository extends EntityRepository
 
         return $result;
     }
+
+    public function getMeanPrice(): int
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->select('AVG(u.prezzo) AS prezzo_medio')
+            ->from(EUfficio::class, 'u')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

@@ -6,6 +6,7 @@ use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
 use DateTime;
 use Model\EFoto;
+use Model\EIntervalloDisponibilita;
 use Model\Enum\FasciaOrariaEnum;
 use Model\Enum\StatoUfficioEnum;
 use Model\EPrenotazione;
@@ -13,6 +14,7 @@ use Model\EPrenotazione;
 use Model\EProfilo;
 use Model\ERecensione;
 use Model\EUfficio;
+use TechnicalServiceLayer\Repository\UserRepository;
 use TechnicalServiceLayer\Roles\Roles;
 use TechnicalServiceLayer\Utility\USession;
 use View\VOffice;
@@ -27,12 +29,7 @@ class CReservation extends BaseController
     {
         //check if the user is logged
         $this->requireLogin();
-        //check the role of user
-        if (!($this->doesLoggedUserHaveRole(Roles::BASIC_USER))) {
-            $view = new VRedirect();
-            $view->redirect('/home');
-            return;
-        }
+
         //take the datetime of today
         $today = new DateTime();
 
@@ -42,19 +39,26 @@ class CReservation extends BaseController
         //take the user from session
         $user = $this->getUser();
 
-        //take the reservation by the user
-        $reservations = $repository->findBy(['utente' => $user->getId()]);
-
+        if ($this->doesLoggedUserHaveRole(Roles::ADMIN)) {
+            $reservations = $repository->findAll();
+            $targetView = "showAdminReservations";
+        } elseif ($this->doesLoggedUserHaveRole(Roles::LANDLORD)) {
+            // molto brutto
+            $this->indexLandlord();
+            return;
+        } else {
+            $reservations = $repository->findBy(['utente' => $user->getId()]);
+            $targetView = "showUserReservations";
+        }
 
         $activereservation=[];
         $pastreservation=[];
+
 
         foreach ($reservations as $reservation) {
             //take the date from reservation to check what reservation are old
             // and what are active
             $Date = $reservation->getData();
-
-
             if ($Date >= $today) {
                 $activereservation[] = [
                     'reservation' => $reservation,
@@ -66,11 +70,77 @@ class CReservation extends BaseController
             }
         }
         $view = new VReservation();
-        $view->showReservation($activereservation, $pastreservation, $user);
+        $view->$targetView($activereservation, $pastreservation, $user);
     }
 
+    //search all bookings of the landlord's offices
+    public function indexLandlord(): void
+    {
+        $this->requireLogin();
 
-    public function show($id)
+        $user = $this->getUser();
+        $id = $user->getId();
+        $oggi = new \DateTime();
+
+        $UfficiCompletiPassati = [];
+        $UfficiCompletiPresenti = [];
+
+        // Repositories
+        $userRepo = UserRepository::getInstance();
+        $uffici = $this->entity_manager->getRepository(EUfficio::class)->getAllOfficeByLocatore(['id' => $id]);
+        $fotoRepo = $this->entity_manager->getRepository(EFoto::class);
+        $prenotazioniRepo = $this->entity_manager->getRepository(EPrenotazione::class);
+        $intervalliRepo = $this->entity_manager->getRepository(EIntervalloDisponibilita::class);
+
+        try {
+            foreach ($uffici as $ufficio) {
+                $prenotazioni = $prenotazioniRepo->getPrenotazioneByUfficio($ufficio);
+                if (empty($prenotazioni)) {
+                    continue;
+                }
+
+                $intervallo = $intervalliRepo->getIntervallobyOffice($ufficio);
+                $foto = $fotoRepo->getFirstPhotoByOffice($ufficio);
+                $fotoUrl = $foto ? "/static/img/"  . $foto->getId() : null;
+
+                $serviziObj = $ufficio->getServiziAggiuntivi();
+                $servizi = [];
+                foreach ($serviziObj as $s) {
+                    $servizi[] = $s->getNomeServizio();
+                }
+                $serviziStringa = implode(', ', $servizi);
+
+                // Per ogni prenotazione creo un oggetto singolo da passare al template
+                foreach ($prenotazioni as $prenotazione) {
+                    $data = $prenotazione->getData();
+                    $email = $userRepo->getEmailByUserId($prenotazione->getUtente()->getUserId());
+
+                    $elemento = [
+                        'ufficio' => $ufficio,
+                        'email' => $email,
+                        'foto' => $fotoUrl,
+                        'prenotazioni' => $prenotazione,
+                        'intervallo' => $intervallo,
+                        'servizio' => $serviziStringa
+                    ];
+
+                    if ($data < $oggi) {
+                        $UfficiCompletiPassati[] = $elemento;
+                    } else {
+                        $UfficiCompletiPresenti[] = $elemento;
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            error_log("Errore nella gestione delle prenotazioni per ufficio: " . $e->getMessage());
+        }
+
+        // Call the view
+        $view = new VOffice();
+        $view->searchReservations($UfficiCompletiPassati, $UfficiCompletiPresenti);
+    }
+
+    public function show($id): void
     {
    //check if the user is logged
         $this->requireLogin();

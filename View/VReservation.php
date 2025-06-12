@@ -9,11 +9,11 @@ use Model\EPrenotazione;
 class VReservation extends BaseView
 {
     /**
-     * @param Collection<int, EPrenotazione> $activeReservations
-     * @param Collection<int, EPrenotazione> $pastReservations
+     * @param array $activeReservations
+     * @param array $pastReservations
      * @return void
      */
-    public function showReservation($activeReservations, $pastReservations, $user)
+    public function showUserReservations($activeReservations, $pastReservations, $user): void
     {
         $this->twig->display(
             '/User/Prenotazioni/Prenotazione.html.twig',
@@ -34,8 +34,13 @@ class VReservation extends BaseView
         $this->twig->display('/User/conferme/Postinondisponibili.html.twig', ['user'=>$user]);
     }
 
-    public function showAdminReservations($reservation): void
+    public function showAdminReservations($activeReservations, $pastReservations, $user): void
     {
-        $this->twig->display('/admin/reservations/reservations.html.twig', ['reservations'=>$reservation]);
+        $this->twig->display(
+            '/admin/reservations/reservations.html.twig',
+            ['activeReservations'=>$activeReservations,
+                'pastReservations'=>$pastReservations,
+            'user'=>$user]
+        );
     }
 }

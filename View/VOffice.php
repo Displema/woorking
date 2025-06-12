@@ -71,6 +71,4 @@ class VOffice extends BaseView
     {
         $this->twig->display('/landlord/gestioneUffici/uffici_rifiutati.html.twig', ['office' => $office]);
     }
-
-
 }

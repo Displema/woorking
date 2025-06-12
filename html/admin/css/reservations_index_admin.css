@@ -1,14 +1,7 @@
-.segnalazione-card {
+.booking-card {
     display: flex;
     align-items: flex-start;
     gap: 1rem;
-}
-
-.segnalazione-card img {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 8px;
 }
 
 .section-tab {

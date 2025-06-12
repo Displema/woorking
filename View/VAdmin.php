@@ -14,20 +14,51 @@ class VAdmin extends BaseView
      * @param Collection<int, EUfficio> $activeOffices
      * @param Collection<int, EUfficio> $pendingOffices
      * @param Collection<int, EUfficio> $rejectedOffices
+     * @param Collection<int, EUfficio> $hiddenOffices
      * @return void
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function showHome($activeOffices, $pendingOffices, $rejectedOffices, $hiddenOffices): void
-    {
+    public function showOfficesIndex(
+        Collection $activeOffices,
+        Collection $pendingOffices,
+        Collection $rejectedOffices,
+        Collection $hiddenOffices
+    ): void {
         $this->twig->display(
-            '/admin/home.html.twig',
-            ['activeOffices' => $activeOffices, 'pendingOffices'=>$pendingOffices, 'rejectedOffices'=>$rejectedOffices, 'hiddenOffices'=> $hiddenOffices],
+            '/admin/offices/index.html.twig',
+            ['activeOffices' => $activeOffices,
+                'pendingOffices'=>$pendingOffices,
+                'rejectedOffices'=>$rejectedOffices,
+                'hiddenOffices'=> $hiddenOffices
+            ],
         );
     }
 
-    public function showOfficeDetails(EUfficio $office, string $landlordEmail, int $reservationCount, array $reservationsArray): void
+    public function showIndex(): void
+    {
+        $this->twig->display('/admin/index.html.twig');
+    }
+
+    public function showStats(
+        $reservationsStats,
+        $grossStats,
+        $userSignupStats,
+        $landlordSignupStats,
+    ): void {
+        $this->twig->display(
+            '/admin/stats/dashboard.html.twig',
+            [
+            'reservationsStats' => implode(",", $reservationsStats),
+            'grossStats' => implode(",", $grossStats),
+            'userSignupStats' => implode(",", $userSignupStats),
+            'landlordSignupStats' => implode(",", $landlordSignupStats)
+            ]
+        );
+    }
+
+    public function showOfficeDetails(EUfficio $office, string $landlordEmail, int $reservationCount, array $reservationsStats, array $grossStats): void
     {
         $this->twig->display(
             '/admin/offices/office_details.html.twig',
@@ -35,10 +66,8 @@ class VAdmin extends BaseView
                 'office' => $office,
                 'email' => $landlordEmail,
                 'reservationCount' => $reservationCount,
-                'reservationsArray' => implode(",", $reservationsArray),
-                'grossArray' => implode(",", array_map(static function ($item) use ($office) {
-                    return $item * $office->getPrezzo();
-                }, $reservationsArray))
+                'reservationsArray' => implode(",", $reservationsStats),
+                'grossArray' => implode(",", $grossStats)
             ],
         );
     }

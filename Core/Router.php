@@ -46,8 +46,6 @@ class Router
             //builds the regex
             $pattern = "@^" . preg_replace('/\{(\w+)}/', '(?P<\1>[^/]+)', $route['raw']) . "$@D";
 
-            $pattern = "@^" . preg_replace('/\{(\w+)}/', '(?P<\1>[^/]+)', $route['raw']) . "$@D";
-
 
             //control
             if (preg_match($pattern, $requestUri, $matches)) {
@@ -63,17 +61,23 @@ class Router
                 // Unifica tutti i parametri
                 $params = array_merge($routeParams, $queryParams, $bodyParams);
 
+                try {
+                    if (is_callable($route['handler'])) {
+                        call_user_func_array($route['handler'], $params);
+                    } elseif (is_string($route['handler'])) {
+                        $this->callController($route['handler'], $params);
+                    }
+                    return;
+                } catch (\Exception $e) {
+                    throw $e;
 
-                if (is_callable($route['handler'])) {
-                    call_user_func_array($route['handler'], $params);
-                } elseif (is_string($route['handler'])) {
-                    $this->callController($route['handler'], $params);
+                    $view = new VStatus();
+                    $view->showStatus(400);
+                    return;
                 }
-                return;
             }
         }
 
-        http_response_code(404);
         $view = new VStatus();
         $view->showStatus(404);
     }

@@ -15,7 +15,7 @@ class EServiziAggiuntiviFixture extends AbstractFixture implements DependentFixt
     {
         $faker = Factory::create('it_IT');
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             for ($j = 0; $j < 4; $j++) {
                 $servizio = new EServiziAggiuntivi();
                 $servizio->setNomeServizio($faker->emoji() . ucFirst($faker->word()));

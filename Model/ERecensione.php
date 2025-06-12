@@ -7,7 +7,6 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Model\EPrenotazione;
 use TechnicalServiceLayer\Repository\ERecensioneRepository;
-use TechnicalServiceLayer\Repository\EUtenteRepository;
 
 #[ORM\Entity(repositoryClass: ERecensioneRepository::class)]
  #[ORM\Table(name: "Recensioni")]

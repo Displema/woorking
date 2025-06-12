@@ -54,8 +54,8 @@ class CHome extends BaseController
         //take the user from the session
         $user = $this->getUser();
 
-         //take the email from a method
-         $email = UserRepository::getInstance()->getEmailByUserId($user->getUserId())[0]['email'];
+         //take the email
+         $email = UserRepository::getInstance()->getEmailByUserId($user->getUserId());
 
         if ($this->doesLoggedUserHaveRole(Roles::LANDLORD)) {
             $view = new VLocatore();

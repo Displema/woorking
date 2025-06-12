@@ -21,8 +21,8 @@ class UserRepository
         return self::$instance;
     }
 
-    public function getEmailByUserId(string $id)
+    public function getEmailByUserId(string $id): ?string
     {
-        return $this->pdoDatabase->select("SELECT email FROM users WHERE id = :id", [":id" => $id]);
+        return $this->pdoDatabase->select("SELECT email FROM users WHERE id = :id", [":id" => $id])[0]['email'] ?? null;
     }
 }

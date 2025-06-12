@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gestione Uffici</title>
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet" />
+    <link href="/static/css/offices_admin_index.css" rel="stylesheet" />
+</head>
+
+<body>
+<div class="page">
+    <!-- Sidebar -->
+    {% include "base/sidebar.html.twig" %}
+    <!-- Page wrapper -->
+    <div class="page-wrapper">
+        <!-- Page body -->
+        <div class="page-body container py-4">
+            <!-- Tabs per le sezioni -->
+            <nav class="tabs" role="tablist" aria-label="Seleziona sezione uffici">
+                <div class="tab active" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-attivi"
+                     id="tab-btn-attivi" data-target="attivi">
+                    Attivi <span class="badge bg-white">{{ activeOffices|length }}</span>
+                </div>
+                <div class="tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-inattesa"
+                     id="tab-btn-inattesa" data-target="inattesa">
+                    In attesa <span class="badge bg-white">{{ pendingOffices|length }}</span>
+                </div>
+                <div class="tab" role="tab" tabindex="0" aria-selected="false" aria-controls="tab-rifiutati"
+                     id="tab-btn-rifiutati" data-target="rifiutati">
+                    Rifiutati <span class="badge bg-white">{{ rejectedOffices|length }}</span>
+                </div>
+                <div class="tab" role="tab" tabindex="0" aria-selected="false" aria-controls="tab-nascosti"
+                     id="tab-btn-nascosti" data-target="nascosti">
+                    Nascosti <span class="badge bg-white">{{ hiddenOffices|length }}</span>
+                </div>
+            </nav>
+
+            <!-- Sezioni contenuto -->
+            <section id="attivi" class="section-tab active" role="tabpanel" aria-labelledby="tab-btn-attivi">
+                {% for office in activeOffices %}
+                    <!-- Card ufficio attivo {{ office.id }} -->
+                    <a href="/admin/offices/{{ office.id }}">
+                        <div class="card mb-3">
+                            <div class="card-body office-card cursor-pointer">
+                                <img src="/static/img/{{ office.foto[0].id }}" alt="Foto principale ufficio {{ office.titolo }}" />
+                                <div>
+                                    <h5 class="mb-1">{{ office.titolo }}</h5>
+                                    <p class="mb-1 text-muted">{{ office.indirizzo.via }} {{ office.indirizzo.numeroCivico }}, {{ office.indirizzo.citta }} ({{ office.indirizzo.provincia }})</p>
+                                    <small class="text-muted">Attivato il: {{ office.dataApprovazione|date('d/m/Y H:i') }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </section>
+
+            <section id="inattesa" class="section-tab" role="tabpanel" aria-labelledby="tab-btn-inattesa" hidden>
+                {% for office in pendingOffices %}
+                    <!-- Card ufficio in attesa {{ office.id }} -->
+                    <a href="/admin/offices/pending/{{ office.id }}">
+                        <div class="card mb-3">
+                            <div class="card-body office-card">
+                                <img src="/static/img/{{ office.foto[0].id }}" alt="Foto principale ufficio {{ office.titolo }}" />
+                                <div>
+                                    <h5 class="mb-1">{{ office.titolo }}</h5>
+                                    <p class="mb-1 text-muted">{{ office.indirizzo.via }} {{ office.indirizzo.numeroCivico }}, {{ office.indirizzo.citta }} ({{ office.indirizzo.provincia }})</p>
+                                    <small class="text-muted">Inviato il: {{ office.dataCaricamento|date('d/m/Y H:i') }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </section>
+
+            <section id="rifiutati" class="section-tab" role="tabpanel" aria-labelledby="tab-btn-rifiutati" hidden>
+                {% for office in rejectedOffices %}
+                    <!-- Card ufficio rifiutato {{ office.id }} -->
+                    <a href="/admin/offices/rejected/{{ office.id }}">
+                        <div class="card mb-3">
+                            <div class="card-body office-card">
+                                <img src="/static/img/{{ office.foto[0].id }}" alt="Foto principale ufficio {{ office.titolo }}" />
+                                <div>
+                                    <h5 class="mb-1">{{ office.titolo }}</h5>
+                                    <p class="mb-1 text-muted">{{ office.indirizzo.via }} {{ office.indirizzo.numeroCivico }}, {{ office.indirizzo.citta }} ({{ office.indirizzo.provincia }})</p>
+                                    <small class="text-muted">Rifiutato il: {{ office.dataRifiuto|date('d/m/Y H:i') }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </section>
+
+            <section id="nascosti" class="section-tab" role="tabpanel" aria-labelledby="tab-btn-nascosti" hidden>
+                {% for office in hiddenOffices %}
+                    <!-- Card ufficio nascosto {{ office.id }} -->
+                    <div class="card mb-3">
+                        <div class="card-body office-card">
+                            <img src="/static/img/{{ office.foto[0].id }}" alt="Foto principale ufficio {{ office.titolo }}" />
+                            <div>
+                                <h5 class="mb-1">{{ office.titolo }}</h5>
+                                <p class="mb-1 text-muted">{{ office.indirizzo.via }} {{ office.indirizzo.numeroCivico }}, {{ office.indirizzo.citta }} ({{ office.indirizzo.provincia }})</p>
+                                <small class="text-muted">Cancellato il: {{ office.dataCancellazione|date('d/m/Y H:i') }}</small>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </section>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/offices_admin_index.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
+</body>
+
+</html>
