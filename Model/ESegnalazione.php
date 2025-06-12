@@ -36,8 +36,8 @@ class ESegnalazione
     #[ORM\Column(type:"string", enumType:Enum\ReportStateEnum::class)]
     private ReportStateEnum $state;
 
-    #[ORM\Column(type:"string")]
-    private string $commentoAdmin;
+    #[ORM\Column(type:"string", nullable: true)]
+    private ?string $commentoAdmin = null;
 
     public function getCommentoAdmin(): string
     {
@@ -49,15 +49,15 @@ class ESegnalazione
         $this->commentoAdmin = $commentoAdmin;
         return $this;
     }
-  #[ORM\Column(name: 'created_at')]
+    #[ORM\Column(name: 'created_at')]
     private Datetime $createdAt;
 
-    #[ORM\Column(name: 'updated_at')]
-    private DateTime $updatedAt;
+    #[ORM\Column(name: 'updated_at', nullable: true)]
+    private ?DateTime $updatedAt = null;
 
-    public function getUpdatedAt(): DateTime
+    public function getUpdatedAt(): ?DateTime
     {
-        return $this->updatedAt;
+        return $this->updatedAt ?? null;
     }
 
     public function setUpdatedAt(DateTime $updatedAt): ESegnalazione

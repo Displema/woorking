@@ -41,7 +41,7 @@ class ESegnalazioneFixture extends AbstractFixture implements DependentFixtureIn
                 ->setCreatedAt($faker->dateTimeBetween('-60 days', '-10 days'))
                 ->setUpdatedAt($faker->dateTimeBetween('-10 days', '-5 days'));
             $manager->persist($segnalazione);
-            $this->addReference('ESegnalazione_' . $j, $segnalazione);
+            $this->addReference('ESegnalazione_' . $j + $i, $segnalazione);
         }
         $manager->flush();
     }
