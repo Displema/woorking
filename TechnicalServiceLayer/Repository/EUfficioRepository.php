@@ -97,7 +97,7 @@ class EUfficioRepository extends EntityRepository
             ->getResult());
     }
 
-    public function getOfficeByLocatore( $id): Collection
+    public function getOfficeByLocatore($id): Collection
     {
         return new \Doctrine\Common\Collections\ArrayCollection(
             $this->createQueryBuilder('u')
@@ -112,7 +112,7 @@ class EUfficioRepository extends EntityRepository
         );
     }
 
-    public function getallOfficeByLocatore( $id): Collection
+    public function getallOfficeByLocatore($id): Collection
     {
         return new \Doctrine\Common\Collections\ArrayCollection(
             $this->createQueryBuilder('u')
@@ -125,4 +125,46 @@ class EUfficioRepository extends EntityRepository
         );
     }
 
+    public function getReservationsByMonths(EUfficio $office): array
+    {
+        $currentYear = (int) date('Y');
+
+        $start = new \DateTimeImmutable("$currentYear-01-01");
+        $end = new \DateTimeImmutable("$currentYear-12-31");
+
+        $reservations = $this->getEntityManager()->getRepository(EPrenotazione::class)->createQueryBuilder('p')
+            ->where('p.ufficio = :ufficio')
+            ->andWhere('p.data BETWEEN :start AND :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->setParameter('ufficio', $office)
+            ->getQuery()
+            ->getResult();
+
+        // Initialize every month at 0
+        $result = [];
+
+        // Generate a Date Period -> Y-01-01 Y-02-01 ...
+        $period = new \DatePeriod(
+            new \DateTimeImmutable($start->format('Y-m-01')),
+            new \DateInterval('P1M'),
+            (new \DateTimeImmutable($end->format('Y-m-01')))->modify('+1 month')
+        );
+
+        foreach ($period as $date) {
+            $key = $date->format('m');
+            $result[$key] = 0;
+        }
+
+        // Count the reservation per month
+        foreach ($reservations as $p) {
+            $date = $p->getData(); // DateTime
+            $key = $date->format('m');
+            if (array_key_exists($key, $result)) {
+                $result[$key]++;
+            }
+        }
+
+        return $result;
+    }
 }

@@ -256,7 +256,7 @@
             labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'],
             datasets: [{
                 label: 'Prenotazioni',
-                data: [10, 15, 13, 18, 25, 20, 22, 24, 30, 28, 26, 32],
+                data: [{{ reservationsArray }}],
                 borderColor: '#206bc4',
                 backgroundColor: 'rgba(32, 107, 196, 0.1)',
                 fill: true,
@@ -295,7 +295,7 @@
             labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'],
             datasets: [{
                 label: 'Entrate (€)',
-                data: [1200, 1500, 1300, 1800, 2500, 2000, 2200, 2400, 3000, 2800, 2600, 3200],
+                data: [{{ grossArray }}],
                 backgroundColor: '#e03131',
                 borderRadius: 4,
             }]

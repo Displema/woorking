@@ -27,13 +27,18 @@ class VAdmin extends BaseView
         );
     }
 
-    public function showOfficeDetails(EUfficio $office, string $landlordEmail, int $reservationCount): void
+    public function showOfficeDetails(EUfficio $office, string $landlordEmail, int $reservationCount, array $reservationsArray): void
     {
         $this->twig->display(
             '/admin/offices/office_details.html.twig',
-            ['office' => $office,
-            'email' => $landlordEmail,
-                'reservationCount' => $reservationCount
+            [
+                'office' => $office,
+                'email' => $landlordEmail,
+                'reservationCount' => $reservationCount,
+                'reservationsArray' => implode(",", $reservationsArray),
+                'grossArray' => implode(",", array_map(static function ($item) use ($office) {
+                    return $item * $office->getPrezzo();
+                }, $reservationsArray))
             ],
         );
     }

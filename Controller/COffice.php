@@ -492,7 +492,13 @@ class COffice extends BaseController
         /** @var EUfficioRepository $officeRepo */
         $officeRepo = $this->entity_manager->getRepository(EUfficio::class);
         $reservations = $officeRepo->getActiveReservations($office);
-        $view->showOfficeDetails($office, $email, count($reservations));
+
+
+        $reservationsArray = $officeRepo->getReservationsByMonths($office);
+
+        error_log(print_r($reservationsArray, true));
+
+        $view->showOfficeDetails($office, $email, count($reservations), $reservationsArray);
     }
 
     public function showPendingDetails(string $id): void

@@ -1,6 +1,7 @@
 <?php
 namespace TechnicalServiceLayer\Repository;
 
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Collections\Collection;
@@ -64,5 +65,46 @@ class EPrenotazioneRepository extends EntityRepository
             ->setParameter('ufficio', $ufficio)
             ->getQuery()
             ->getSingleScalarResult();
+    }
+
+    public function getReservationsByMonths(): array
+    {
+        $currentYear = (int) date('Y');
+
+        $start = new DateTimeImmutable("$currentYear-01-01");
+        $end = new DateTimeImmutable("$currentYear-12-31");
+
+        $reservations = $this->getEntityManager()->getRepository(EPrenotazione::class)->createQueryBuilder('p')
+            ->where('p.data BETWEEN :start AND :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->getResult();
+
+        // Initialize every month at 0
+        $result = [];
+
+        // Generate a Date Period -> Y-01-01 Y-02-01 ...
+        $period = new \DatePeriod(
+            new \DateTimeImmutable($start->format('Y-m-01')),
+            new \DateInterval('P1M'),
+            (new \DateTimeImmutable($end->format('Y-m-01')))->modify('+1 month')
+        );
+
+        foreach ($period as $date) {
+            $key = $date->format('m');
+            $result[$key] = 0;
+        }
+
+        // Count the reservation per month
+        foreach ($reservations as $p) {
+            $date = $p->getData(); // DateTime
+            $key = $date->format('m');
+            if (array_key_exists($key, $result)) {
+                $result[$key]++;
+            }
+        }
+
+        return $result;
     }
 }
