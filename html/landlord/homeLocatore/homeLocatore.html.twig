@@ -15,7 +15,7 @@
 <body>
   
     <!-- Creo la navbar -->
-    {% include '/locatore/navbar/NavBarLocatore.html.twig' %}
+    {% include '/landlord/navbar/NavBarLocatore.html.twig' %}
 
 
   <!-- Contenuto principale -->
@@ -88,8 +88,6 @@
             <canvas id="graficoUtilizzo"></canvas>
           </div>
         </div>
-
-
       </div>
     </div>
   </div>
@@ -105,52 +103,9 @@
         <a href="/recensioni" class="text-decoration-none">
           <div id="recensioni-container" class="text-center"></div>
         </a>
-        <script>
 
-        fetch('/api/recensioni/casuali')
-        .then(res => res.text())
-        .then(txt => {
-        console.log("Risposta ricevuta:", txt);
-
-        try {
-        const data = JSON.parse(txt); // singolo oggetto recensione
-
-        const container = document.getElementById('recensioni-container');
-        container.innerHTML = ''; // Pulisce il contenuto precedente
-
-        const div = document.createElement('div');
-        div.classList.add('mb-4');
-        div.innerHTML = `
-        <div class="card shadow-sm rounded-3 p-3 bg-white">
-          <h5 class="text-primary">${data.utente}</h5>
-          <p class="mb-2">${data.commento}</p>
-          <p class="text-warning">${'★'.repeat(data.valutazione)}${'☆'.repeat(5 - data.valutazione)}</p>
-        </div>
-        `;
-        container.appendChild(div);
-
-        } catch (e) {
-        document.getElementById('recensioni-container').innerHTML = `
-        <div class="alert alert-danger">
-          Errore nel caricamento delle recensioni. <br>
-          Controlla la console per maggiori dettagli.
-        </div>
-        `;
-        console.error("Errore di parsing JSON:", e);
-        console.log("Contenuto ricevuto (non JSON):", txt);
-        }
-        })
-        .catch(err => {
-        document.getElementById('recensioni-container').innerHTML = `
-        <div class="alert alert-danger">
-          Errore di rete durante il caricamento delle recensioni.
-        </div>
-        `;
-        console.error('Errore di rete:', err);
-        });
-      </script>
-
-
+        <script src="/static/js/grafico_entrate.js"></script>
+        <script src="/static/js/recensioni.js" ></script
       </div>
     </div>
   </div>
@@ -159,89 +114,7 @@
   <!-- Tabler JS -->
   <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/js/tabler.min.js"></script>
 
-
-    <script>
-      fetch('/api/grafici/entrate-mensili')
-              .then(res => res.json())
-              .then(data => {
-                const mesi = data.map(e => e.mese);
-                const entrate = data.map(e => e.entrate);
-
-                new Chart(document.getElementById('graficoEntrate'), {
-                  type: 'bar',
-                  data: {
-                    labels: mesi,
-                    datasets: [{
-                      label: 'Entrate (€)',
-                      data: entrate,
-                      backgroundColor: 'rgba(54, 162, 235, 0.7)', // colore barre
-                      borderColor: 'rgba(54, 162, 235, 1)',       // bordo barre
-                      borderWidth: 1,
-                      borderRadius: 5                            // arrotonda gli angoli delle barre
-                    }]
-                  },
-                  options: {
-                    responsive: true,
-                    scales: {
-                      y: {
-                        beginAtZero: true,
-                        ticks: {
-                          callback: value => '€ ' + value.toLocaleString()  // formato valuta sull'asse Y
-                        }
-                      }
-                    }
-                  }
-                });
-              });
-    </script>
-
-    <script>
-      fetch('/api/grafici/utilizzo-uffici')
-              .then(res => res.json())
-              .then(data => {
-                const nomiUffici = data.map(e => e.nome);
-                const utilizzi = data.map(e => e.numeroPrenotazioni);
-
-                new Chart(document.getElementById('graficoUtilizzo'), {
-                  type: 'pie',
-                  data: {
-                    labels: nomiUffici,
-                    datasets: [{
-                      label: 'Prenotazioni',
-                      data: utilizzi,
-                      backgroundColor: [
-                        'rgba(255, 99, 132, 0.7)',
-                        'rgba(54, 162, 235, 0.7)',
-                        'rgba(255, 206, 86, 0.7)',
-                        'rgba(75, 192, 192, 0.7)',
-                        'rgba(153, 102, 255, 0.7)',
-                        'rgba(255, 159, 64, 0.7)'
-                      ],
-                      borderColor: 'white',
-                      borderWidth: 1
-                    }]
-                  },
-                  options: {
-                    responsive: true,
-                    plugins: {
-                      legend: {
-                        position: 'bottom'
-                      },
-                      tooltip: {
-                        callbacks: {
-                          label: function(context) {
-                            const label = context.label || '';
-                            const value = context.parsed;
-                            return `${label}: ${value} prenotazioni`;
-                          }
-                        }
-                      }
-                    }
-                  }
-                });
-              })
-              .catch(err => console.error("Errore nel fetch del grafico:", err));
-    </script>
+    <script src = "/static/js/grafico_uffici.js" ></script>
   </div>
 </body>
 </html>

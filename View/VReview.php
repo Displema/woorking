@@ -34,6 +34,6 @@ class VReview extends BaseView
 
     public function reviews($array) : void
     {
-        $this->twig->display('/locatore/recensioni/recensioni.html.twig', ['recensioni' => $array]);
+        $this->twig->display('/landlord/recensioni/recensioni.html.twig', ['recensioni' => $array]);
     }
 }

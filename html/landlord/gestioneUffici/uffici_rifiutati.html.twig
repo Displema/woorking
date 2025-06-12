@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Uffici Rifiutati - Coworking</title>
+
+    <!-- Tabler Core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/css/tabler.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- CSS personalizzato -->
+    <link rel="stylesheet" href="/static/css/gestione_uffici.css" />
+</head>
+<body>
+
+<!-- Navbar -->
+{% include 'landlord/navbar/NavBarLocatore.html.twig' %}
+
+<!-- Main Content -->
+<div class="page-wrapper main-content">
+    <div class="container-xl mt-5">
+        <!-- Titolo e sottotitolo -->
+        <h1 class="mb-3">Uffici Rifiutati</h1>
+        <p class="text-muted mb-4">Visualizza gli uffici che sono stati rifiutati dal sistema o dall'amministrazione.</p>
+
+        <!-- Elenco Uffici Rifiutati -->
+        <div class="row g-4">
+            {% for ufficio in office %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card">
+                        <img src="{{ ufficio.foto }}" class="card-img-top" alt="Foto Ufficio Rifiutato">
+                        <div class="card-body">
+                            <h4 class="card-title">{{ ufficio.ufficio.titolo }}</h4>
+                            <p class="mb-1"><strong>Prezzo:</strong> {{ ufficio.ufficio.prezzo }} €</p>
+                            <p class="mb-3"><strong>Indirizzo:</strong> {{ ufficio.ufficio.indirizzo }}</p>
+                            <div class="d-flex justify-content-between">
+                                <button
+                                        class="btn btn-primary btn-sm btn-dettagli"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modal-dettagli"
+                                        data-titolo="{{ ufficio.ufficio.titolo }}"
+                                        data-descrizione="{{ ufficio.ufficio.descrizione }}"
+                                        data-prezzo="{{ ufficio.ufficio.prezzo }}"
+                                        data-superficie="{{ ufficio.ufficio.superficie }}"
+                                        data-fascia="{{ ufficio.intervallo.fascia.value }}"
+                                        data-indirizzo="{{ ufficio.ufficio.indirizzo }}"
+                                        data-postazioni="{{ ufficio.ufficio.numeroPostazioni }}"
+                                        data-servizi="{{ ufficio.servizi|map(s => s.nomeServizio)|join(', ') }}">
+                                    <i class="fa fa-eye me-1"></i> Dettagli
+                                </button>
+
+                                <!-- Nessuna cancellazione per rifiutati, ma puoi aggiungerla se necessario -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-muted">Nessun ufficio rifiutato trovato.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- JS -->
+<script src="https://unpkg.com/@tabler/core@latest/dist/js/tabler.min.js"></script>
+
+<!-- Modali -->
+{% include '/landlord/gestioneUffici/modal_dettagli_ufficio.html.twig' %}
+
+<!-- Script -->
+<script src="/static/js/gestione_uffici.js"></script>
+
+</body>
+</html>

@@ -58,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const indirizzo = button.getAttribute('data-indirizzo');
             const postazioni = button.getAttribute('data-postazioni');
             const servizi = button.getAttribute('data-servizi');
+            const rifiuto = button.getAttribute('data-rifiuto');
 
             document.getElementById('modalNome').textContent = nome;
             document.getElementById('modalCognome').textContent = cognome;
@@ -73,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('modalIndirizzo').textContent = indirizzo;
             document.getElementById('modalPostazioni').textContent = postazioni;
             document.getElementById('modalServizi').textContent = servizi;
+
 
         });
     });

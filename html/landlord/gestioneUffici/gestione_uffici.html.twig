@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestione Uffici - Coworking</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/css/tabler.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/static/css/gestione_uffici.css" />
+</head>
+<body>
+
+{% include 'landlord/navbar/NavBarLocatore.html.twig' %}
+
+<div class="page-wrapper main-content">
+  <div class="container-xl mt-5">
+    <h1 class="mb-3">Gestione Uffici</h1>
+    <p class="text-muted mb-4">Visualizza, modifica o rimuovi i tuoi uffici.</p>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-4" id="uffici-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <a class="nav-link active" id="approvati-tab" data-bs-toggle="tab" href="#approvati" role="tab">Uffici approvati</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link" id="non-approvati-tab" data-bs-toggle="tab" href="#non-approvati" role="tab">Uffici non approvati</a>
+      </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- Uffici Approvati -->
+      <div class="tab-pane fade show active" id="approvati" role="tabpanel">
+        <div class="row g-4">
+          {% for ufficio in ufficiA %}
+            <div class="col-md-6 col-lg-4">
+              <div class="card">
+                <img src="{{ ufficio.foto }}" class="card-img-top" alt="Foto ufficio">
+                <div class="card-body">
+                  <h4 class="card-title">{{ ufficio.ufficio.titolo }}</h4>
+                  <p class="mb-1"><strong>Prezzo:</strong> {{ ufficio.ufficio.prezzo }} €</p>
+                  <p class="mb-3"><strong>Indirizzo:</strong> {{ ufficio.ufficio.indirizzo }}</p>
+                  <div class="d-flex justify-content-between">
+                    <button class="btn btn-primary btn-sm btn-dettagli"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modal-dettagli"
+                            data-titolo="{{ ufficio.ufficio.titolo }}"
+                            data-descrizione="{{ ufficio.ufficio.descrizione }}"
+                            data-prezzo="{{ ufficio.ufficio.prezzo }}"
+                            data-superficie="{{ ufficio.ufficio.superficie }}"
+                            data-fascia="{{ ufficio.intervallo.fascia.value }}"
+                            data-indirizzo="{{ ufficio.ufficio.indirizzo }}"
+                            data-postazioni="{{ ufficio.ufficio.numeroPostazioni }}"
+                            data-servizi="{{ ufficio.servizi|map(s => s.nomeServizio)|join(', ') }}">
+                      <i class="fa fa-eye me-1"></i> Dettagli
+                    </button>
+                    <button class="btn btn-danger btn-sm btn-cancella"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modal-conferma-cancella"
+                            data-office-id="{{ ufficio.ufficio.id }}">
+                      <i class="fa fa-trash me-1"></i> Cancella
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% else %}
+            <p class="text-muted">Nessun ufficio approvato disponibile.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Uffici Non Approvati -->
+      <div class="tab-pane fade" id="non-approvati" role="tabpanel">
+        <div class="row g-4">
+          {% for ufficio in nonApprovati %}
+            <div class="col-md-6 col-lg-4">
+              <div class="card border-danger">
+                <img src="{{ ufficio.foto }}" class="card-img-top" alt="Foto ufficio">
+                <div class="card-body">
+                  <h4 class="card-title text-danger">{{ ufficio.ufficio.titolo }}</h4>
+                  <p class="mb-1"><strong>Prezzo:</strong> {{ ufficio.ufficio.prezzo }} €</p>
+                  <p class="mb-3"><strong>Indirizzo:</strong> {{ ufficio.ufficio.indirizzo }}</p>
+                  <div class="d-flex justify-content-between">
+                    <button class="btn btn-primary btn-sm btn-dettagli"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modal-dettagli"
+                            data-titolo="{{ ufficio.ufficio.titolo }}"
+                            data-descrizione="{{ ufficio.ufficio.descrizione }}"
+                            data-prezzo="{{ ufficio.ufficio.prezzo }}"
+                            data-superficie="{{ ufficio.ufficio.superficie }}"
+                            data-fascia="{{ ufficio.intervallo.fascia.value }}"
+                            data-indirizzo="{{ ufficio.ufficio.indirizzo }}"
+                            data-postazioni="{{ ufficio.ufficio.numeroPostazioni }}"
+                            data-servizi="{{ ufficio.servizi|map(s => s.nomeServizio)|join(', ') }}"
+                            data-rifiuto="{{ ufficio.ufficio.motivoRifiuto}}">
+                      <i class="fa fa-eye me-1"></i> Dettagli
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% else %}
+            <p class="text-muted">Nessun ufficio non approvato disponibile.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modali -->
+{% include '/landlord/gestioneUffici/modal_dettagli_ufficio.html.twig' %}
+{% include '/landlord/gestioneUffici/modal_conferma_cancella.html.twig' %}
+
+<!-- Script -->
+<script src="https://unpkg.com/@tabler/core@latest/dist/js/tabler.min.js"></script>
+<script src="/static/js/gestione_uffici.js"></script>
+<script src="/static/js/cancella_ufficio.js"></script>
+
+</body>
+</html>
