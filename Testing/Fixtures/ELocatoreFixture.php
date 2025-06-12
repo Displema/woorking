@@ -22,7 +22,6 @@ class ELocatoreFixture extends AbstractFixture implements DependentFixtureInterf
                 ->setDob($faker->dateTimeBetween("-60 years", "-18 years"))
                 // +20 is required to not get normal users ids
                 ->setUserId(FixtureState::$userIds[$i + 20])
-                ->setAdmin(false)
                 ->setPartitaIva($faker->randomNumber(9, true))
                 ->setCreatedAt($faker->dateTimeBetween("-1 years", "-5 months"))
                 ->setPhone($faker->phoneNumber());

@@ -40,8 +40,6 @@ class EProfilo
     private string $phone;
     #[ORM\Column(type: "date", nullable: false)]
     private DateTime $dob;
-    #[ORM\Column(type: "boolean")]
-    private bool $admin = false;
 
     #[ORM\Column(name: "created_at", type: "date", nullable: false)]
     private DateTime $createdAt;
@@ -129,14 +127,8 @@ class EProfilo
     }
 
 
-    public function setAdmin(bool $admin): EProfilo
-    {
-        $this->admin = $admin;
-        return $this;
-    }
-
     public function __toString(): string
     {
-        return "EProfilo(ID: $this->id, Nome: $this->name, Cognome: $this->surname, Telefono: $this->phone, Data di Nascita: " . $this->dob->format('Y-m-d') . ", Admin: " . ($this->admin ? 'Sì' : 'No'.")");
+        return "EProfilo(ID: $this->id, Nome: $this->name, Cognome: $this->surname, Telefono: $this->phone, Data di Nascita: " . $this->dob->format('Y-m-d') . ", Admin: " . ('No'.")");
     }
 }

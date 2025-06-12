@@ -22,7 +22,6 @@ class EProfiloFixture extends AbstractFixture implements DependentFixtureInterfa
                 ->setSurname($faker->lastName())
                 ->setDob($faker->dateTimeBetween("-60 years", "-18 years"))
                 ->setUserId(FixtureState::$userIds[$i])
-                ->setAdmin(false)
                 ->setCreatedAt($faker->dateTimeBetween("-1 years", "-5 months"))
                 ->setPhone($faker->phoneNumber());
             $manager->persist($user);
