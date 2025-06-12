@@ -343,11 +343,14 @@ class COffice extends BaseController
 
         $user = $this->getUser();
         $id = $user->getId();
-        $UfficiCompleti = [];
+        $ufficiApprovati = [];
+        $ufficiNonApprovati = [];
+
         $em = getEntityManager();
 
-        /** @var EUfficioRepository $uffici */
-        $uffici = $em->getRepository(EUfficio::class)->getOfficeByLocatore(['id' => $id]);
+        /** @var EUfficioRepository $ufficiRepo */
+        $ufficiRepo = $em->getRepository(EUfficio::class);
+        $uffici = $ufficiRepo->getOfficeByLocatore(['id' => $id]);
 
         /** @var EFotoRepository $fotoRepo */
         $fotoRepo = $em->getRepository(EFoto::class);
@@ -364,17 +367,25 @@ class COffice extends BaseController
             $servizi = $serviziRepo->getServiziAggiuntivibyOffice($ufficio);
             $intervallo = $intervalliRepo->getIntervallobyOffice($ufficio);
 
-            $UfficiCompleti[] = [
+            $datiUfficio = [
                 'ufficio' => $ufficio,
                 'foto' => $fotoUrl,
                 'servizi' => $servizi,
                 'intervallo' => $intervallo
             ];
+
+            if ($ufficio->getStato() === StatoUfficioEnum::Approvato) {
+                $ufficiApprovati[] = $datiUfficio;
+            } else if ($ufficio->getStato() === StatoUfficioEnum::NonApprovato)
+            {
+                $ufficiNonApprovati[] = $datiUfficio;
+            }
         }
 
         $view = new VOffice();
-        $view->searchOfficeLocatore($UfficiCompleti);
+        $view->searchOfficeLocatore($ufficiApprovati, $ufficiNonApprovati);
     }
+
 
     public function addOffice(): void
     {
@@ -562,4 +573,6 @@ class COffice extends BaseController
         $view = new VOffice();
         $view->$targetView($office);
     }
+
+
 }

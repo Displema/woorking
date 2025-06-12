@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const indirizzo = button.getAttribute('data-indirizzo') || '';
             const postazioni = button.getAttribute('data-postazioni') || '';
             const servizi = button.getAttribute('data-servizi') || '';
+            const rifiuto = button.getAttribute('data-rifiuto');
 
             // Inserisco nei campi del modale
             document.getElementById('modalTitoloHeader').textContent = `🏢 ${titolo}`;
@@ -24,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('modalIndirizzo').textContent = indirizzo;
             document.getElementById('modalPostazioni').textContent = postazioni;
             document.getElementById('modalServizi').textContent = servizi;
+            document.getElementById('modalRifiuto').textContent = rifiuto
         });
     });
 });

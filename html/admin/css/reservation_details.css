@@ -1,0 +1,63 @@
+/* Descrizione della prenotazione */
+.card-description {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+/* Footer della card con info cliente e data */
+.card-footer {
+    font-size: 0.85rem;
+    color: #999;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap; /* Per adattarsi su più righe se serve */
+    font-style: italic;
+    gap: 0.5rem; /* Spazio tra gli elementi */
+}
+
+/* Stile per i badge nei tab */
+.nav-link .badge {
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+/* Tab attivo più evidente */
+.nav-link.active {
+    font-weight: 600;
+    color: #0d6efd; /* Blu Tabler/Bootstrap */
+    border-bottom: 2px solid #0d6efd;
+}
+
+/* Card generica */
+.card {
+    border: 1px solid #e1e5eb;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+    transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+}
+
+/* Titolo card */
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: #212529;
+}
+
+/* Container principale della pagina */
+.page-body {
+    background-color: #f8f9fa;
+}
+
+/* Responsive: assicurati che il footer si adatti bene su schermi piccoli */
+@media (max-width: 576px) {
+    .card-footer {
+        flex-direction: column;
+        font-size: 0.8rem;
+    }
+}

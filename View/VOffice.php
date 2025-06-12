@@ -38,23 +38,23 @@ class VOffice extends BaseView
         $this->twig->display('/recensioni/recensioni.html.twig', ['recensioni' => $recensione,'ufficio' => $ufficio,]);
     }
 
-    public function searchOfficeLocatore($result)
+    public function searchOfficeLocatore($approvati, $nonApprovati)
     {
 
         // Render Twig
-        $this->twig->display('/locatore/gestioneUffici/gestione_uffici.html.twig', ['uffici' => $result]);
+        $this->twig->display('/landlord/gestioneUffici/gestione_uffici.html.twig', ['ufficiA' => $approvati, 'nonApprovati' => $nonApprovati]);
     }
 
     public function searchReservations($resultPassato, $resultPresente)
     {
 
-        $this->twig->display('/locatore/prenotazioni/gestione_prenotazioni_locatore.html.twig', ['ufficiPassati' => $resultPassato, 'ufficiPresente' => $resultPresente]);
+        $this->twig->display('/landlord/prenotazioni/gestione_prenotazioni_locatore.html.twig', ['ufficiPassati' => $resultPassato, 'ufficiPresente' => $resultPresente]);
     }
 
     public function addOfficeV()
     {
 
-        $this->twig->display('/locatore/aggiuntaUfficio/aggiungi_ufficio.html.twig');
+        $this->twig->display('/landlord/aggiuntaUfficio/aggiungi_ufficio.html.twig');
     }
 
     public function showPendingAdmin(EUfficio $office): void
@@ -66,4 +66,11 @@ class VOffice extends BaseView
     {
         $this->twig->display('/admin/offices/rejected_details.html.twig', ['office' => $office]);
     }
+
+    public function showRejectedLandlord(EUfficio $office): void
+    {
+        $this->twig->display('/landlord/gestioneUffici/uffici_rifiutati.html.twig', ['office' => $office]);
+    }
+
+
 }

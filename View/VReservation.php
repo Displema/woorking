@@ -33,4 +33,9 @@ class VReservation extends BaseView
     {
         $this->twig->display('/User/conferme/Postinondisponibili.html.twig', ['user'=>$user]);
     }
+
+    public function showAdminReservations($reservation): void
+    {
+        $this->twig->display('/admin/reservations/reservations.html.twig', ['reservations'=>$reservation]);
+    }
 }

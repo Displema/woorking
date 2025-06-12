@@ -9,13 +9,13 @@ class VLocatore extends BaseView
     //rendering home
     public function index(): void
     {
-        $this->twig->display('/locatore/homeLocatore/homeLocatore.html.twig', [
+        $this->twig->display('/landlord/homeLocatore/homeLocatore.html.twig', [
             'messaggio' => 'Questa è la pagina principale'
         ]);
     }
 
     public function goProfile(EProfilo $profilo): void
     {
-        $this->twig->display('/locatore/profilo/profilo_locatore.html.twig', ['profilo' => $profilo]);
+        $this->twig->display('/landlord/profilo/profilo_locatore.html.twig', ['profilo' => $profilo]);
     }
 }
