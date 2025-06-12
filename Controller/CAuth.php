@@ -241,7 +241,7 @@ class CAuth extends BaseController
             ->setDob(new Datetime())
             ->setCreatedAt(new DateTime())
             ->setSurname("Admin")
-            ->setName("Woorking")
+            ->setName("Coworking")
             ->setPhone("0123456789")
             ->setUserId($userId);
         $this->auth_manager->admin()->addRoleForUserById($userId, Roles::ADMIN);
