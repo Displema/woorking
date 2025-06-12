@@ -17,7 +17,6 @@ class CResource extends BaseController
         $parsedFilename = basename($filename); // Removes paths
 
         if (!preg_match("/^[a-zA-Z0-9_\-]+\.$folder$/", $parsedFilename)) {
-            error_log($parsedFilename);
             return null;
         }
         // Look for file inside the authorized folders
@@ -70,5 +69,30 @@ class CResource extends BaseController
 
         $view = new VResource();
         $view->serve($content, "text/javascript");
+    }
+
+    public function serveAsset(string $id): void
+    {
+        $parsedFilename = basename($id); // Removes paths
+        if (!preg_match('/^[a-zA-Z0-9_-]+\.(avif|jpg|png|webp)$/', $parsedFilename)) {
+            $view = new VStatus();
+            $view->showStatus(406);
+            return;
+        }
+
+        $path = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'asset' . DIRECTORY_SEPARATOR . $parsedFilename;
+
+
+        // Look for file inside the static folder
+        if (file_exists($path) && is_file($path)) {
+            $content = file_get_contents($path);
+            $fileType = mime_content_type($path);
+            $view = new VResource();
+            $view->serve($content, $fileType);
+        } else {
+            $view = new VStatus();
+            $view->showStatus(405);
+            return;
+        }
     }
 }

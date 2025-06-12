@@ -1,7 +1,6 @@
 {
   "require": {
     "doctrine/orm": "3.3",
-    "moneyphp/money": "^4.4",
     "ramsey/uuid": "^4.7",
     "doctrine/annotations": "^2.0",
     "vlucas/phpdotenv": "^5.6",
@@ -11,7 +10,8 @@
     "twig/twig": "^3.21",
     "delight-im/auth": "^8.3",
     "delight-im/db": "^1.5",
-    "symfony/cache": "^7.3"
+    "symfony/cache": "^7.3",
+    "ext-fileinfo": "*"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest"

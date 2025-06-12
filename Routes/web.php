@@ -21,6 +21,7 @@ $router->post('/salvaProfilo', 'CAuth@modifyUser');
 $router->get('/static/img/{id}', 'CResource@serveImg');
 $router->get('/static/css/{key}', 'CResource@serveCss');
 $router->get('/static/js/{key}', 'CResource@serveJs');
+$router->get('/static/asset/{key}', 'CResource@serveAsset');
 
 // Admin routes
 $router->get('/admin/home', 'CAdmin@index');
@@ -35,8 +36,6 @@ $router->get('/profile', 'CHome@profile');
 //route to manage the offices
 $router->get('/uffici', 'COffice@showOfficesLocatore');
 
-//route to print photos
-//$router->get('/foto/{id}', 'CResource@serveImage');
 
 //route to manage reservations
 $router->get('/prenotazioni', 'COffice@showPrenotazioni');
@@ -47,8 +46,6 @@ $router->get('/aggiunta', 'COffice@addOffice');
 //route to add office
 $router->post('/aggiuntaUfficio', 'COffice@addOfficeInDB');
 
-//route to landlord's profile
-//$router->get('/profilo', 'CLocatore@profilo');
 
 //route to reviews
 $router->get('/recensioni', 'CReview@getReviews');
@@ -100,7 +97,7 @@ $router->get('/reservations/{id}/review', 'CReview@reviewForm');     //show revi
 $router->post('/reservations/{id}/review', 'CReview@storeReview');  //confirm review
 
 // route to resetpassword
-$router->get('/resetPassword', 'CAuth@ResetPassword');
+$router->get('/auth/reset', 'CAuth@ResetPassword');
 
 
 return $router;
