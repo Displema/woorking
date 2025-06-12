@@ -92,6 +92,7 @@ class EUfficioRepository extends EntityRepository
             ->update(EUfficio::class, 'e')
             ->select('e')
             ->where('e.stato = :stato')
+            //->andWhere('e.isHidden = 0')
             ->setParameter('stato', $state->value)
             ->getQuery()
             ->getResult());
@@ -103,10 +104,10 @@ class EUfficioRepository extends EntityRepository
             $this->createQueryBuilder('u')
                 ->where('u.locatore = :id')
                 ->andWhere('u.stato = :stato')
-                ->andWhere('u.isHidden = :Hidden')
+                //->andWhere('u.isHidden = :Hidden')
                 ->setParameter('id', $id)
                 ->setParameter('stato', 'Approvato')
-                ->setParameter('Hidden', false)
+                //->setParameter('Hidden', false)
                 ->getQuery()
                 ->getResult()
         );

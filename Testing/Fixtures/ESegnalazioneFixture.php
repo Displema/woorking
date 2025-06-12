@@ -24,9 +24,24 @@ class ESegnalazioneFixture extends AbstractFixture implements DependentFixtureIn
                 ->setCommento($faker->text($maxNbChars = 50))
                 ->setUfficio($this->getReference('EUfficio_' . $i, EUfficio::class))
                 ->setUser($this->getReference('EProfilo_' . $i, EProfilo::class))
-                ->setState($faker->randomElement(ReportStateEnum::class));
+                ->setState(ReportStateEnum::ACTIVE)
+                ->setCreatedAt($faker->dateTimeBetween('-60 days', '-10 days'));
             $manager->persist($segnalazione);
             $this->addReference('ESegnalazione_' . $i, $segnalazione);
+        }
+
+        for ($j = 0; $j < 5; $j++) {
+            $segnalazione = new ESegnalazione();
+            $segnalazione
+                ->setCommento($faker->text($maxNbChars = 50))
+                ->setUfficio($this->getReference('EUfficio_' . $j, EUfficio::class))
+                ->setUser($this->getReference('EProfilo_' . $j, EProfilo::class))
+                ->setState(ReportStateEnum::SOLVED)
+                ->setCommentoAdmin($faker->text($maxNbChars = 250))
+                ->setCreatedAt($faker->dateTimeBetween('-60 days', '-10 days'))
+                ->setUpdatedAt($faker->dateTimeBetween('-10 days', '-5 days'));
+            $manager->persist($segnalazione);
+            $this->addReference('ESegnalazione_' . $j, $segnalazione);
         }
         $manager->flush();
     }

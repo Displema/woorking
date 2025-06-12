@@ -1,6 +1,7 @@
 <?php
 namespace Model;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Model\Enum\ReportStateEnum;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
@@ -23,7 +24,7 @@ class ESegnalazione
     //#[ORM\JoinColumn(name:"idUfficio", referencedColumnName:"id", nullable: false)]
     private EUfficio $ufficio;
 
-    #[ORM\ManyToOne(targetEntity:EProfilo::class, inversedBy: "reports")]
+    #[ORM\ManyToOne(targetEntity: EProfilo::class, fetch: 'EAGER', inversedBy: "reports")]
     private EProfilo $user;
 
     #[ORM\Column]
@@ -34,6 +35,47 @@ class ESegnalazione
 
     #[ORM\Column(type:"string", enumType:Enum\ReportStateEnum::class)]
     private ReportStateEnum $state;
+
+    #[ORM\Column(type:"string")]
+    private string $commentoAdmin;
+
+    public function getCommentoAdmin(): string
+    {
+        return $this->commentoAdmin;
+    }
+
+    public function setCommentoAdmin(string $commentoAdmin): ESegnalazione
+    {
+        $this->commentoAdmin = $commentoAdmin;
+        return $this;
+    }
+  #[ORM\Column(name: 'created_at')]
+    private Datetime $createdAt;
+
+    #[ORM\Column(name: 'updated_at')]
+    private DateTime $updatedAt;
+
+    public function getUpdatedAt(): DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(DateTime $updatedAt): ESegnalazione
+    {
+        $this->updatedAt = $updatedAt;
+        return $this;
+    }
+
+    public function getCreatedAt(): DateTime
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(DateTime $createdAt): ESegnalazione
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
 
     public function getState(): ReportStateEnum
     {
@@ -46,9 +88,10 @@ class ESegnalazione
         return $this;
     }
 
-    public function getUser(): EProfilo
+    // Getter is nullable to avoid runtime errors in twig for uninitialized attributes
+    public function getUser(): ?EProfilo
     {
-        return $this->user;
+        return $this->user ?? null;
     }
 
     public function setUser(EProfilo $user): ESegnalazione
@@ -57,11 +100,8 @@ class ESegnalazione
         return $this;
     }
 
-
-
     public function __construct()
     {
-        //$this->id = Uuid::uuid4();
     }
 
     public function getId(): UuidInterface

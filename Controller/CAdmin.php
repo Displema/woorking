@@ -31,6 +31,7 @@ class CAdmin extends BaseController
         $activeOffices = $officeRepo->getOfficesByState(StatoUfficioEnum::Approvato);
         $pendingOffices = $officeRepo->getOfficesByState(StatoUfficioEnum::InAttesa);
         $rejectedOffices = $officeRepo->getOfficesByState(StatoUfficioEnum::NonApprovato);
-        $view->showHome($activeOffices, $pendingOffices, $rejectedOffices);
+        $hiddenOffices = $officeRepo->getOfficesByState(StatoUfficioEnum::Nascosto);
+        $view->showHome($activeOffices, $pendingOffices, $rejectedOffices, $hiddenOffices);
     }
 }

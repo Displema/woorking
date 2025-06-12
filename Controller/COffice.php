@@ -111,7 +111,7 @@ class COffice extends BaseController
                 continue;  // if the office is full we can pass to check another office
             }
             //it's a way to control that the office is hidden
-            if ($office->isHidden()) {
+            if ($office->getStato() === StatoUfficioEnum::Nascosto) {
                 continue;
             }
             $validOffices[] = $office;
@@ -189,24 +189,12 @@ class COffice extends BaseController
     public function deleteOffice(string $id, string $shouldRefund = '0'): void
     {
         $this->requireRoles([Roles::ADMIN, Roles::LANDLORD]);
-        $this->entity_manager->beginTransaction();
-
         /** @var EUfficioRepository $officeRepo */
         $officeRepo = $this->entity_manager->getRepository(EUfficio::class);
         /** @var EUfficio $office */
         $office = $officeRepo->findOneBy(['id'=>$id]);
 
         if (!$office) {
-            $view = new VStatus();
-            $view->showStatus(404);
-            return;
-        }
-
-        $this->entity_manager->lock($office, LockMode::PESSIMISTIC_WRITE);
-
-
-
-        if ($office->isHidden()) {
             $view = new VStatus();
             $view->showStatus(404);
             return;
@@ -221,51 +209,64 @@ class COffice extends BaseController
             }
         }
 
-        $office->setIsHidden(true);
+        $this->entity_manager->beginTransaction();
+        $this->entity_manager->lock($office, LockMode::PESSIMISTIC_READ);
 
+        if ($office->getStato() === StatoUfficioEnum::Nascosto) {
+            $this->entity_manager->flush();
+            $this->entity_manager->commit();
+            $view = new VStatus();
+            $view->showStatus(400);
+            return;
+        }
+
+        $office->setStato(StatoUfficioEnum::Nascosto);
 
         $reservations = $officeRepo->getActiveReservations($office);
         if ($shouldRefund && !$reservations->isEmpty()) {
             foreach ($reservations as $reservation) {
+                $user = $office->getLocatore();
                 $report = new ESegnalazione();
                 $report->setUfficio($office)
                     ->setCommento("Rimborso per cancellazione ufficio")
-                    ->setState(ReportStateEnum::class::SOLVED);
+                    ->setUser($user)
+                    ->setState(ReportStateEnum::class::SOLVED)
+                    ->setCreatedAt(new DateTime())
+                    ->setUpdatedAt(new DateTime())
+                    ->setCommentoAdmin("Rimborso per cancellazione ufficio");
                 $refund = new ERimborso();
                 $refund
                     ->setImporto($reservation->getPagamento()->getImporto())
                     ->setSegnalazione($report);
 
                 try {
-                    $this->entity_manager->beginTransaction();
                     $this->entity_manager->persist($refund);
                     $this->entity_manager->persist($report);
-                    $this->entity_manager->flush();
                 } catch (ORMException) {
+                    if ($this->entity_manager->getConnection()->isTransactionActive()) {
+                        $this->entity_manager->rollback();
+                    }
                     $view = new VStatus();
                     $view->showStatus(500);
                 }
-
-                $this->entity_manager->commit();
-                $this->entity_manager->clear();
+                $this->entity_manager->flush();
             }
         }
 
         try {
-            $this->entity_manager->beginTransaction();
             $this->entity_manager->persist($office);
             $this->entity_manager->flush();
             $this->entity_manager->commit();
-            $this->entity_manager->clear();
         } catch (\Exception $e) {
-            $this->entity_manager->rollback();
-            error_log("Errore durante il salvataggio di isHidden: " . $e->getMessage());
+            if ($this->entity_manager->getConnection()->isTransactionActive()) {
+                $this->entity_manager->rollback();
+            }
             $view = new VStatus();
             $view->showStatus(500);
         }
 
         $view = new VRedirect();
-        $view->redirect('/office/'.$office->getId() . '/delete' . '/confirmation');
+        $view->redirect('/home');
     }
 
     //search all bookings of the landlord's offices
@@ -500,7 +501,6 @@ class COffice extends BaseController
 
         $reservationsArray = $officeRepo->getReservationsByMonths($office);
 
-        error_log(print_r($reservationsArray, true));
 
         $view->showOfficeDetails($office, $email, count($reservations), $reservationsArray);
     }
@@ -544,7 +544,6 @@ class COffice extends BaseController
             return;
         }
 
-        error_log(print_r($_SESSION, true));
         $user = $this->getUser();
 
 

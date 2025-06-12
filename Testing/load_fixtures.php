@@ -26,10 +26,8 @@ while (true) {
         exit;
     } catch (\Exception $e) {
         error_log($e->getMessage());
+        error_log($e->getTraceAsString());
         error_log("Exception while running fixtures... Retrying in 5 seconds");
         sleep(5);
     }
 }
-
-//
-

@@ -12,6 +12,7 @@ use PHP_CodeSniffer\Reports\Report;
 
 use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
 use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
+use TechnicalServiceLayer\Repository\ESegnalazioneRepository;
 use TechnicalServiceLayer\Roles\Roles;
 use TechnicalServiceLayer\Utility\USession;
 use View\VRedirect;
@@ -41,6 +42,7 @@ class CReport extends BaseController
         $this->requireLogin();
 
         $user = $this->getUser();
+        /** @var ESegnalazioneRepository $reportsRepo */
         $reportsRepo = $this->entity_manager->getRepository(ESegnalazione::class);
 
         if ($this->doesLoggedUserHaveRole(Roles::ADMIN)) {
@@ -112,10 +114,13 @@ class CReport extends BaseController
         //creation of a new report
         $Report= new ESegnalazione();
         //setting of report information
-        $Report->setCommento($reportMotivation);
-        $Report->setUfficio($office);
-        $Report->setUser($user);
-        $Report->setState(ReportStateEnum::ACTIVE);
+        $Report
+            ->setCommento($reportMotivation)
+            ->setUfficio($office)
+            ->setUser($user)
+            ->setState(ReportStateEnum::ACTIVE)
+            ->setCreatedAt(new DateTime());
+
         //save report
         $this->entity_manager->persist($Report);
         $this->entity_manager->flush();

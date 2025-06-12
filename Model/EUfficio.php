@@ -28,20 +28,6 @@ class EUfficio
     #[ORM\OneToMany(targetEntity:EFoto::class, mappedBy:"ufficio", cascade:["persist", "remove"])]
     private Collection $foto;
 
-    #[ORM\Column]
-    private bool $isHidden = false;
-
-    public function isHidden(): bool
-    {
-        return $this->isHidden;
-    }
-
-    public function setIsHidden(bool $isHidden): self
-    {
-        $this->isHidden = $isHidden;
-        return $this;
-    }
-
      #[ORM\ManyToOne(targetEntity:EIndirizzo::class, cascade:["persist"])]
     private EIndirizzo $indirizzo;
 

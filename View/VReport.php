@@ -33,15 +33,8 @@ class VReport extends BaseView
      */
     public function showAdminReports($activeReports, $closedReports): void
     {
-        foreach ($activeReports as $report) {
-            error_log($report->getId());
-        }
-        foreach ($closedReports as $report) {
-            error_log($report->getId());
-        }
-
         $this->twig->display(
-            '/admin/reports/reports.html.twig',
+            '/admin/reports/reports_new.html.twig',
             ['activeReports' => $activeReports, 'closedReports' => $closedReports]
         );
     }

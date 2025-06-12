@@ -83,6 +83,10 @@
                      id="tab-btn-rifiutati" data-target="rifiutati">
                     Rifiutati <span class="badge bg-white">{{ rejectedOffices|length }}</span>
                 </div>
+                <div class="tab" role="tab" tabindex="0" aria-selected="false" aria-controls="tab-nascosti"
+                     id="tab-btn-nascosti" data-target="nascosti">
+                    Nascosti <span class="badge bg-white">{{ hiddenOffices|length }}</span>
+                </div>
             </nav>
 
             <!-- Sezioni contenuto -->
@@ -137,6 +141,22 @@
                         </div>
                     </div>
                     </a>
+                {% endfor %}
+            </section>
+
+            <section id="nascosti" class="section-tab" role="tabpanel" aria-labelledby="tab-btn-nascosti" hidden>
+                {% for office in hiddenOffices %}
+                    <!-- Card ufficio nascosto {{ office.id }} -->
+                        <div class="card mb-3">
+                            <div class="card-body office-card">
+                                <img src="/static/img/{{ office.foto[0].id }}" alt="Foto principale ufficio {{ office.titolo }}" />
+                                <div>
+                                    <h5 class="mb-1">{{ office.titolo }}</h5>
+                                    <p class="mb-1 text-muted">{{ office.indirizzo.via }} {{ office.indirizzo.numeroCivico }}, {{ office.indirizzo.citta }} ({{ office.indirizzo.provincia }})</p>
+                                    <small class="text-muted">Cancellato il: {{ office.dataCancellazione|date('d/m/Y H:i') }}</small>
+                                </div>
+                            </div>
+                        </div>
                 {% endfor %}
             </section>
         </div>

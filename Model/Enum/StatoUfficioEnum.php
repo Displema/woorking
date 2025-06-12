@@ -8,4 +8,6 @@ enum StatoUfficioEnum : string
     case Approvato = "Approvato";
 
     case NonApprovato = "Non Approvato";
+
+    case Nascosto = "Nascosto";
 }

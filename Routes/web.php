@@ -28,8 +28,8 @@ $router->get('/admin/home', 'CAdmin@index');
 $router->get('/admin/offices/{id}', 'COffice@showAdminOfficeDetails');
 $router->get('/admin/offices/pending/{id}', 'COffice@showPendingDetails');
 $router->get('/admin/offices/rejected/{id}', 'COffice@showRejectedDetails');
-$router->get('/reports', 'CReport@index');
-$router->get('/reports/{id}', 'CReport@show');
+$router->get('/admin/reports', 'CReport@index');
+$router->get('/admin/reports/{id}', 'CReport@show');
 
 $router->get('/profile', 'CHome@profile');
 

@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Model\EIntervalloDisponibilita;
+use Model\Enum\StatoUfficioEnum;
 use Model\EPagamento;
 use \Model\EPrenotazione;
 use Model\EProfilo;

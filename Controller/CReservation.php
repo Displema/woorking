@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManager;
 use DateTime;
 use Model\EFoto;
 use Model\Enum\FasciaOrariaEnum;
+use Model\Enum\StatoUfficioEnum;
 use Model\EPrenotazione;
 
 use Model\EProfilo;
@@ -43,9 +44,7 @@ class CReservation extends BaseController
 
         //take the reservation by the user
         $reservations = $repository->findBy(['utente' => $user->getId()]);
-        foreach ($reservations as $reservation) {
-            error_log($reservation->getId());
-        }
+
 
         $activereservation=[];
         $pastreservation=[];
@@ -132,7 +131,7 @@ class CReservation extends BaseController
                 return;
             }
 
-            if ($office->isHidden()) {
+            if ($office->getStato() === StatoUfficioEnum::InAttesa) {
                 $this->entity_manager->rollback();
                 $view = new VStatus();
                 $view->showStatus(400);

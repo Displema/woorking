@@ -19,7 +19,7 @@ class EFotoFixture extends AbstractFixture implements DependentFixtureInterface
         $faker = Factory::create('it_IT');
         $faker->addProvider(new FakerPicsumImagesProvider($faker));
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             $ufficio = $this->getReference("EUfficio_" . $i, EUfficio::class);
             for ($j = 0; $j < 3; $j++) {
                 $url = $faker->imageUrl(width: 800, height: 600);

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gestione Segnalazioni</title>
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet" />
+    <style>
+        .segnalazione-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .segnalazione-card img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .section-tab {
+            display: none;
+        }
+
+        .section-tab.active {
+            display: block;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+
+        .tab {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            user-select: none;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab.active {
+            background-color: var(--tblr-primary);
+            color: white;
+            border-color: var(--tblr-primary);
+        }
+
+        .tab .badge {
+            font-size: 0.75rem;
+            line-height: 1;
+        }
+    </style>
+</head>
+
+<body>
+<div class="page">
+    {% include "base/sidebar.html.twig" %}
+    <div class="page-wrapper">
+        <div class="page-body container py-4">
+            <!-- Tabs -->
+            <nav class="tabs" role="tablist" aria-label="Seleziona sezione segnalazioni">
+                <div class="tab active" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-attive"
+                     id="tab-btn-attive" data-target="attive">
+                    Attive <span class="badge bg-white">{{ activeReports|length }}</span>
+                </div>
+                <div class="tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-chiuse"
+                     id="tab-btn-chiuse" data-target="chiuse">
+                    Chiuse <span class="badge bg-white">{{ closedReports|length }}</span>
+                </div>
+            </nav>
+
+            <!-- Sezione Segnalazioni Attive -->
+            <section id="attive" class="section-tab active" role="tabpanel" aria-labelledby="tab-btn-attive">
+                {% for report in activeReports %}
+                    <div class="card mb-3">
+                        <div class="card-body segnalazione-card">
+                            <img src="/static/img/{{ report.ufficio.foto[0].id }}" alt="Foto ufficio {{ report.ufficio.titolo }}">
+                            <div>
+                                <h5 class="mb-1">{{ report.commento }}</h5>
+                                <p class="mb-1 text-muted">
+                                    Inviata da {{ report.user.name }} {{ report.user.surname }} <br>
+                                    Ufficio: {{ report.ufficio.titolo }}
+                                </p>
+                                <small class="text-muted">Data segnalazione: {{ report.data|date('d/m/Y H:i') }}</small>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Nessuna segnalazione attiva.</p>
+                {% endfor %}
+            </section>
+
+            <!-- Sezione Segnalazioni Chiuse -->
+            <section id="chiuse" class="section-tab" role="tabpanel" aria-labelledby="tab-btn-chiuse" hidden>
+                {% for closedReport in closedReports %}
+                    <div class="card mb-3">
+                        <div class="card-body segnalazione-card">
+                            <img src="/static/img/{{ closedReport.ufficio.foto[0].id }}" alt="Foto ufficio {{ closedReport.ufficio.titolo }}">
+                            <div>
+                                <h5 class="mb-1">{{ closedReport.commento }}</h5>
+                                <p class="mb-1 text-muted">
+                                    Inviata da {{ closedReport.user.name }} {{ closedReport.user.surname }} <br>
+                                    Ufficio: {{ closedReport.ufficio.titolo }}
+                                </p>
+                                <small class="text-muted">Data segnalazione: {{ closedReport.data|date('d/m/Y H:i') }}</small>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Nessuna segnalazione chiusa.</p>
+                {% endfor %}
+            </section>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const target = tab.getAttribute('data-target');
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.toggle('active', t === tab);
+                t.setAttribute('aria-selected', t === tab);
+                t.setAttribute('tabindex', t === tab ? '0' : '-1');
+            });
+            document.querySelectorAll('.section-tab').forEach(sec => {
+                if (sec.id === target) {
+                    sec.classList.add('active');
+                    sec.removeAttribute('hidden');
+                } else {
+                    sec.classList.remove('active');
+                    sec.setAttribute('hidden', '');
+                }
+            });
+        });
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
+</body>
+
+</html>
