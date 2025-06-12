@@ -13,13 +13,13 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/html/home/home.css" />
+    <link rel="stylesheet" href="/static/css/home.css" />
 </head>
 <body>
 
 
 <!-- include the navbar from another template -->
-{% include 'navbar/navbar.html.twig' %}
+{% include 'User/navbar/navbar.html.twig' %}
 
 
 
@@ -75,7 +75,7 @@
         <div class="row g-4">
             <div class="col-md-6 col-lg-3">
                 <div class="card h-100 text-center">
-                    <img src="/html/immagini/wifi.webp" class="card-img-top" alt="Wi-Fi Ultraveloce">
+                    <img src="/static/asset/wifi.webp" class="card-img-top" alt="Wi-Fi Ultraveloce">
                     <div class="card-body">
                         <h5 class="card-title">Wi-Fi Ultraveloce</h5>
                         <p class="card-text">Connessione stabile e ad alta velocità per videoconferenze e lavoro online senza interruzioni.</p>
@@ -85,7 +85,7 @@
 
             <div class="col-md-6 col-lg-3">
                 <div class="card h-100 text-center">
-                    <img src="/html/immagini/stampante.png" class="card-img-top" alt="Stampante & Scanner">
+                    <img src="/static/asset/stampante.png" class="card-img-top" alt="Stampante & Scanner">
                     <div class="card-body">
                         <h5 class="card-title">Stampante & Scanner</h5>
                         <p class="card-text">Accesso rapido a dispositivi per la stampa e la scansione di documenti professionali.</p>
@@ -95,7 +95,7 @@
 
             <div class="col-md-6 col-lg-3">
                 <div class="card h-100 text-center">
-                    <img src="/html/immagini/areacoffeebreak.jpg" class="card-img-top" alt="Area Coffee Break">
+                    <img src="/static/asset/areacoffeebreak.jpg" class="card-img-top" alt="Area Coffee Break">
                     <div class="card-body">
                         <h5 class="card-title">Area Coffee Break</h5>
                         <p class="card-text">Un angolo di relax con caffè, bevande calde e snack per le tue pause rigeneranti.</p>
@@ -105,7 +105,7 @@
 
             <div class="col-md-6 col-lg-3">
                 <div class="card h-100 text-center">
-                    <img src="/html/immagini/sala-riunioni.avif" class="card-img-top" alt="Sala Riunioni">
+                    <img src="/static/asset/sala-riunioni.avif" class="card-img-top" alt="Sala Riunioni">
                     <div class="card-body">
                         <h5 class="card-title">Sala Riunioni</h5>
                         <p class="card-text">Spazi riservati per meeting, brainstorming e videoconferenze professionali.</p>
@@ -118,7 +118,7 @@
 </section>
 
 <!-- include footer-->
-{% include 'Footer/footer.html.twig' %}
+{% include 'User/Footer/footer.html.twig' %}
 
 
 </body>

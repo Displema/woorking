@@ -8,12 +8,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <!-- link to use awesome and some beautiful effect -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
-    <link href="/html/User/segnalazioni/segnalazioni.css" rel="stylesheet" />
+    <link href="/static/css/segnalazioni.css" rel="stylesheet" />
 </head>
 <body class="text-white">
 
 <!-- include navbar-->
-{% include 'navbar/navbar.html.twig' %}
+{% include 'User/navbar/navbar.html.twig' %}
 
 <div class="container form-container text-dark">
     <h2 class="mb-4 text-center">Segnala questo annuncio</h2>
@@ -55,32 +55,8 @@
     </form>
 </div>
  <!-- include the footer -->
-{% include 'Footer/footer.html.twig' %}
-
-<script>
-
-    <!-- show or not textarea when we choose "altro -->
-    const radios = document.querySelectorAll('input[name="reportMotivation"]');
-    const altroContainer = document.getElementById("TextContainer");
-    const altroTextarea = document.getElementById("Text");
-    const form = document.getElementById("segnalazioneForm");
-
-    radios.forEach(radio => {
-        radio.addEventListener("change", () => {
-            if (document.getElementById("altro").checked) {
-                altroContainer.style.display = "block";
-                altroTextarea.setAttribute("required", "required");
-            } else {
-                altroContainer.style.display = "none";
-                altroTextarea.removeAttribute("required");
-                altroTextarea.value = "";
-            }
-        });
-    });
-
-
-</script>
-
+{% include 'User/Footer/footer.html.twig' %}
+<script src="/static/js/report.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

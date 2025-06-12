@@ -19,7 +19,7 @@
 }
 /* HERO + Sezione descrittiva unite con sfondo */
 .hero-background {
-    background-image: url('/html/immagini/Herman-Miller-OE1-scrivanie-condivise-sedia-ufficio-Lino-lavagne-gallery5.jpg');
+    background-image: url('/static/asset/Herman-Miller-OE1-scrivanie-condivise-sedia-ufficio-Lino-lavagne-gallery5.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

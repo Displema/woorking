@@ -9,12 +9,12 @@
 <!-- link to awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <!-- link to css for the style -->
-    <link rel="stylesheet" href="/html/login/login.css">
+    <link rel="stylesheet" href="/static/css/login.css">
 </head>
 <body class="text-dark">
 
 <!--include navbar-->
-{% include 'navbar/navbar.html.twig' %}
+{% include 'User/navbar/navbar.html.twig' %}
 
 <!-- content -->
 <div class="container my-5">
@@ -108,56 +108,8 @@
 </div>
 
 <!-- FOOTER -->
-{% include 'Footer/footer.html.twig' %}
-
-<!-- SCRIPT -->
-<script>
-
-    // Switch login <-> registrazione
-    document.addEventListener("DOMContentLoaded", () => {
-        const loginForm = document.getElementById("login-form");
-        const registerForm = document.getElementById("register-form");
-        const formTitle = document.getElementById("form-title");
-        let isLogin = true;
-
-        const handleToggle = (e) => {
-            e.preventDefault();
-
-            isLogin = !isLogin;
-
-            if (isLogin) {
-                loginForm.style.display = "block";
-                registerForm.style.display = "none";
-                formTitle.innerHTML = '<i class="fas fa-sign-in-alt"></i> Accedi';
-                toggleText.innerHTML = 'Non hai un account? <a href="#" id="toggle-link">Registrati</a>';
-            } else {
-                loginForm.style.display = "none";
-                registerForm.style.display = "block";
-                formTitle.innerHTML = '<i class="fas fa-user-plus"></i> Registrati';
-                toggleText.innerHTML = 'Hai già un account? <a href="#" id="toggle-link">Accedi</a>';
-            }
-
-            // Riattacca il listener al nuovo link appena creato
-            document.getElementById("toggle-link").addEventListener("click", handleToggle);
-        };
-
-        // Attiva primo listener
-        document.getElementById("toggle-link").addEventListener("click", handleToggle);
-    });
-</script>
-<script>
-    // Mostra/nascondi campo Partita IVA
-    document.addEventListener("DOMContentLoaded", () => {
-        const locatoreSwitch = document.getElementById("isLocatoreSwitch");
-        const partitaIvaField = document.getElementById("partitaIvaField");
-
-        locatoreSwitch.addEventListener("change", () => {
-            const isLocatore = locatoreSwitch.checked;
-            partitaIvaField.style.display = locatoreSwitch.checked ? "block" : "none";
-            userTypeInput.value = isLocatore ? "LOCATORE" : "UTENTE";
-        });
-    });
-</script>
+{% include 'User/Footer/footer.html.twig' %}
+<script src="/static/js/login.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

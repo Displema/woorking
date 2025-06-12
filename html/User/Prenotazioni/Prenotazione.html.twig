@@ -9,12 +9,12 @@
     <!--link to awesome-->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <!-- link to css for the style-->
-    <link rel="stylesheet" href="/html/User/Prenotazioni/Prenotazioni.css" />
+    <link rel="stylesheet" href="/static/css/Prenotazioni.css" />
 </head>
 <body>
 <!--include navbar-->
 
-    {% include 'navbar/navbar.html.twig' %}
+    {% include 'User/navbar/navbar.html.twig' %}
 
 
 
@@ -61,33 +61,9 @@
     </div>
 </main>
 <!--include footer-->
-{% include "Footer/footer.html.twig" %}
+{% include "User/Footer/footer.html.twig" %}
 
-
-<script>
-    <!-- script that allow to switch from active to past -->
-    const btnAttive = document.getElementById("btn-attive");
-    const btnPassate = document.getElementById("btn-passate");
-    const prenotazioni = document.querySelectorAll(".prenotazione");
-
-    btnAttive.addEventListener("click", () => {
-        btnAttive.classList.add("active");
-        btnPassate.classList.remove("active");
-        prenotazioni.forEach(card => {
-            card.classList.toggle("d-none", card.classList.contains("passata"));
-        });
-    });
-
-    btnPassate.addEventListener("click", () => {
-        btnPassate.classList.add("active");
-        btnAttive.classList.remove("active");
-        prenotazioni.forEach(card => {
-            card.classList.toggle("d-none", card.classList.contains("attiva"));
-        });
-    });
-</script>
-
-
+<script src="/static/js/reservation.js"></script>
 
 </body>
 </html>
