@@ -11,9 +11,9 @@ class ELocatoreRepository extends EntityRepository
 {
     /**
      * @param string $id
-     * @return ELocatore|null
+     * @return ELocatore
      */
-    public function getLocatoreByUser(string $id): ?ELocatore
+    public function getLocatoreByUser(string $id): ELocatore
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 

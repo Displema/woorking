@@ -11,14 +11,14 @@ class EIntervalloDisponibilitaRepository extends EntityRepository
 {
     /**
      * @param EUfficio $ufficio
-     * @return EIntervalloDisponibilita|null
+     * @return array
      */
-    public function getIntervallobyOffice(EUfficio $ufficio): ?EIntervalloDisponibilita
+    public function getIntervallobyOffice(EUfficio $ufficio): array
     {
         return $this->createQueryBuilder('s')
             ->where('s.ufficio = :uffici')
             ->setParameter('uffici', $ufficio)
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getResult();
     }
 }

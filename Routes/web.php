@@ -42,6 +42,7 @@ $router->get('/profile', 'CHome@profile');
 
 //route to manage the offices
 $router->get('/landlord/offices', 'COffice@showOfficesLocatore');
+$router->post('/landlord/offices', 'COffice@saveAvailability');
 
 
 //route to manage reservations

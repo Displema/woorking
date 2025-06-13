@@ -49,7 +49,7 @@ function getAuth(): Auth
 {
     $db = getAuthDb();
     $throttling = (bool) $_ENV['AUTH_ENDPOINTS_THROTTLING'];
-    return new Auth($db, throttling: $throttling);
+    return new Auth($db, throttling: false);
 }
 
 function getAuthDb(): PdoDatabase

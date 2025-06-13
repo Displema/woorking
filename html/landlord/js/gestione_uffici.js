@@ -59,6 +59,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+    const disponibilitaButtons = document.querySelectorAll('.btn-disponibilita');
+    disponibilitaButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const officeId = button.getAttribute('data-office-id');
+            document.getElementById('disponibilita-office-id').value = officeId;
+        });
+    });
+
+});
+
+
+
 
 
 
