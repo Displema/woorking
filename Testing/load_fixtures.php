@@ -9,7 +9,7 @@ require_once __DIR__ . "/../vendor/autoload.php";
 require_once __DIR__ . "/../bootstrap.php";
 
 $loader = new Loader();
-$loader->loadFromDirectory(__DIR__ . '\Fixtures');
+$loader->loadFromDirectory(__DIR__ . DIRECTORY_SEPARATOR . 'Fixtures');
 
 $entityManager = getEntityManager();
 
