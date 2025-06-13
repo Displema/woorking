@@ -7,7 +7,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Model\Enum\ReportStateEnum;
-use Model\EPrenotazione;
 use Model\EProfilo;
 use Model\ESegnalazione;
 use Model\EUfficio;

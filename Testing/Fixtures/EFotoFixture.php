@@ -7,8 +7,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Model\EFoto;
-use Model\EPrenotazione;
-use Model\ERecensione;
 use Model\EUfficio;
 use Smknstd\FakerPicsumImages\FakerPicsumImagesProvider;
 
