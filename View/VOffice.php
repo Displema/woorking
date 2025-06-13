@@ -44,11 +44,7 @@ class VOffice extends BaseView
         $this->twig->display('/landlord/gestioneUffici/gestione_uffici.html.twig', ['ufficiA' => $approvati, 'nonApprovati' => $nonApprovati]);
     }
 
-    public function searchReservations($resultPassato, $resultPresente)
-    {
 
-        $this->twig->display('/landlord/prenotazioni/gestione_prenotazioni_locatore.html.twig', ['ufficiPassati' => $resultPassato, 'ufficiPresente' => $resultPresente]);
-    }
 
     public function addOfficeV()
     {

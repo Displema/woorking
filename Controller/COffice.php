@@ -364,7 +364,7 @@ class COffice extends BaseController
         $ufficio->setSuperficie($superficie);
         $ufficio->setDataCaricamento(new \DateTime());
 
-        $ufficio->setStato(StatoUfficioEnum::Approvato);
+        $ufficio->setStato(StatoUfficioEnum::InAttesa);
         $ufficio->setIndirizzo($indirizzov);
         $ufficio->setLocatore($user);
 

@@ -40,7 +40,16 @@ class VReservation extends BaseView
             '/admin/reservations/reservations.html.twig',
             ['activeReservations'=>$activeReservations,
                 'pastReservations'=>$pastReservations,
-            'user'=>$user]
+            'user'=>$user,
+            ]
         );
+    }
+    public function searchReservations($activeReservations, $pastReservations, $user)
+    {
+
+        $this->twig->display('/landlord/prenotazioni/gestione_prenotazioni_locatore.html.twig', ['activeReservations'=>$activeReservations,
+            'pastReservations'=>$pastReservations,
+            'user'=>$user,
+            ]);
     }
 }

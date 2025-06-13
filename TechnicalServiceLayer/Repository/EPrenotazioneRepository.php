@@ -105,4 +105,18 @@ class EPrenotazioneRepository extends EntityRepository
 
         return $result;
     }
+
+    /**
+     * @param String $locatoreId
+     * @return array
+     */
+    public function getPrenotazioniByLocatore(string $locatoreId): array
+    {
+        return $this->createQueryBuilder('p')
+            ->join('p.ufficio', 'u')
+            ->where('u.locatore = :locatoreId')
+            ->setParameter('locatoreId', $locatoreId)
+            ->getQuery()
+            ->getResult();
+    }
 }
