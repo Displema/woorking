@@ -82,7 +82,7 @@ $router->get('/offices', 'COffice@searchResults');                              
 $router->get('/offices/{id}/availability/{date}/{slot}', 'COffice@availability'); // availabilty details
 //
 //// Office reservation
-$router->get('/offices/{id}/availability/{date}/{fascia}/confirm', 'CReservation@confirmReservation'); // confirm reservation
+$router->post('/offices/{id}/availability/{date}/{fascia}/confirm', 'CReservation@confirmReservation'); // confirm reservation
 //
 //// review on reservation and report
 $router->get('/offices/{id}/reviews', 'CReview@showReviews');     // show review

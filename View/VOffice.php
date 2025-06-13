@@ -28,7 +28,6 @@ class VOffice extends BaseView
     }
     public function showconfirmedpage1($user)
     {
-
          $this->twig->display('/User/conferme/confermaprenotazione.html.twig', ['user' => $user]);
     }
 
