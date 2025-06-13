@@ -8,8 +8,6 @@ use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
 use TechnicalServiceLayer\Repository\ERecensioneRepository;
 use TechnicalServiceLayer\Repository\EUfficioRepository;
 use TechnicalServiceLayer\Roles\Roles;
-use TechnicalServiceLayer\Utility\USession;
-use View\VHome;
 use View\VResource;
 
 class CStats extends BaseController

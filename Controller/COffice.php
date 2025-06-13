@@ -1,10 +1,8 @@
 <?php
 namespace Controller;
 
-use Controller;
 use DateTime;
 use Doctrine\DBAL\LockMode;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Model\EFoto;
 use Model\EIndirizzo;
@@ -14,31 +12,22 @@ use Model\Enum\FasciaOrariaEnum;
 use Model\Enum\ReportStateEnum;
 use Model\Enum\StatoUfficioEnum;
 use Model\EPrenotazione;
-use Model\EProfilo;
 use Exception;
 use Model\EServiziAggiuntivi;
 use TechnicalServiceLayer\Repository\EFotoRepository;
 use TechnicalServiceLayer\Repository\EIntervalloDisponibilitaRepository;
 use TechnicalServiceLayer\Repository\ELocatoreRepository;
-use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
-use TechnicalServiceLayer\Repository\ERecensioneRepository;
 use TechnicalServiceLayer\Repository\EServiziAggiuntiviRepository;
 use TechnicalServiceLayer\Repository\UserRepository;
 use TechnicalServiceLayer\Roles\Roles;
 use View\VAdmin;
 use View\VOffice;
 
-use Model\ERecensione;
 use Model\ERimborso;
 use Model\ESegnalazione;
 use Model\EUfficio;
 
-use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
 use TechnicalServiceLayer\Repository\EUfficioRepository;
-use TechnicalServiceLayer\Utility\USession;
-use View\VReservation;
-use View\VResource;
-use View\VReview;
 use View\VRedirect;
 use View\VStatus;
 

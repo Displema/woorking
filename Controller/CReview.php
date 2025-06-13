@@ -1,26 +1,21 @@
 <?php
 namespace Controller;
 
-use Doctrine\ORM\EntityManager;
-use DateTime;
-use Model\EFoto;
+
 use Model\EPrenotazione;
 
-use Model\EProfilo;
 use Model\ERecensione;
 use Model\EUfficio;
 use TechnicalServiceLayer\Repository\ERecensioneRepository;
 use TechnicalServiceLayer\Repository\EUfficioRepository;
 use TechnicalServiceLayer\Roles\Roles;
-use TechnicalServiceLayer\Utility\USession;
 use View\VRedirect;
-use View\VReservation;
 use View\VReview;
 use View\VStatus;
 
 class CReview extends BaseController
 {
-    public function getReviews()
+    public function getReviews(): void
     {
 
         /** @var ERecensioneRepository $repo */

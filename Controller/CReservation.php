@@ -1,26 +1,21 @@
 <?php
 namespace Controller;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\LockMode;
-use Doctrine\ORM\EntityManager;
 use DateTime;
 use Model\EFoto;
 use Model\EIntervalloDisponibilita;
 use Model\Enum\FasciaOrariaEnum;
 use Model\Enum\StatoUfficioEnum;
 use Model\EPrenotazione;
-
 use Model\EProfilo;
-use Model\ERecensione;
 use Model\EUfficio;
+
 use TechnicalServiceLayer\Repository\UserRepository;
 use TechnicalServiceLayer\Roles\Roles;
-use TechnicalServiceLayer\Utility\USession;
 use View\VOffice;
 use View\VRedirect;
 use View\VReservation;
-use View\VReview;
 use View\VStatus;
 
 class CReservation extends BaseController

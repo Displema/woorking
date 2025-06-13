@@ -2,20 +2,14 @@
 namespace Controller;
 
 use DateTime;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Mapping\Entity;
 use Model\Enum\ReportStateEnum;
-use Model\EProfilo;
 use Model\ESegnalazione;
 use Model\EUfficio;
-use PHP_CodeSniffer\Reports\Report;
 
-use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
-use TechnicalServiceLayer\Repository\EPrenotazioneRepository;
+
 use TechnicalServiceLayer\Repository\ESegnalazioneRepository;
 use TechnicalServiceLayer\Repository\UserRepository;
 use TechnicalServiceLayer\Roles\Roles;
-use TechnicalServiceLayer\Utility\USession;
 use View\VRedirect;
 use View\VReport;
 use View\VStatus;
@@ -152,9 +146,6 @@ class CReport extends BaseController
         $this->requireRole(Roles::ADMIN);
 
         $report = $this->entity_manager->getRepository(ESegnalazione::class)->find($id);
-
-        error_log($id);
-        error_log($resolutionMessage);
 
         if (!$report) {
             $view = new VStatus();

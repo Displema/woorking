@@ -1,13 +1,8 @@
 <?php
 namespace Controller;
 
-use Delight\Auth\Auth;
-use Doctrine\ORM\EntityManager;
-use Model\EProfilo;
-use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
 use TechnicalServiceLayer\Repository\UserRepository;
 use TechnicalServiceLayer\Roles\Roles;
-use TechnicalServiceLayer\Utility\USession;
 use View\VHome;
 use View\VLocatore;
 use View\VRedirect;
