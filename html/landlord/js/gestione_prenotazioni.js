@@ -48,29 +48,29 @@ document.addEventListener('DOMContentLoaded', () => {
             const cognome = button.getAttribute('data-cognome');
             const data = button.getAttribute('data-data');
             const telefono = button.getAttribute('data-telefono');
-            const email = button.getAttribute('data-email');
+
 
             const nomeUfficio = button.getAttribute('data-nome-ufficio');
             const descrizione = button.getAttribute('data-descrizione');
             const prezzo = button.getAttribute('data-prezzo');
             const superficie = button.getAttribute('data-superficie');
-            const fascia = button.getAttribute('data-fascia');
+
             const indirizzo = button.getAttribute('data-indirizzo');
             const postazioni = button.getAttribute('data-postazioni');
             const servizi = button.getAttribute('data-servizi');
-            const rifiuto = button.getAttribute('data-rifiuto');
+
 
             document.getElementById('modalNome').textContent = nome;
             document.getElementById('modalCognome').textContent = cognome;
             document.getElementById('modalData').textContent = data;
             document.getElementById('modalTelefono').textContent = telefono;
-            document.getElementById('modalEmail').textContent = email;
+
 
             document.getElementById('modalNomeUfficio').textContent = nomeUfficio;
             document.getElementById('modalDescrizione').textContent = descrizione;
             document.getElementById('modalPrezzo').textContent = prezzo;
             document.getElementById('modalSuperficie').textContent = superficie;
-            document.getElementById('modalFascia').textContent = fascia;
+
             document.getElementById('modalIndirizzo').textContent = indirizzo;
             document.getElementById('modalPostazioni').textContent = postazioni;
             document.getElementById('modalServizi').textContent = servizi;

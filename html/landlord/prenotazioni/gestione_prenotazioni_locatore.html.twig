@@ -35,31 +35,30 @@
 
         <!-- Prenotazioni Attive -->
         <div id="attive" class="tab-content">
-          {% for ufficio in ufficiPresente %}
+          {% for item in activeReservations %}
           <div class="prenotazione">
 
 
-            <img src="{{ ufficio.foto }}" alt="Ufficio 1" />
+            <img src="/static/img/{{ item.reservation.ufficio.foto[0].id }}" alt="Ufficio 1" />
             <div class="prenotazione-info">
-              <h5>{{ ufficio.ufficio.titolo }}</h5>
-              <p><strong>Cliente:</strong> {{ ufficio.prenotazioni.utente.name  }} {{ ufficio.prenotazioni.utente.surname }}</p>
-              <p><strong>Telefono:</strong> {{ ufficio.prenotazioni.utente.phone }}</p>
-              <p><strong>Email:</strong> {{ ufficio.email}} </p>
+              <h5>{{ item.reservation.ufficio.titolo }}</h5>
+              <p><strong>Cliente:</strong> {{ item.reservation.utente.name  }} {{ item.reservation.utente.surname }}</p>
+              <p><strong>Telefono:</strong> {{ item.reservation.utente.phone }}</p>
+
             </div>
             <a href="#" class="btn-dettagli" data-bs-toggle="modal" data-bs-target="#modal-dettagliP"
-               data-nome="{{ ufficio.prenotazioni.utente.name }}"
-               data-cognome="{{ ufficio.prenotazioni.utente.surname }}"
-               data-data="{{ ufficio.prenotazioni.data|date('d M Y') }}"
-               data-telefono="{{ ufficio.prenotazioni.utente.phone }}"
-               data-email="{{ ufficio.email }}"
-               data-nome-ufficio="{{ ufficio.ufficio.titolo }}"
-               data-descrizione="{{ ufficio.ufficio.descrizione }}"
-               data-prezzo="{{ ufficio.ufficio.prezzo }} €"
-               data-superficie="{{ ufficio.ufficio.superficie }} m²"
-               data-fascia="{{ ufficio.intervallo.fascia.value }}"
-               data-indirizzo="{{ ufficio.ufficio.indirizzo }}"
-               data-postazioni="{{ ufficio.ufficio.numeroPostazioni }}"
-               data-servizi="{{ ufficio.servizio }}">
+               data-nome="{{ item.reservation.utente.name }}"
+               data-cognome="{{ item.reservation.utente.surname }}"
+               data-data="{{ item.reservation.data|date('d M Y') }}"
+               data-telefono="{{ item.reservation.utente.phone }}"
+
+               data-nome-ufficio="{{ item.reservation.ufficio.titolo }}"
+               data-descrizione="{{ item.reservation.ufficio.descrizione }}"
+               data-prezzo="{{ item.reservation.ufficio.prezzo }} €"
+               data-superficie="{{ item.reservation.ufficio.superficie }} m²"
+               data-indirizzo="{{ item.reservation.ufficio.indirizzo }}"
+               data-postazioni="{{ item.reservation.ufficio.numeroPostazioni }}"
+               data-servizi="{{ item.reservation.ufficio.serviziAggiuntivi|map(s => s.nomeServizio)|join(', ') }}">
               Dettagli
             </a>
 
@@ -70,29 +69,28 @@
 
         <!-- Prenotazioni Passate -->
         <div id="passate" class="tab-content" style="display:none;">
-          {% for ufficio in ufficiPassati %}
+          {% for item in pastReservations %}
           <div class="prenotazione">
-            <img src="{{ ufficio.foto}} " alt="Ufficio 3" />
+            <img src="/static/img/{{ item.reservation.ufficio.foto[0].id }}" alt="Ufficio 1" />
             <div class="prenotazione-info">
-              <h5>{{ ufficio.ufficio.titolo }}</h5>
-              <p><strong>Cliente:</strong> {{ ufficio.prenotazioni.utente.name  }} {{ ufficio.prenotazioni.utente.surname }}</p>
-              <p><strong>Telefono:</strong> {{ ufficio.prenotazioni.utente.phone }}</p>
-              <p><strong>Email:</strong> {{ ufficio.email }}</p>
+              <h5>{{ item.reservation.ufficio.titolo }}</h5>
+              <p><strong>Cliente:</strong> {{ item.reservation.utente.name  }} {{ item.reservation.utente.surname }}</p>
+              <p><strong>Telefono:</strong> {{ item.reservation.utente.phone }}</p>
+
             </div>
             <a href="#" class="btn-dettagliP" data-bs-toggle="modal" data-bs-target="#modal-dettagliP"
-               data-nome="{{ ufficio.prenotazioni.utente.name }}"
-               data-cognome="{{ ufficio.prenotazioni.utente.surname }}"
-               data-data="{{ ufficio.prenotazioni.data|date('d M Y') }}"
-               data-telefono="{{ ufficio.prenotazioni.utente.phone }}"
-               data-email="{{ ufficio.email }}"
-               data-nome-ufficio="{{ ufficio.ufficio.titolo }}"
-               data-descrizione="{{ ufficio.ufficio.descrizione }}"
-               data-prezzo="{{ ufficio.ufficio.prezzo }} €"
-               data-superficie="{{ ufficio.ufficio.superficie }} m²"
-               data-fascia="{{ ufficio.intervallo.fascia.value }}"
-               data-indirizzo="{{ ufficio.ufficio.indirizzo }}"
-               data-postazioni="{{ ufficio.ufficio.numeroPostazioni }}"
-               data-servizi="{{ ufficio.servizio }}">
+               data-nome="{{ item.reservation.utente.name }}"
+               data-cognome="{{ item.reservation.utente.surname }}"
+               data-data="{{ item.reservation.data|date('d M Y') }}"
+               data-telefono="{{ item.reservation.utente.phone }}"
+
+               data-nome-ufficio="{{ item.reservation.ufficio.titolo }}"
+               data-descrizione="{{ item.reservation.ufficio.descrizione }}"
+               data-prezzo="{{ item.reservation.ufficio.prezzo }} €"
+               data-superficie="{{ item.reservation.ufficio.superficie }} m²"
+               data-indirizzo="{{ item.reservation.ufficio.indirizzo }}"
+               data-postazioni="{{ item.reservation.ufficio.numeroPostazioni }}"
+               data-servizi="{{ item.reservation.ufficio.serviziAggiuntivi|map(s => s.nomeServizio)|join(', ') }}">
               Dettagli
             </a>
           </div>
@@ -106,8 +104,7 @@
 {% include '/landlord/prenotazioni/modal_dettagli.html.twig' %}
 
 
-<!-- Bootstrap Bundle JS (include anche Popper) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-X...Z" crossorigin="anonymous"></script>
+
 
   <!-- Tabler Core JS -->
   <script src="https://unpkg.com/@tabler/core@latest/dist/js/tabler.min.js"></script>
