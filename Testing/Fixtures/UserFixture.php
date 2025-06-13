@@ -6,12 +6,11 @@ use Delight\Auth\AuthError;
 use Delight\Auth\InvalidEmailException;
 use Delight\Auth\InvalidPasswordException;
 use Delight\Auth\TooManyRequestsException;
+use Delight\Auth\UnknownIdException;
 use Delight\Auth\UserAlreadyExistsException;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
-use \Model\EProfilo;
-use Ramsey\Uuid\Type\Integer;
 use TechnicalServiceLayer\Roles\Roles;
 
 class UserFixture extends AbstractFixture
@@ -22,6 +21,7 @@ class UserFixture extends AbstractFixture
      * @throws AuthError
      * @throws UserAlreadyExistsException
      * @throws InvalidPasswordException
+     * @throws UnknownIdException
      */
     public function load(ObjectManager $manager): void
     {

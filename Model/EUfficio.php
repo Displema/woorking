@@ -2,13 +2,11 @@
 namespace Model;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use DateTime;
 use Model\Enum\StatoUfficioEnum;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\UuidInterface;
-use Ramsey\Uuid\Uuid;
 use TechnicalServiceLayer\Repository\EUfficioRepository;
 
 #[ORM\Entity(repositoryClass: EUfficioRepository::class)]

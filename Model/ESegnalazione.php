@@ -5,9 +5,7 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Model\Enum\ReportStateEnum;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
-use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
-use Model\EPrenotazione;
 use TechnicalServiceLayer\Repository\ESegnalazioneRepository;
 
 #[ORM\Entity(repositoryClass: ESegnalazioneRepository::class)]

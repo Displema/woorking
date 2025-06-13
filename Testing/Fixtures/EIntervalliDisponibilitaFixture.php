@@ -4,12 +4,10 @@ namespace Testing\Fixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Model\EIntervalloDisponibilita;
 use Model\Enum\FasciaOrariaEnum;
-use Model\Enum\UserEnum;
 use Model\EUfficio;
 
 class EIntervalliDisponibilitaFixture extends AbstractFixture implements DependentFixtureInterface

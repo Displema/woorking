@@ -7,8 +7,6 @@ use Doctrine\Common\Collections\Collection;
 use Model\Enum\StatoUfficioEnum;
 use Model\EPrenotazione;
 use Model\EUfficio;
-use Ramsey\Uuid\Uuid;
-use TechnicalServiceLayer\Foundation\FEntityManager;
 
 class EUfficioRepository extends EntityRepository
 {

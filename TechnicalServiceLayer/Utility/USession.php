@@ -1,9 +1,6 @@
 <?php
 namespace TechnicalServiceLayer\Utility;
 
-use Model\EProfilo;
-use TechnicalServiceLayer\Exceptions\UserNotAuthenticatedException;
-
 /**
  * Credit to https://github.com/flebo45/Agora/blob/main/app/services/TechnicalServiceLayer/utility/USession.php
  */
@@ -32,13 +29,13 @@ class USession
         return self::$instance;
     }
 
-    public static function getSessionStatus()
+    public static function getSessionStatus(): int
     {
         return session_status();
     }
 
 
-    public static function sessionUnset()
+    public static function sessionUnset(): void
     {
         session_unset();
     }
@@ -46,7 +43,7 @@ class USession
     /**
      * unset of an element of _SESSION superglobal
      */
-    public static function unsetElement($id)
+    public static function unsetElement($id): void
     {
         unset($_SESSION[$id]);
     }
@@ -54,7 +51,7 @@ class USession
     /**
      * destroy the session
      */
-    public static function destroy()
+    public static function destroy(): void
     {
         session_destroy();
     }

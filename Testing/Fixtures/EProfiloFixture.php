@@ -7,7 +7,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use \Model\EProfilo;
-use Ramsey\Uuid\Type\Integer;
 
 class EProfiloFixture extends AbstractFixture implements DependentFixtureInterface
 {
