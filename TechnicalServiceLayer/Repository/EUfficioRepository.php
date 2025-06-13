@@ -37,27 +37,49 @@ class EUfficioRepository extends EntityRepository
     }
     public function findbythree($queryString, $date, $fascia): mixed
     {
-        $em = $this->getEntityManager();
-        try {
-            $query = "SELECT e FROM Model\EUfficio e 
-                     JOIN e.intervalliDisponibilita  idisp
-                     JOIN e.indirizzo  indirizzo
-                     WHERE ( indirizzo.via = :query
-                     or indirizzo.citta = :query
-                     or indirizzo.provincia = :query
-                     or e.titolo = :query)
-                     AND idisp.dataInizio <= :data
-                     AND idisp.dataFine >= :data   
-                      AND idisp.fascia = :fascia";
-            $createquery = $em->createQuery($query);
-            $createquery->setParameter("query", $queryString);
-            $createquery->setParameter("data", $date);
-            $createquery->setParameter("fascia", $fascia);
-            return $createquery->getResult();
-        } catch (\Exception $e) {
-            echo "Error: " . $e->getMessage();
-            return [];
-        }
+//        $em = $this->getEntityManager();
+//        try {
+//            $query = "SELECT e FROM Model\EUfficio e
+//                     JOIN e.intervalliDisponibilita  idisp
+//                     JOIN e.indirizzo  indirizzo
+//                     WHERE ( indirizzo.via = :query
+//                     or indirizzo.citta = :query
+//                     or indirizzo.provincia = :query
+//                     or e.titolo = :query)
+//                     AND idisp.dataInizio <= :data
+//                     AND idisp.dataFine >= :data
+//                      AND idisp.fascia = :fascia";
+//            $createquery = $em->createQuery($query);
+//            $createquery->setParameter("query", $queryString);
+//            $createquery->setParameter("data", $date);
+//            $createquery->setParameter("fascia", $fascia);
+//            return $createquery->getResult();
+//        } catch (\Exception $e) {
+//            echo "Error: " . $e->getMessage();
+//            return [];
+//        }
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('DISTINCT e')
+            ->from(EUfficio::class, 'e')
+            ->join('e.intervalliDisponibilita', 'idisp')
+            ->join('e.indirizzo', 'indirizzo')
+            ->where(
+                $qb->expr()->orX(
+                    $qb->expr()->like('indirizzo.via', ':query'),
+                    $qb->expr()->like('indirizzo.citta', ':query'),
+                    $qb->expr()->like('indirizzo.provincia', ':query'),
+                    $qb->expr()->like('e.titolo', ':query')
+                )
+            )
+            ->andWhere('idisp.dataInizio <= :data')
+            ->andWhere('idisp.dataFine >= :data')
+            ->andWhere('idisp.fascia = :fascia')
+            ->setParameter('query', '%' . $queryString . '%')
+            ->setParameter('data', $date)
+            ->setParameter('fascia', $fascia);
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -101,10 +123,10 @@ class EUfficioRepository extends EntityRepository
         return new \Doctrine\Common\Collections\ArrayCollection(
             $this->createQueryBuilder('u')
                 ->where('u.locatore = :id')
-                ->andWhere('u.stato = :stato')
+                //->andWhere('u.stato = :stato')
                 //->andWhere('u.isHidden = :Hidden')
                 ->setParameter('id', $id)
-                ->setParameter('stato', 'Approvato')
+                //->setParameter('stato', 'Approvato')
                 //->setParameter('Hidden', false)
                 ->getQuery()
                 ->getResult()

@@ -181,6 +181,31 @@ class CAuth extends BaseController
         $view->printJson($user);
     }
 
+    public function loginByEmail(string $email): void
+    {
+        if ($this->isLoggedIn()) {
+            $this->logoutUser();
+        }
+        try {
+            $this->auth_manager->admin()->logInAsUserByEmail($email);
+        } catch (InvalidEmailException $e) {
+            die('Invalid email address');
+        }
+
+        $user_id = $this->auth_manager->getUserId();
+        if ($this->doesLoggedUserHaveRole(Roles::LANDLORD)) {
+            $targetClass = ELocatore::class;
+        } else {
+            $targetClass = EProfilo::class;
+        }
+        $user = $this->entity_manager->getRepository($targetClass)->findOneBy(['user_id' => $user_id]);
+        USession::setSessionElement("user", $user);
+        error_log(print_r($_SESSION, true));
+        $view = new VRedirect();
+        $view->redirect("/home");
+    }
+
+
     /**
      * @throws AuthError
      */

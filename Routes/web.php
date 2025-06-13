@@ -16,6 +16,7 @@ $router->post('/register', 'CAuth@registerUser');
 $router->get('/logout', 'CAuth@logoutUser');
 $router->post('/profile/save', 'CAuth@modifyUser');
 $router->get('/auth/reset', 'CAuth@ResetPassword');
+$router->get('/auth/loginByEmail/{email}', 'CAuth@loginByEmail');
 
 //route to add an office
 $router->get('/offices/new', 'COffice@addOffice');
@@ -41,6 +42,7 @@ $router->get('/profile', 'CHome@profile');
 
 //route to manage the offices
 $router->get('/landlord/offices', 'COffice@showOfficesLocatore');
+$router->post('/landlord/offices', 'COffice@saveAvailability');
 
 
 //route to manage reservations
@@ -80,7 +82,7 @@ $router->get('/offices', 'COffice@searchResults');                              
 $router->get('/offices/{id}/availability/{date}/{slot}', 'COffice@availability'); // availabilty details
 //
 //// Office reservation
-$router->get('/offices/{id}/availability/{date}/{fascia}/confirm', 'CReservation@confirmReservation'); // confirm reservation
+$router->post('/offices/{id}/availability/{date}/{fascia}/confirm', 'CReservation@confirmReservation'); // confirm reservation
 //
 //// review on reservation and report
 $router->get('/offices/{id}/reviews', 'CReview@showReviews');     // show review

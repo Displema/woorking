@@ -1,0 +1,58 @@
+<div class="modal fade" id="modal-disponibilita" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Aggiungi Disponibilità</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+            </div>
+            <form id="form-disponibilita" action="/landlord/offices" method="POST">
+                <div class="modal-body">
+
+                    <input type="hidden" id="disponibilita-office-id" name="office_id" />
+
+                    <!-- Elenco disponibilità già presenti -->
+                    <div class="mb-3">
+                        <h6>Disponibilità esistenti</h6>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                            <tr>
+                                <th>Data Inizio</th>
+                                <th>Data Fine</th>
+                                <th>Fascia</th>
+                            </tr>
+                            </thead>
+                            <tbody id="disponibilita-esistenti-body">
+                            <!-- Popolato dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="row g-3 align-items-center mb-3">
+                        <div class="col-md-6">
+                            <label for="data-inizio" class="form-label">Data Inizio</label>
+                            <input type="date" class="form-control" id="data-inizio" name="data_inizio" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="data-fine" class="form-label">Data Fine</label>
+                            <input type="date" class="form-control" id="data-fine" name="data_fine" required />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="fascia" class="form-label">Fascia Oraria</label>
+                        <select class="form-select" id="fascia" name="fascia" required>
+                            <option value="" selected disabled>Seleziona fascia</option>
+                            <option value="Mattina">Mattina</option>
+                            <option value="Pomeriggio">Pomeriggio</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <button type="submit" class="btn btn-primary">Salva</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

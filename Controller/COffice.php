@@ -284,22 +284,17 @@ class COffice extends BaseController
         /** @var EFotoRepository $fotoRepo */
         $fotoRepo = $em->getRepository(EFoto::class);
 
-        /** @var EServiziAggiuntiviRepository $serviziRepo */
-        $serviziRepo = $em->getRepository(EServiziAggiuntivi::class);
-
         /** @var EIntervalloDisponibilitaRepository $intervalliRepo */
         $intervalliRepo = $em->getRepository(EIntervalloDisponibilita::class);
 
         foreach ($uffici as $ufficio) {
             $foto = $fotoRepo->getFirstPhotoByOffice($ufficio);
             $fotoUrl = $foto ? "/static/img/" . $foto->getId() : null;
-            $servizi = $serviziRepo->getServiziAggiuntivibyOffice($ufficio);
             $intervallo = $intervalliRepo->getIntervallobyOffice($ufficio);
 
             $datiUfficio = [
                 'ufficio' => $ufficio,
                 'foto' => $fotoUrl,
-                'servizi' => $servizi,
                 'intervallo' => $intervallo
             ];
 
@@ -344,14 +339,14 @@ class COffice extends BaseController
         $data_inizio,
         $data_fine,
         $fascia,
+        $servizi,
+        $altro_servizio,
     ) {
 
         $this->requireRole(Roles::LANDLORD);
 
         $user = $this->getUser();
-        /** @var ELocatoreRepository $locatore */
-        $locatorerepo = getEntityManager()->getRepository(ELocatore::class);
-        $locatore = $locatorerepo->getLocatoreByUser($user->getId());
+
         $ufficio = new EUfficio();
         $indirizzov = new Eindirizzo();
         $intervallo = new EIntervalloDisponibilita();
@@ -368,9 +363,10 @@ class COffice extends BaseController
         $ufficio->setNumeroPostazioni($postazioni);
         $ufficio->setSuperficie($superficie);
         $ufficio->setDataCaricamento(new \DateTime());
+
         $ufficio->setStato(StatoUfficioEnum::InAttesa);
         $ufficio->setIndirizzo($indirizzov);
-        $ufficio->setLocatore($locatore);
+        $ufficio->setLocatore($user);
 
         $intervallo->setDataInizio(new \DateTime($data_inizio));
         $intervallo->setDataFine(new \DateTime($data_fine));
@@ -404,11 +400,11 @@ class COffice extends BaseController
         }
 
         // take the services from the checkbox
-        $listaServizi = $_POST['servizi'] ?? [];
+        $listaServizi = $servizi ?? [];
 
         // if there's the section "altro" I add it
-        if (!empty($_POST['altro-servizio'])) {
-            $nomeAltro = trim($_POST['altro-servizio']);
+        if ($altro_servizio !== null) {
+            $nomeAltro = trim($altro_servizio);
             if ($nomeAltro !== '') {
                 $listaServizi[] = $nomeAltro;
             }
@@ -545,6 +541,85 @@ class COffice extends BaseController
         $view = new VOffice();
         $view->$targetView($office);
     }
+
+    public function saveAvailability(
+        $office_id,
+        $data_inizio,
+        $data_fine,
+        $fascia
+    ): void
+    {
+        $this->requireRoles([Roles::LANDLORD, Roles::ADMIN]);
+        $intervallo = new EIntervalloDisponibilita();
+        $office = $this->entity_manager->find(EUfficio::class, $office_id);
+        $intervallo->setDataInizio(new \DateTime($data_inizio));
+        $intervallo->setDataFine(new \DateTime($data_fine));
+        $intervallo->setFascia(FasciaOrariaEnum::from($fascia));
+        $intervallo->setUfficio($office);
+
+        // Validazione semplice
+        if (!$office_id || !$data_fine || !$data_inizio || !$fascia) {
+            $view = new VStatus();
+            $view->showStatus(400);
+            return;
+        }
+
+        // Recupera l'ufficio dal DB
+
+        $office = $this->entity_manager->find(EUfficio::class, $office_id);
+        if (!$office) {
+            $view = new VStatus();
+            $view->showStatus(404);
+            return;
+        }
+
+        try {
+            $inizio = new \DateTime($data_inizio);
+            $fine = new \DateTime($data_fine);
+            if ($fine < $inizio) {
+                throw new \Exception("Data fine precedente a data inizio");
+            }
+        } catch (\Exception $e) {
+            $view = new VStatus();
+            $view->showStatus(403);
+            return;
+        }
+
+        // Validazione fascia oraria
+        try {
+            $fasciaEnum = FasciaOrariaEnum::from($fascia);
+        } catch (\ValueError $ex) {
+            $view = new VStatus();
+            $view->showStatus(402);
+            return;
+        }
+
+        // Crea nuovo intervallo disponibilità
+        $intervallo = new EIntervalloDisponibilita();
+        $intervallo->setDataInizio($inizio);
+        $intervallo->setDataFine($fine);
+        $intervallo->setFascia($fasciaEnum);
+        $intervallo->setUfficio($office);
+
+        $this->entity_manager->beginTransaction();
+        try {
+            $this->entity_manager->persist($intervallo);
+            $this->entity_manager->flush();
+            $this->entity_manager->commit();
+        } catch (\Exception $e) {
+            if ($this->entity_manager->getConnection()->isTransactionActive()) {
+                $this->entity_manager->rollback();
+            }
+            $view = new VStatus();
+            $view->showStatus(500);
+            return;
+        }
+
+        // Redirect alla pagina dell'ufficio (o dove preferisci)
+        $view = new VRedirect();
+        $view->redirect('/landlord/offices');
+    }
+
 
 
 }

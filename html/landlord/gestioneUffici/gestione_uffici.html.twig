@@ -49,11 +49,25 @@
                             data-descrizione="{{ ufficio.ufficio.descrizione }}"
                             data-prezzo="{{ ufficio.ufficio.prezzo }}"
                             data-superficie="{{ ufficio.ufficio.superficie }}"
-                            data-fascia="{{ ufficio.intervallo.fascia.value }}"
                             data-indirizzo="{{ ufficio.ufficio.indirizzo }}"
                             data-postazioni="{{ ufficio.ufficio.numeroPostazioni }}"
-                            data-servizi="{{ ufficio.servizi|map(s => s.nomeServizio)|join(', ') }}">
+                            data-servizi="{{ ufficio.ufficio.serviziAggiuntivi|map(s => s.nomeServizio)|join(', ') }}">
                       <i class="fa fa-eye me-1"></i> Dettagli
+                    </button>
+                    {% set disponibilitaArray = [] %}
+                    {% for intervallo in ufficio.intervallo %}
+                      {% set disponibilitaArray = disponibilitaArray|merge([{
+                        'dataInizio': intervallo.dataInizio|date('Y-m-d'),
+                        'dataFine': intervallo.dataFine|date('Y-m-d'),
+                        'fascia': intervallo.fascia.value
+                      }]) %}
+                    {% endfor %}
+                    <button class="btn btn-success btn-sm btn-disponibilita"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modal-disponibilita"
+                            data-office-id="{{ ufficio.ufficio.id }}"
+                            data-disponibilita='{{ disponibilitaArray|json_encode|e('html_attr') }}'>
+                      <i class="fa fa-calendar-plus me-1"></i> Disponibilità
                     </button>
                     <button class="btn btn-danger btn-sm btn-cancella"
                             data-bs-toggle="modal"
@@ -93,7 +107,7 @@
                             data-fascia="{{ ufficio.intervallo.fascia.value }}"
                             data-indirizzo="{{ ufficio.ufficio.indirizzo }}"
                             data-postazioni="{{ ufficio.ufficio.numeroPostazioni }}"
-                            data-servizi="{{ ufficio.servizi|map(s => s.nomeServizio)|join(', ') }}"
+                            data-servizi="{{ ufficio.ufficio.serviziAggiuntivi|map(s => s.nomeServizio)|join(', ') }}"
                             data-rifiuto="{{ ufficio.ufficio.motivoRifiuto}}">
                       <i class="fa fa-eye me-1"></i> Dettagli
                     </button>
@@ -113,11 +127,15 @@
 <!-- Modali -->
 {% include '/landlord/gestioneUffici/modal_dettagli_ufficio.html.twig' %}
 {% include '/landlord/gestioneUffici/modal_conferma_cancella.html.twig' %}
+{% include '/landlord/gestioneUffici/modal_disponibilita.html.twig' %}
 
 <!-- Script -->
 <script src="https://unpkg.com/@tabler/core@latest/dist/js/tabler.min.js"></script>
 <script src="/static/js/gestione_uffici.js"></script>
 <script src="/static/js/cancella_ufficio.js"></script>
+
+
+
 
 </body>
 </html>

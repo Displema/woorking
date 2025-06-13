@@ -48,7 +48,9 @@
                 </ul>
 
                 <div class="prezzo h4 text-danger text-end">Prezzo: {{office.prezzo}} euro al giorno</div>
-                <a href="/offices/{{office.id}}/availability/{{date}}/{{slot}}/confirm" class="btn btn-danger mt-3"><i class="fas fa-credit-card"></i> Vai al pagamento</a>
+                <form action="/offices/{{office.id}}/availability/{{date}}/{{slot}}/confirm" method="POST">
+                <button type="submit" class="btn btn-danger max-width"><i class="fas fa-credit-card"></i> Vai al pagamento
+                </form>
             </div>
             <div class="row mt-3">
                 <div class="col-6">

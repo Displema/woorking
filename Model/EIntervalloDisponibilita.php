@@ -20,14 +20,14 @@ class EIntervalloDisponibilita
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
-    #[ORM\ManyToOne(cascade: ["persist", "remove"], inversedBy: "intervalliDisponibilita")]
+    #[ORM\ManyToOne(cascade: ["persist"], inversedBy: "intervalliDisponibilita")]
     private EUfficio $ufficio;
 
     #[ORM\Column(name: "data_inizio", type: "datetime")]
     private DateTime $dataInizio;
 
 
-    #[ORM\Column(type:"string", enumType:Enum\FasciaOrariaEnum::class)]
+    #[ORM\Column(type:"string", enumType:FasciaOrariaEnum::class)]
     private FasciaOrariaEnum $fascia;
 
     #[ORM\Column(name: "data_fine", type: "datetime")]

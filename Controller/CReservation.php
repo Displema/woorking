@@ -12,6 +12,7 @@ use Model\EPrenotazione;
 use Model\EProfilo;
 use Model\EUfficio;
 
+use TechnicalServiceLayer\Repository\EIntervalloDisponibilitaRepository;
 use TechnicalServiceLayer\Repository\UserRepository;
 use TechnicalServiceLayer\Roles\Roles;
 use View\VOffice;
@@ -21,6 +22,8 @@ use View\VStatus;
 
 class CReservation extends BaseController
 {
+
+
     public function index()
     {
         //check if the user is logged
@@ -32,16 +35,21 @@ class CReservation extends BaseController
         //take the repository of EPrenotazione
         $repository = $this->entity_manager->getRepository(EPrenotazione::class);
 
+
+        $userRepo = UserRepository::getInstance();
+
+
         //take the user from session
         $user = $this->getUser();
+
 
         if ($this->doesLoggedUserHaveRole(Roles::ADMIN)) {
             $reservations = $repository->findAll();
             $targetView = "showAdminReservations";
         } elseif ($this->doesLoggedUserHaveRole(Roles::LANDLORD)) {
-            // molto brutto
-            $this->indexLandlord();
-            return;
+            $id = $user->getId();
+            $reservations = $repository->getPrenotazioniByLocatore($id);
+            $targetView = "searchReservations";
         } else {
             $reservations = $repository->findBy(['utente' => $user->getId()]);
             $targetView = "showUserReservations";
@@ -67,73 +75,6 @@ class CReservation extends BaseController
         }
         $view = new VReservation();
         $view->$targetView($activereservation, $pastreservation, $user);
-    }
-
-    //search all bookings of the landlord's offices
-    public function indexLandlord(): void
-    {
-        $this->requireLogin();
-
-        $user = $this->getUser();
-        $id = $user->getId();
-        $oggi = new \DateTime();
-
-        $UfficiCompletiPassati = [];
-        $UfficiCompletiPresenti = [];
-
-        // Repositories
-        $userRepo = UserRepository::getInstance();
-        $uffici = $this->entity_manager->getRepository(EUfficio::class)->getAllOfficeByLocatore(['id' => $id]);
-        $fotoRepo = $this->entity_manager->getRepository(EFoto::class);
-        $prenotazioniRepo = $this->entity_manager->getRepository(EPrenotazione::class);
-        $intervalliRepo = $this->entity_manager->getRepository(EIntervalloDisponibilita::class);
-
-        try {
-            foreach ($uffici as $ufficio) {
-                $prenotazioni = $prenotazioniRepo->getPrenotazioneByUfficio($ufficio);
-                if (empty($prenotazioni)) {
-                    continue;
-                }
-
-                $intervallo = $intervalliRepo->getIntervallobyOffice($ufficio);
-                $foto = $fotoRepo->getFirstPhotoByOffice($ufficio);
-                $fotoUrl = $foto ? "/static/img/"  . $foto->getId() : null;
-
-                $serviziObj = $ufficio->getServiziAggiuntivi();
-                $servizi = [];
-                foreach ($serviziObj as $s) {
-                    $servizi[] = $s->getNomeServizio();
-                }
-                $serviziStringa = implode(', ', $servizi);
-
-                // Per ogni prenotazione creo un oggetto singolo da passare al template
-                foreach ($prenotazioni as $prenotazione) {
-                    $data = $prenotazione->getData();
-                    $email = $userRepo->getEmailByUserId($prenotazione->getUtente()->getUserId());
-
-                    $elemento = [
-                        'ufficio' => $ufficio,
-                        'email' => $email,
-                        'foto' => $fotoUrl,
-                        'prenotazioni' => $prenotazione,
-                        'intervallo' => $intervallo,
-                        'servizio' => $serviziStringa
-                    ];
-
-                    if ($data < $oggi) {
-                        $UfficiCompletiPassati[] = $elemento;
-                    } else {
-                        $UfficiCompletiPresenti[] = $elemento;
-                    }
-                }
-            }
-        } catch (Exception $e) {
-            error_log("Errore nella gestione delle prenotazioni per ufficio: " . $e->getMessage());
-        }
-
-        // Call the view
-        $view = new VOffice();
-        $view->searchReservations($UfficiCompletiPassati, $UfficiCompletiPresenti);
     }
 
     public function show($id): void
@@ -204,6 +145,15 @@ class CReservation extends BaseController
                 return;
             }
 
+            /** @var EIntervalloDisponibilitaRepository $rangesRepo */
+            $rangesRepo = $this->entity_manager->getRepository(EIntervalloDisponibilita::class);
+
+            if (!$rangesRepo->isDateValid($office, $date_parsed)) {
+                $this->entity_manager->rollback();
+                $view = new VStatus();
+                $view->showStatus(400);
+            }
+
             //take the number of reservation for this office in a specific date and slot
             $reservationCount = $this->entity_manager->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $slotEnum);
 
@@ -241,11 +191,10 @@ class CReservation extends BaseController
             $view = new VOffice();
             $view->showconfirmedpage1($user);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // if the saving have problem rollback cancel everything
             $this->entity_manager->rollback();
             echo $e->getMessage();
-
         }
     }
 }
