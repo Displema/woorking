@@ -22,6 +22,7 @@ use TechnicalServiceLayer\Utility\USession;
 use View\VRedirect;
 use View\VAuth;
 use View\VResource;
+use View\VStatus;
 
 require_once __DIR__ . "/../bootstrap.php";
 
@@ -195,30 +196,30 @@ class CAuth extends BaseController
         $view->redirect("/home");
     }
 
-    public function modifyUser(): void
-    {
+    public function modifyUser(
+        string $nome,
+        string $cognome,
+        string $data_nascita,
+        string $partiva_iva,
+        string $telefono,
+    ): void {
+        $this->requireRole(Roles::LANDLORD);
+
+        $user = $this->getUser();
+
+        $user->setName($nome);
+        $user->setSurname($cognome);
         try {
-            $sessionUser = $this->getUser();
-            // Forza il reattacco all'EntityManager (managed entity)
-            $user = $this->entity_manager->getRepository(get_class($sessionUser))->find($sessionUser->getId());
-        } catch (UserNotAuthenticatedException $e) {
-            $view = new VRedirect();
-            $view->redirect("/error");
-            return;
-        }
-        $user->setName($_POST['nome']);
-        $user->setSurname($_POST['cognome']);
-        try {
-            $dob = new \DateTime($_POST['data_nascita']);
+            $dob = new \DateTime($data_nascita);
             $user->setDob($dob);
         } catch (\Exception) {
             // Gestione errore: data non valida
-            $view = new VRedirect();
-            $view->redirect("/error?msg=data_nascita_invalida");
+            $view = new VStatus();
+            $view->showStatus(400);
             return;
         }
-        $user->setPhone($_POST['telefono']);
-        $user->setPartitaIva($_POST['partita_iva']);
+        $user->setPhone($telefono);
+        $user->setPartitaIva($partiva_iva);
         $this->entity_manager->persist($user);
         $this->entity_manager->flush();
 
@@ -252,7 +253,8 @@ class CAuth extends BaseController
         $view = new VRedirect();
         $view->redirect("/admin/home");
     }
-    public function ResetPassword(): void {
+    public function ResetPassword(): void
+    {
         $view = new VAuth();
         $view->redirectResetPassword();
     }
