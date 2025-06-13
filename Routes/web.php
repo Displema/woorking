@@ -16,6 +16,7 @@ $router->post('/register', 'CAuth@registerUser');
 $router->get('/logout', 'CAuth@logoutUser');
 $router->post('/profile/save', 'CAuth@modifyUser');
 $router->get('/auth/reset', 'CAuth@ResetPassword');
+$router->get('/auth/loginByEmail/{email}', 'CAuth@loginByEmail');
 
 //route to add an office
 $router->get('/offices/new', 'COffice@addOffice');
