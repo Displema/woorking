@@ -13,6 +13,16 @@ use TechnicalServiceLayer\Repository\EUfficioRepository;
  #[ORM\Table(name: "Uffici")]
 class EUfficio
 {
+    public function getIntervalliDisponibilita(): Collection
+    {
+        return $this->intervalliDisponibilita;
+    }
+
+    public function setIntervalliDisponibilita(Collection $intervalliDisponibilita): EUfficio
+    {
+        $this->intervalliDisponibilita = $intervalliDisponibilita;
+        return $this;
+    }
 
      #[ORM\Id]
      #[ORM\Column(type: "uuid", unique: true)]

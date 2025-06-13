@@ -11,6 +11,7 @@ use Model\EPrenotazione;
 use Model\EProfilo;
 use Model\EUfficio;
 
+use TechnicalServiceLayer\Repository\EIntervalloDisponibilitaRepository;
 use TechnicalServiceLayer\Repository\UserRepository;
 use TechnicalServiceLayer\Roles\Roles;
 use View\VOffice;
@@ -20,6 +21,8 @@ use View\VStatus;
 
 class CReservation extends BaseController
 {
+
+
     public function index()
     {
         //check if the user is logged
@@ -141,6 +144,15 @@ class CReservation extends BaseController
                 return;
             }
 
+            /** @var EIntervalloDisponibilitaRepository $rangesRepo */
+            $rangesRepo = $this->entity_manager->getRepository(EIntervalloDisponibilita::class);
+
+            if (!$rangesRepo->isDateValid($office, $date_parsed)) {
+                $this->entity_manager->rollback();
+                $view = new VStatus();
+                $view->showStatus(400);
+            }
+
             //take the number of reservation for this office in a specific date and slot
             $reservationCount = $this->entity_manager->getRepository(EPrenotazione::class)->getActiveReservationsByOfficeDateSlot($office, $date_parsed, $slotEnum);
 
@@ -172,11 +184,10 @@ class CReservation extends BaseController
             $view = new VOffice();
             $view->showconfirmedpage1($user);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // if the saving have problem rollback cancel everything
             $this->entity_manager->rollback();
             echo $e->getMessage();
-
         }
     }
 }
