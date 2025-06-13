@@ -2,7 +2,6 @@
 namespace Model;
 
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\UuidInterface;
 use TechnicalServiceLayer\Repository\ELocatoreRepository;
 
 #[ORM\Entity(repositoryClass: ELocatoreRepository::class)]

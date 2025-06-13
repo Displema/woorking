@@ -3,9 +3,7 @@ namespace Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
-use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
-use TechnicalServiceLayer\Repository\ESegnalazioneRepository;
 use TechnicalServiceLayer\Repository\EServiziAggiuntiviRepository;
 
 #[ORM\Entity(repositoryClass: EServiziAggiuntiviRepository::class)]

@@ -3,9 +3,7 @@ namespace Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
-use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
-use TechnicalServiceLayer\Repository\ERecensioneRepository;
 use TechnicalServiceLayer\Repository\ERimborsoRepository;
 
 #[ORM\Entity(repositoryClass: ERimborsoRepository::class)]

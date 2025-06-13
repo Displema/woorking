@@ -1,9 +1,6 @@
 <?php
 namespace Model;
 
-use Money\Currency;
-use Money\Money;
-
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\Uuid;

@@ -5,10 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
 use DateTime;
 use Model\Enum\FasciaOrariaEnum;
 
-use Model\Enum\UserEnum;
-
 use Ramsey\Uuid\Doctrine\UuidGenerator;
-use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use TechnicalServiceLayer\Repository\EIntervalloDisponibilitaRepository;
 
