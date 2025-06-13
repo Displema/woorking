@@ -2,7 +2,6 @@
 
 namespace Routes;
 
-use Controller\CReport;
 use Core\Router;
 
 $router = new Router();

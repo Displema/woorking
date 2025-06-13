@@ -2,9 +2,7 @@
 namespace TechnicalServiceLayer\Repository;
 
 use DateTimeImmutable;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\Common\Collections\Collection;
 use Model\Enum\FasciaOrariaEnum;
 use Model\EPrenotazione;
 use Model\EUfficio;
