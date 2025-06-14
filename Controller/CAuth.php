@@ -147,7 +147,6 @@ class CAuth extends BaseController
             $profile = $repo->findOneBy(['user_id' => $userId]);
 
             USession::setSessionElement("user", $profile);
-
             $view = new VRedirect();
             if ($this->doesLoggedUserHaveRole(Roles::ADMIN)) {
                 $view->redirect("/admin/home");
@@ -200,7 +199,6 @@ class CAuth extends BaseController
         }
         $user = $this->entity_manager->getRepository($targetClass)->findOneBy(['user_id' => $user_id]);
         USession::setSessionElement("user", $user);
-        error_log(print_r($_SESSION, true));
         $view = new VRedirect();
         $view->redirect("/home");
     }
@@ -247,7 +245,6 @@ class CAuth extends BaseController
 
         USession::setSessionElement("user", $user);
 
-
         $view = new VRedirect();
         $view->redirect("/home");
     }
@@ -256,7 +253,7 @@ class CAuth extends BaseController
     {
         $userId = $this->auth_manager->register(
             "admin@admin.it",
-            "admin",
+            "a~3M!,sTo:_Kq+981`",
             "admin"
         );
         $user = new EProfilo();
@@ -270,7 +267,7 @@ class CAuth extends BaseController
         $this->auth_manager->admin()->addRoleForUserById($userId, Roles::ADMIN);
         $this->entity_manager->persist($user);
         $this->entity_manager->flush();
-        $this->loginUser("admin@admin.it", "admin", 1);
+        $this->loginUser("admin@admin.it", "a~3M!,sTo:_Kq+981`", 1);
 
         $view = new VRedirect();
         $view->redirect("/admin/home");
