@@ -253,7 +253,7 @@ class CAuth extends BaseController
     {
         $userId = $this->auth_manager->register(
             "admin@admin.it",
-            "a~3M!,sTo:_Kq+981`",
+            $_ENV['ADMIN_PASSWORD'] ?? 'admin',
             "admin"
         );
         $user = new EProfilo();
@@ -267,7 +267,7 @@ class CAuth extends BaseController
         $this->auth_manager->admin()->addRoleForUserById($userId, Roles::ADMIN);
         $this->entity_manager->persist($user);
         $this->entity_manager->flush();
-        $this->loginUser("admin@admin.it", "a~3M!,sTo:_Kq+981`", 1);
+        $this->loginUser("admin@admin.it", $_ENV['ADMIN_PASSWORD'] ?? 'admin', 1);
 
         $view = new VRedirect();
         $view->redirect("/admin/home");
