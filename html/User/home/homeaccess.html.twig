@@ -35,6 +35,24 @@
     }
 </script>
 
+<noscript>
+    <div class="alert alert-danger text-center m-0" role="alert">
+        Attenzione: questo sito richiede JavaScript per funzionare correttamente. Abilitalo nel tuo browser.
+    </div>
+</noscript>
+
+<!-- Avviso se i cookie sono disabilitati -->
+<div id="cookie-warning" class="alert alert-danger text-center m-0 d-none" role="alert">
+    Attenzione: questo sito richiede l'uso dei cookie per funzionare correttamente. Abilitali nel tuo browser.
+</div>
+
+<script>
+    // Controlla se i cookie sono abilitati
+    if (!navigator.cookieEnabled) {
+        document.getElementById('cookie-warning').classList.remove('d-none');
+    }
+</script>
+
 
 <!-- include the navbar from another template -->
 {% include 'User/navbar/navbar.html.twig' %}

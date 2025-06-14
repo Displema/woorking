@@ -7,6 +7,7 @@ use Model\EFoto;
 use Model\EIntervalloDisponibilita;
 use Model\Enum\FasciaOrariaEnum;
 use Model\Enum\StatoUfficioEnum;
+use Model\EPagamento;
 use Model\EPrenotazione;
 use Model\EProfilo;
 use Model\EUfficio;
@@ -173,10 +174,16 @@ class CReservation extends BaseController
             $reservation->setFascia($slotEnum);
             $reservation->setUtente($usertosave);
 
+            $payment = new EPagamento();
+            $payment->setPrenotazione($reservation);
+            $payment->setImporto($office->getPrezzo());
+
             //method of entitymanager to prepare and save the reseration
             $this->entity_manager->persist($reservation); //prepare the reservation to be save
             $this->entity_manager->flush(); //set the information of reservation
 
+            $this->entity_manager->persist($payment);
+            $this->entity_manager->flush();
             // commit don't is used in directly way but to user PESSIMISTIC WRITE is very important
             // because allow to book an office only after a commit
             $this->entity_manager->commit();
