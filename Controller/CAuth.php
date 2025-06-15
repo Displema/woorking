@@ -20,8 +20,6 @@ use View\VAuth;
 use View\VResource;
 use View\VStatus;
 
-require_once __DIR__ . "/../bootstrap.php";
-
 class CAuth extends BaseController
 {
     public function showLoginForm(): void
