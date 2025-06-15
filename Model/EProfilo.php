@@ -21,7 +21,7 @@ class EProfilo
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private UuidInterface $id;
 
-    #[ORM\Column(name: 'user_id', type: 'string', length: 255)]
+    #[ORM\Column(name: 'user_id', type: 'string', length: 255, unique: true)]
     private string $user_id;
 
     #[ORM\OneToMany(targetEntity:ESegnalazione::class, mappedBy:"user", fetch: "EAGER")]

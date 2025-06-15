@@ -15,7 +15,6 @@ use Model\ELocatore;
 use Model\Enum\UserEnum;
 use Model\EProfilo;
 use TechnicalServiceLayer\Roles\Roles;
-use TechnicalServiceLayer\Utility\USession;
 use View\VRedirect;
 use View\VAuth;
 use View\VResource;
@@ -146,7 +145,7 @@ class CAuth extends BaseController
             $repo = $this->entity_manager->getRepository(EProfilo::class);
             $profile = $repo->findOneBy(['user_id' => $userId]);
 
-            USession::setSessionElement("user", $profile);
+            //USession::setSessionElement("user", $profile);
             $view = new VRedirect();
             if ($this->doesLoggedUserHaveRole(Roles::ADMIN)) {
                 $view->redirect("/admin/home");
@@ -198,7 +197,7 @@ class CAuth extends BaseController
             $targetClass = EProfilo::class;
         }
         $user = $this->entity_manager->getRepository($targetClass)->findOneBy(['user_id' => $user_id]);
-        USession::setSessionElement("user", $user);
+        //USession::setSessionElement("user", $user);
         $view = new VRedirect();
         $view->redirect("/home");
     }
@@ -209,9 +208,7 @@ class CAuth extends BaseController
      */
     public function logoutUser(): void
     {
-        USession::destroy();
         $this->auth_manager->logout();
-        USession::unsetElement('user');
         $view = new VRedirect();
         $view->redirect("/home");
     }
@@ -243,7 +240,7 @@ class CAuth extends BaseController
         $this->entity_manager->persist($user);
         $this->entity_manager->flush();
 
-        USession::setSessionElement("user", $user);
+        //USession::setSessionElement("user", $user);
 
         $view = new VRedirect();
         $view->redirect("/home");

@@ -112,6 +112,10 @@ abstract class BaseController
 
     public function getUser(): EProfilo | ELocatore
     {
-        return $this->entity_manager->getRepository(get_class($_SESSION['user']))->find($_SESSION['user']->getId());
+        $type = $this->doesLoggedUserHaveRole(Roles::LANDLORD) ? ELocatore::class : EProfilo::class;
+        $user_id = $this->getUserId();
+        return $this->entity_manager->getRepository($type)->findOneBy([
+            "user_id" => $user_id,
+        ]);
     }
 }
